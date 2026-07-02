@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Nunito', 'Noto Sans SC', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+html {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  @apply bg-background text-text-primary min-h-screen;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 107, 74, 0.12) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(78, 205, 196, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px, 14px 14px;
+  background-position: 0 0, 7px 7px;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-2.5 rounded-2xl font-bold
+           border-[3px] border-outline shadow-cartoon
+           hover:bg-primary-dark hover:shadow-cartoon-sm hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-none
+           transition-all duration-150;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-text-primary px-6 py-2.5 rounded-2xl font-bold
+           border-[3px] border-outline shadow-cartoon-sm
+           hover:bg-surface hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-none
+           transition-all duration-150;
+  }
+
+  .card {
+    @apply bg-white rounded-3xl border-[3px] border-outline shadow-card overflow-hidden
+           transition-all duration-200 hover:shadow-cartoon-sm hover:-translate-y-0.5;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-2xl border-[3px] border-outline bg-white
+           text-text-primary placeholder:text-text-secondary/50 font-medium
+           focus:outline-none focus:ring-0 focus:border-secondary focus:shadow-cartoon-sm
+           transition-all duration-150;
+  }
+
+  .cartoon-header {
+    @apply sticky z-50 bg-white/95 backdrop-blur-sm
+           border-b-[3px] border-outline px-4 pt-4 pb-3;
+  }
+
+  .cartoon-section-title {
+    @apply font-cartoon text-lg text-text-primary mb-3 flex items-center gap-2;
+  }
+
+  .cartoon-section-bar {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded-xl
+           bg-accent border-2 border-outline text-base shadow-cartoon-sm;
+  }
+
+  .cartoon-icon-btn {
+    @apply p-2 rounded-2xl border-2 border-outline bg-white shadow-cartoon-sm
+           hover:-translate-y-0.5 hover:shadow-cartoon active:translate-y-0 active:shadow-none
+           transition-all duration-150;
+  }
+
+  .cartoon-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold
+           border-2 border-outline shadow-cartoon-sm;
+  }
+
+  .cartoon-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50
+           bg-white border-t-[3px] border-outline
+           px-4 py-2 pb-[calc(0.5rem+var(--safe-bottom))];
+  }
+
+  .cartoon-fab {
+    @apply relative -top-6 w-16 h-16 bg-primary rounded-full
+           border-[3px] border-outline shadow-cartoon-lg
+           flex items-center justify-center
+           hover:-translate-y-1 hover:shadow-cartoon active:translate-y-0 active:shadow-cartoon-sm
+           transition-all duration-150;
+  }
+
+  .cartoon-category-chip {
+    @apply flex flex-col items-center gap-1.5 p-3 rounded-3xl
+           bg-white border-[3px] border-outline shadow-cartoon-sm
+           hover:shadow-cartoon hover:-translate-y-1
+           active:translate-y-0 active:shadow-cartoon-sm
+           transition-all duration-150 min-w-[76px];
+  }
+
+  .cartoon-list-item {
+    @apply flex items-center gap-4 p-3 bg-white rounded-2xl
+           border-2 border-outline shadow-cartoon-sm
+           hover:shadow-cartoon hover:-translate-y-0.5
+           transition-all duration-150;
+  }
+}
