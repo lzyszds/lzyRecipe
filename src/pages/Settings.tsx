@@ -165,7 +165,7 @@ export function Settings() {
         <section className="bg-white rounded-2xl p-5 shadow-card space-y-1.5">
           <h2 className="text-sm font-bold text-text-primary mb-2">关于</h2>
           <p className="text-xs text-text-secondary">应用名称：{APP_NAME}</p>
-          <p className="text-xs text-text-secondary">版本：0.1.0</p>
+          <p className="text-xs text-text-secondary">版本：{__APP_VERSION__}</p>
           <p className="text-xs text-text-secondary leading-relaxed">
             API 密钥仅保存在本地，不会上传到任何服务器。
           </p>

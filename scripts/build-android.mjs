@@ -11,6 +11,10 @@
  *   npm run android:build -- --skip-rust  # 快速重打包：跳过 Rust，复用已有 .so（前端不会更新）
  *   npm run android:build -- arm32        # 完整打包 armv7 Release
  *   npm run android:build -- --open       # 打包完成后打开 APK 所在文件夹
+ *   npm run android:build -- --bump=patch # 打包前自动升级版本号（patch|minor|major|none）
+ *
+ * 版本号: 未指定 --bump 时会在打包前交互选择升级方式（回车默认不升级）；
+ *         非交互环境（无终端）默认不升级。打包失败会自动回滚版本号。
  *
  * 输出位置（固定，方便查找）:
  *   release/android/萌厨食光-{version}-{arch}-{type}.apk
@@ -29,7 +33,9 @@ import {
   readdirSync,
   readFileSync,
   statSync,
+  writeFileSync,
 } from 'fs';
+import { createInterface } from 'readline/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -37,6 +43,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, '..');
 const androidDir = join(projectRoot, 'src-tauri', 'gen', 'android');
 const releaseDir = join(projectRoot, 'release', 'android');
+
+const versionFiles = {
+  packageJson: join(projectRoot, 'package.json'),
+  tauriConf: join(projectRoot, 'src-tauri', 'tauri.conf.json'),
+  cargoToml: join(projectRoot, 'src-tauri', 'Cargo.toml'),
+  cargoLock: join(projectRoot, 'src-tauri', 'Cargo.lock'),
+  androidProps: join(androidDir, 'app', 'tauri.properties'),
+};
 
 const APP_DISPLAY_NAME = '萌厨食光';
 
@@ -46,6 +60,13 @@ const wantDebug = args.includes('debug');
 const wantArm32 = args.includes('arm32');
 const skipRust = args.includes('--skip-rust');
 const openFolder = args.includes('--open');
+const BUMP_KINDS = ['patch', 'minor', 'major', 'none'];
+const bumpFlag = args.find((a) => a.startsWith('--bump='))?.slice('--bump='.length);
+const bumpArg = args.includes('--no-bump') ? 'none' : bumpFlag;
+if (bumpArg !== undefined && !BUMP_KINDS.includes(bumpArg)) {
+  console.error(`无效的 --bump 参数: ${bumpArg}（可选: ${BUMP_KINDS.join('|')}）`);
+  process.exit(1);
+}
 
 const target = wantArm32 ? 'armv7' : 'aarch64';
 const archDir = wantArm32 ? 'arm32' : 'arm64';
@@ -61,7 +82,108 @@ function readAppVersion() {
     return '0.0.0';
   }
 }
-const appVersion = readAppVersion();
+let appVersion = readAppVersion();
+// 版本号写入后的回滚函数，构建失败时调用
+let versionRollback = null;
+
+const BUMP_LABELS = {
+  patch: '修订号 (问题修复)',
+  minor: '次版本 (新增功能)',
+  major: '主版本 (不兼容变更)',
+};
+
+function bumpSemver(version, kind) {
+  const match = version.match(/^(\d+)\.(\d+)\.(\d+)$/);
+  if (!match) fail(`版本号格式不正确（需要 x.y.z）: ${version}`);
+  let [major, minor, patch] = match.slice(1).map(Number);
+  if (kind === 'major') {
+    major += 1;
+    minor = 0;
+    patch = 0;
+  } else if (kind === 'minor') {
+    minor += 1;
+    patch = 0;
+  } else {
+    patch += 1;
+  }
+  return `${major}.${minor}.${patch}`;
+}
+
+// 与 Tauri 默认规则一致: major * 1000000 + minor * 1000 + patch
+function androidVersionCode(version) {
+  const [major, minor, patch] = version.split('.').map(Number);
+  return major * 1000000 + minor * 1000 + patch;
+}
+
+async function resolveBump(current) {
+  if (bumpArg !== undefined) return bumpArg;
+  if (!process.stdin.isTTY) return 'none';
+
+  console.log(`\n当前版本: ${current}，请选择本次升级方式:`);
+  ['patch', 'minor', 'major'].forEach((kind, i) => {
+    console.log(`  ${i + 1}) ${BUMP_LABELS[kind]}  ${current} → ${bumpSemver(current, kind)}`);
+  });
+  console.log('  4) 不升级');
+
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  let answer;
+  try {
+    answer = (await rl.question('请输入序号 [1-4，直接回车为不升级]: ')).trim();
+  } finally {
+    rl.close();
+  }
+  if (answer === '') return 'none';
+  const picked = { 1: 'patch', 2: 'minor', 3: 'major', 4: 'none' }[answer];
+  if (!picked) fail(`无效的选项: ${answer}`);
+  return picked;
+}
+
+function applyVersion(next) {
+  const replaceVersion = (regex) => (text) =>
+    text.replace(regex, (_, prefix, suffix) => `${prefix}${next}${suffix}`);
+
+  const updates = {
+    [versionFiles.packageJson]: replaceVersion(/("version":\s*")[^"]+(")/),
+    [versionFiles.tauriConf]: replaceVersion(/("version":\s*")[^"]+(")/),
+    [versionFiles.cargoToml]: replaceVersion(/^(version\s*=\s*")[^"]+(")/m),
+    [versionFiles.cargoLock]: replaceVersion(/(name = "app"\r?\nversion = ")[^"]+(")/),
+    [versionFiles.androidProps]: (text) =>
+      text
+        .replace(/^(tauri\.android\.versionName=).*$/m, `$1${next}`)
+        .replace(/^(tauri\.android\.versionCode=).*$/m, `$1${androidVersionCode(next)}`),
+  };
+
+  const originals = {};
+  for (const [file, update] of Object.entries(updates)) {
+    if (!existsSync(file)) continue;
+    const original = readFileSync(file, 'utf8');
+    originals[file] = original;
+    writeFileSync(file, update(original));
+  }
+
+  versionRollback = () => {
+    for (const [file, original] of Object.entries(originals)) {
+      writeFileSync(file, original);
+    }
+    console.error('\x1b[33m已回滚版本号修改\x1b[0m');
+  };
+}
+
+async function maybeBumpVersion() {
+  const previous = appVersion;
+  const kind = await resolveBump(previous);
+  if (kind === 'none') {
+    console.log(`\x1b[32m[√]\x1b[0m 版本保持 ${previous}`);
+    return;
+  }
+
+  const next = bumpSemver(previous, kind);
+  applyVersion(next);
+  appVersion = next;
+  console.log(
+    `\x1b[32m[√]\x1b[0m 版本已升级: ${previous} → ${next}（Android versionCode ${androidVersionCode(next)}）`
+  );
+}
 
 // ---------- 环境变量 ----------
 const ANDROID_HOME = process.env.ANDROID_HOME || 'C:\\Users\\Administrator\\AppData\\Local\\Android\\Sdk';
@@ -70,6 +192,7 @@ const JAVA_HOME = process.env.JAVA_HOME || 'C:\\Program Files\\Android\\Android 
 
 function fail(msg) {
   console.error(`\x1b[31m[错误]\x1b[0m ${msg}`);
+  if (versionRollback) versionRollback();
   process.exit(1);
 }
 
@@ -163,6 +286,8 @@ const env = {
   https_proxy: PROXY,
   NO_PROXY: 'localhost,127.0.0.1',
 };
+
+await maybeBumpVersion();
 
 if (skipRust) {
   const abi = wantArm32 ? 'armeabi-v7a' : 'arm64-v8a';
