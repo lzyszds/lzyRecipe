@@ -1,33 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: 'Nunito', 'Noto Sans SC', sans-serif;
+  font-family: 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
   font-weight: 400;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-top: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top, 0px));
+  --safe-bottom: max(var(--safe-area-inset-bottom, 0px), env(safe-area-inset-bottom, 0px));
+  --safe-left: max(var(--safe-area-inset-left, 0px), env(safe-area-inset-left, 0px));
+  --safe-right: max(var(--safe-area-inset-right, 0px), env(safe-area-inset-right, 0px));
+  --size-touch: 2.5rem;
+  --size-nav: 4rem;
+  --radius-btn: 12px;
+  --radius-card: 16px;
+  --space-page-x: 1.25rem;
+  --space-section: 1.25rem;
 }
 
 html {
-  padding-top: var(--safe-top);
-  padding-bottom: var(--safe-bottom);
   padding-left: var(--safe-left);
   padding-right: var(--safe-right);
   box-sizing: border-box;
+  overflow-x: clip;
+  background: #f6f7f9;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
@@ -35,93 +42,337 @@ body {
   @apply bg-background text-text-primary min-h-screen;
   padding-top: 0;
   padding-bottom: 0;
-  background-image:
-    radial-gradient(circle, rgba(255, 107, 74, 0.12) 1.5px, transparent 1.5px),
-    radial-gradient(circle, rgba(78, 205, 196, 0.08) 1px, transparent 1px);
-  background-size: 28px 28px, 14px 14px;
-  background-position: 0 0, 7px 7px;
+  overflow-x: clip;
+  background: #f6f7f9;
+}
+
+#root {
+  position: relative;
+  min-height: 100vh;
 }
 
 @layer components {
+  /* ── Buttons ── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium
+           rounded-xl transition-all duration-150
+           active:scale-[0.98]
+           disabled:opacity-50 disabled:pointer-events-none
+           select-none whitespace-nowrap leading-none;
+  }
+
+  .btn-md {
+    height: 2.75rem;
+    @apply px-5 text-sm;
+  }
+
+  .btn-sm {
+    height: 2.25rem;
+    @apply px-3.5 text-xs;
+  }
+
   .btn-primary {
-    @apply bg-primary text-white px-6 py-2.5 rounded-2xl font-bold
-           border-[3px] border-outline shadow-cartoon
-           hover:bg-primary-dark hover:shadow-cartoon-sm hover:-translate-y-0.5
-           active:translate-y-0 active:shadow-none
-           transition-all duration-150;
+    @apply btn btn-md bg-primary text-white hover:bg-primary-light shadow-cozy-primary;
   }
 
   .btn-secondary {
-    @apply bg-white text-text-primary px-6 py-2.5 rounded-2xl font-bold
-           border-[3px] border-outline shadow-cartoon-sm
-           hover:bg-surface hover:-translate-y-0.5
-           active:translate-y-0 active:shadow-none
-           transition-all duration-150;
+    @apply btn btn-md bg-white text-text-primary shadow-cozy-sm hover:bg-neutral-50;
   }
 
-  .card {
-    @apply bg-white rounded-3xl border-[3px] border-outline shadow-card overflow-hidden
-           transition-all duration-200 hover:shadow-cartoon-sm hover:-translate-y-0.5;
+  .btn-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    @apply inline-flex items-center justify-center flex-shrink-0
+           rounded-full bg-white text-text-muted
+           transition-all duration-150 active:scale-95
+           disabled:opacity-50 disabled:pointer-events-none;
+    box-shadow: 0 1px 4px rgba(17, 24, 39, 0.04);
   }
 
-  .input-field {
-    @apply w-full px-4 py-3 rounded-2xl border-[3px] border-outline bg-white
-           text-text-primary placeholder:text-text-secondary/50 font-medium
-           focus:outline-none focus:ring-0 focus:border-secondary focus:shadow-cartoon-sm
-           transition-all duration-150;
+  .btn-icon-primary {
+    @apply bg-sage-50 text-primary;
   }
 
-  .cartoon-header {
-    @apply sticky z-50 bg-white/95 backdrop-blur-sm
-           border-b-[3px] border-outline px-4 pt-4 pb-3;
+  .btn-icon-danger {
+    @apply bg-red-50 text-red-500;
   }
 
-  .cartoon-section-title {
-    @apply font-cartoon text-lg text-text-primary mb-3 flex items-center gap-2;
+  .toolbar {
+    @apply flex items-center gap-2;
   }
 
-  .cartoon-section-bar {
-    @apply inline-flex items-center justify-center w-8 h-8 rounded-xl
-           bg-accent border-2 border-outline text-base shadow-cartoon-sm;
+  .toolbar-row {
+    @apply flex items-center gap-2 w-full;
   }
 
-  .cartoon-icon-btn {
-    @apply p-2 rounded-2xl border-2 border-outline bg-white shadow-cartoon-sm
-           hover:-translate-y-0.5 hover:shadow-cartoon active:translate-y-0 active:shadow-none
-           transition-all duration-150;
+  .toolbar-end {
+    @apply justify-end;
+  }
+
+  .page-container {
+    @apply w-full max-w-5xl mx-auto px-[var(--space-page-x)];
+  }
+
+  /* ── Layout ── */
+  .page-header {
+    @apply sticky z-40 top-0 bg-background/90 backdrop-blur-md;
+    padding-top: var(--safe-top);
+  }
+
+  .page-header-row {
+    @apply flex items-center gap-3 min-h-[3.5rem] py-2;
+  }
+
+  .page-header-start {
+    @apply flex items-center gap-2 flex-shrink-0;
+  }
+
+  .page-header-title {
+    @apply flex-1 min-w-0 font-bold text-base text-text-primary truncate leading-tight;
+  }
+
+  .page-header-actions {
+    @apply flex items-center gap-2 flex-shrink-0 ml-auto;
+  }
+
+  .page-main {
+    @apply page-container py-4 space-y-[var(--space-section)];
+  }
+
+  .section-header {
+    @apply flex items-center justify-between gap-3 mb-3;
+  }
+
+  .section-header-title {
+    @apply flex items-center gap-2 min-w-0;
+  }
+
+  .section-header-title h2 {
+    @apply font-bold text-sm text-text-primary truncate leading-tight;
+  }
+
+  .section-icon {
+    @apply inline-flex items-center justify-center flex-shrink-0 text-lg;
+  }
+
+  .card-header {
+    @apply flex items-center justify-between gap-3 px-4 py-3;
+  }
+
+  .card-header-accent,
+  .card-header-secondary,
+  .card-header-plain {
+    @apply bg-white;
+  }
+
+  .card-body {
+    @apply p-4;
+  }
+
+  .card-meta {
+    @apply px-4 py-2 text-xs font-medium text-text-secondary;
+  }
+
+  .empty-state {
+    @apply text-center py-16 px-4;
+  }
+
+  .empty-state-icon {
+    width: 4.5rem;
+    height: 4.5rem;
+    @apply mx-auto mb-4 flex items-center justify-center
+           rounded-full bg-sage-50 text-primary;
+  }
+
+  .empty-state-title {
+    @apply font-bold text-base text-text-primary mb-1.5;
+  }
+
+  .empty-state-desc {
+    @apply text-sm text-text-secondary mb-6;
+  }
+
+  .empty-state-actions {
+    @apply flex flex-col sm:flex-row gap-2 justify-center;
+  }
+
+  .cozy-badge {
+    @apply inline-flex items-center h-5 px-2 rounded-md text-[10px] font-medium
+           bg-neutral-100 text-text-secondary whitespace-nowrap leading-none;
   }
 
   .cartoon-badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold
-           border-2 border-outline shadow-cartoon-sm;
+    @apply cozy-badge;
   }
 
-  .cartoon-nav {
+  /* ── Bottom navigation ── */
+  .bottom-nav-shell {
     @apply fixed bottom-0 left-0 right-0 z-50
-           bg-white border-t-[3px] border-outline
-           px-4 py-2 pb-[calc(0.5rem+var(--safe-bottom))];
+           bg-white/95 backdrop-blur-md border-t border-neutral-100;
+    padding-bottom: var(--safe-bottom);
   }
 
-  .cartoon-fab {
-    @apply relative -top-6 w-16 h-16 bg-primary rounded-full
-           border-[3px] border-outline shadow-cartoon-lg
-           flex items-center justify-center
-           hover:-translate-y-1 hover:shadow-cartoon active:translate-y-0 active:shadow-cartoon-sm
-           transition-all duration-150;
+  .bottom-nav-bar {
+    @apply relative mx-auto max-w-lg grid grid-cols-4 items-center;
+    height: var(--size-nav);
   }
 
-  .cartoon-category-chip {
-    @apply flex flex-col items-center gap-1.5 p-3 rounded-3xl
-           bg-white border-[3px] border-outline shadow-cartoon-sm
-           hover:shadow-cartoon hover:-translate-y-1
-           active:translate-y-0 active:shadow-cartoon-sm
-           transition-all duration-150 min-w-[76px];
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center gap-1 h-full w-full
+           text-[10px] font-medium text-neutral-400 transition-colors duration-150;
+  }
+
+  .bottom-nav-item--active {
+    @apply text-primary;
+  }
+
+  /* ── Category pills ── */
+  .category-pill {
+    @apply inline-flex items-center px-4 py-2 rounded-full text-xs font-medium
+           bg-white text-neutral-600 transition-colors flex-shrink-0;
+    box-shadow: 0 1px 4px rgba(17, 24, 39, 0.04);
+  }
+
+  .category-pill-active {
+    @apply bg-primary text-white shadow-cozy-primary;
+  }
+
+  /* ── Cards & lists ── */
+  /* 注意：此层样式优先于工具类，调用方用 !shadow-* 覆盖 */
+  .cozy-box {
+    @apply bg-white rounded-2xl transition-shadow duration-200;
+    box-shadow: 0 2px 12px rgba(17, 24, 39, 0.03);
+  }
+
+  .cozy-box-interactive {
+    @apply hover:shadow-cozy-hover active:scale-[0.99];
   }
 
   .cartoon-list-item {
-    @apply flex items-center gap-4 p-3 bg-white rounded-2xl
-           border-2 border-outline shadow-cartoon-sm
-           hover:shadow-cartoon hover:-translate-y-0.5
-           transition-all duration-150;
+    @apply cozy-box cozy-box-interactive flex items-center gap-3 p-3 overflow-visible relative;
+  }
+
+  .card {
+    @apply cozy-box overflow-hidden;
+  }
+
+  .page-shell {
+    @apply relative min-h-screen pb-4;
+  }
+
+  .page-shell--nav {
+    padding-bottom: calc(var(--size-nav) + 1.25rem + var(--safe-bottom));
+  }
+
+  .input-field {
+    height: 2.75rem;
+    @apply w-full px-4 rounded-xl bg-white text-sm text-text-primary
+           placeholder:text-neutral-400 font-normal
+           focus:outline-none focus:ring-2 focus:ring-primary/20
+           transition-shadow duration-150;
+  }
+
+  .input-area {
+    @apply input-field !h-auto min-h-[6rem] py-3 leading-relaxed resize-none;
+  }
+
+  .form-label {
+    @apply block text-xs font-medium text-text-secondary mb-1.5;
+  }
+
+  .form-section-title {
+    @apply font-bold text-sm text-text-primary;
+  }
+
+  .card-inner-scroll {
+    @apply overflow-hidden rounded-[calc(var(--radius-card)-2px)];
+  }
+
+  /* ── Planner ── */
+  .planner-day {
+    @apply p-3 bg-surface rounded-2xl space-y-2;
+  }
+
+  .planner-meal {
+    @apply bg-white p-3 rounded-xl text-[11px];
+  }
+
+  /* ── Bottom sheet ── */
+  .sheet-backdrop {
+    @apply absolute inset-0 bg-black/40;
+  }
+
+  .sheet-panel {
+    @apply relative w-full bg-white rounded-t-[28px] flex flex-col overflow-hidden;
+    box-shadow: 0 12px 40px rgba(17, 24, 39, 0.1);
+  }
+
+  .sheet-handle {
+    @apply mx-auto mt-2.5 mb-1 h-1 w-9 rounded-full bg-neutral-200;
+  }
+
+  .sheet-header {
+    @apply flex items-center justify-between gap-3 px-5 pt-2 pb-3;
+  }
+
+  .sheet-title {
+    @apply font-bold text-base text-text-primary;
+  }
+
+  .sheet-body {
+    @apply px-5 pb-6 overflow-y-auto;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.28s ease-out both;
+  }
+
+  .animate-sheet {
+    animation: sheet-up 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-sheet {
+    animation: none !important;
+  }
+
+  .card,
+  .cartoon-list-item,
+  .category-pill,
+  .btn,
+  .btn-icon {
+    transition: none !important;
   }
 }
