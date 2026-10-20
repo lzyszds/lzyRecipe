@@ -25,6 +25,6 @@ tauri = { version = "2.11.3", features = [] }
 tauri-plugin-log = "2"
 tauri-plugin-dialog = "2"
 tauri-plugin-fs = "2"
-reqwest = { version = "0.12", features = ["json", "gzip"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "gzip", "rustls-tls"] }
 base64 = "0.22"
 tokio = { version = "1", features = ["time"] }
