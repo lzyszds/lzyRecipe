@@ -2,6 +2,7 @@ import { getLocalCoverPath } from './coverRegistry';
 import { generateCloudCover } from './cloudCover';
 import { isCloudCoverConfigured, useSettingsStore } from '../store/settingsStore';
 import { isTauri } from './tauri';
+import { APP_NAME } from './appBrand';
 
 const CATEGORY_EMOJI: Record<string, string> = {
   川菜: '🌶️',
@@ -23,49 +24,58 @@ const CATEGORY_EMOJI: Record<string, string> = {
 
 export type CoverGenerateProgress = (message: string) => void;
 
-export function hashStringToSeed(str: string): number {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash) || 1;
+export interface CoverGenerateOptions {
+  /** 修复封面时跳过已下载的内置图，强制重新搜索 */
+  skipBundled?: boolean;
 }
+
+/** 柔和莫兰迪配色，与鼠尾草绿主题保持一致 */
+const MORANDI = {
+  tomato: { c1: '#EFDCD4', c2: '#DEBFB3' },
+  egg: { c1: '#F3EBD9', c2: '#E3D2AE' },
+  seafood: { c1: '#DCE7EA', c2: '#C1D3D8' },
+  meat: { c1: '#ECDCD2', c2: '#D8BCAA' },
+  staple: { c1: '#EEE5D8', c2: '#DCCBB1' },
+  soup: { c1: '#EAE4D6', c2: '#D6C9AE' },
+  dessert: { c1: '#F0DFE2', c2: '#DEBEC4' },
+  drink: { c1: '#DDE7E7', c2: '#C2D4D4' },
+  tofu: { c1: '#F1EEDC', c2: '#E0D9B8' },
+  veggie: { c1: '#E3ECE6', c2: '#C8DBD0' },
+  default: { c1: '#E8ECEC', c2: '#D2DADA' },
+};
 
 function getDishStyle(name: string, category?: string) {
   if (name.includes('番茄') && name.includes('蛋')) {
-    return { emoji: '🍅🥚', c1: '#e74c3c', c2: '#f39c12' };
+    return { emoji: '🍅🥚', ...MORANDI.tomato };
   }
-  if (name.includes('番茄')) return { emoji: '🍅', c1: '#e74c3c', c2: '#c0392b' };
+  if (name.includes('番茄')) return { emoji: '🍅', ...MORANDI.tomato };
   if (name.includes('蛋') || name.includes('炒蛋')) {
-    return { emoji: '🥚', c1: '#f1c40f', c2: '#e67e22' };
+    return { emoji: '🥚', ...MORANDI.egg };
   }
   if (/鱼|鲈|蟹|虾|鳝|海参|生蚝/.test(name)) {
-    return { emoji: '🐟', c1: '#3498db', c2: '#2980b9' };
+    return { emoji: '🐟', ...MORANDI.seafood };
   }
   if (/肉|鸡|鸭|牛|猪|兔|翅/.test(name)) {
-    return { emoji: '🥩', c1: '#a0522d', c2: '#8b4513' };
+    return { emoji: '🥩', ...MORANDI.meat };
   }
   if (/面|饭|粥|炒饭/.test(name)) {
-    return { emoji: '🍚', c1: '#d4a574', c2: '#b8956a' };
+    return { emoji: '🍚', ...MORANDI.staple };
   }
-  if (name.includes('汤')) return { emoji: '🍲', c1: '#e8b86d', c2: '#d4a056' };
+  if (name.includes('汤')) return { emoji: '🍲', ...MORANDI.soup };
   if (/蛋糕|甜/.test(name) || category === '甜点') {
-    return { emoji: '🍰', c1: '#fd79a8', c2: '#e84393' };
+    return { emoji: '🍰', ...MORANDI.dessert };
   }
   if (/茶|奶茶|Mojito|B52/.test(name) || category === '饮品') {
-    return { emoji: '🥤', c1: '#74b9ff', c2: '#0984e3' };
+    return { emoji: '🥤', ...MORANDI.drink };
   }
-  if (name.includes('豆腐')) return { emoji: '🧈', c1: '#ffeaa7', c2: '#fdcb6e' };
+  if (name.includes('豆腐')) return { emoji: '🧈', ...MORANDI.tofu };
   if (category === '蔬菜' || name.includes('菜')) {
-    return { emoji: '🥬', c1: '#55efc4', c2: '#00b894' };
+    return { emoji: '🥬', ...MORANDI.veggie };
   }
 
-  const hue = hashStringToSeed(name) % 360;
   return {
     emoji: CATEGORY_EMOJI[category ?? ''] ?? '🍳',
-    c1: `hsl(${hue}, 45%, 45%)`,
-    c2: `hsl(${(hue + 40) % 360}, 50%, 30%)`,
+    ...MORANDI.default,
   };
 }
 
@@ -84,7 +94,7 @@ export function generateCanvasCover(recipeName: string, category?: string): stri
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, 800, 600);
 
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.fillStyle = 'rgba(255,255,255,0.28)';
   ctx.beginPath();
   ctx.arc(640, 120, 160, 0, Math.PI * 2);
   ctx.fill();
@@ -95,19 +105,19 @@ export function generateCanvasCover(recipeName: string, category?: string): stri
 
   const name = recipeName.trim();
   const displayName = name.length > 10 ? `${name.slice(0, 10)}…` : name;
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#5d6b63';
   ctx.font = 'bold 42px "Noto Sans SC", sans-serif';
   ctx.fillText(displayName, 400, 360);
 
   if (category) {
-    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.fillStyle = 'rgba(93,107,99,0.6)';
     ctx.font = '22px "Noto Sans SC", sans-serif';
     ctx.fillText(category, 400, 400);
   }
 
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillStyle = 'rgba(93,107,99,0.35)';
   ctx.font = '16px "Noto Sans SC", sans-serif';
-  ctx.fillText('珍藏阁 · 菜谱', 400, 520);
+  ctx.fillText(APP_NAME, 400, 520);
 
   return canvas.toDataURL('image/jpeg', 0.85);
 }
@@ -115,10 +125,20 @@ export function generateCanvasCover(recipeName: string, category?: string): stri
 export function isDefaultCoverImage(url: string): boolean {
   if (!url) return true;
   if (url.includes('unsplash.com')) return true;
+  // 占位封面，生成脚本或导入失败时使用
+  if (/covers\/default\.(svg|png|jpe?g|webp)$/i.test(url)) return true;
   return false;
 }
 
 const displayCoverCache = new Map<string, string>();
+
+export function clearDisplayCoverCache(recipeName?: string): void {
+  if (recipeName) {
+    displayCoverCache.delete(recipeName.trim());
+    return;
+  }
+  displayCoverCache.clear();
+}
 
 async function searchBaiduImages(recipeName: string): Promise<string> {
   if (!isTauri()) {
@@ -219,7 +239,8 @@ export async function getRecipeDisplayCover(
 export async function generateCoverImageDataUrl(
   recipeName: string,
   category?: string,
-  onProgress?: CoverGenerateProgress
+  onProgress?: CoverGenerateProgress,
+  options?: CoverGenerateOptions
 ): Promise<string> {
   const settings = useSettingsStore.getState();
   const name = recipeName.trim();
@@ -227,7 +248,7 @@ export async function generateCoverImageDataUrl(
 
   // 1. 内置菜谱已下载的真实封面（covers:photos 产物，优先使用）
   const local = getLocalCoverPath(name);
-  if (local && isBundledPhotoPath(local)) {
+  if (!options?.skipBundled && local && isBundledPhotoPath(local)) {
     onProgress?.('正在加载内置封面…');
     try {
       return await loadCoverPathAsDataUrl(local);
@@ -292,7 +313,20 @@ export function getDefaultCoverPlaceholder(): string {
 export async function generateCoverImageDataUrlWithRetry(
   recipeName: string,
   category?: string,
+  onProgress?: CoverGenerateProgress,
+  options?: CoverGenerateOptions
+): Promise<string> {
+  return generateCoverImageDataUrl(recipeName, category, onProgress, options);
+}
+
+/** 详情页「修复封面」：清缓存并强制重新搜索 */
+export async function repairRecipeCover(
+  recipeName: string,
+  category?: string,
   onProgress?: CoverGenerateProgress
 ): Promise<string> {
-  return generateCoverImageDataUrl(recipeName, category, onProgress);
+  clearDisplayCoverCache(recipeName);
+  return generateCoverImageDataUrl(recipeName, category, onProgress, {
+    skipBundled: true,
+  });
 }

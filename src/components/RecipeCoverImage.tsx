@@ -5,30 +5,48 @@ import {
   getRecipeDisplayCover,
   isDefaultCoverImage,
 } from '../lib/coverImage';
+import { useRecipeCoverOverridesStore } from '../store/recipeCoverOverridesStore';
 
 interface RecipeCoverImageProps {
+  recipeId?: string;
   name: string;
   coverImage: string;
   category?: string;
   alt?: string;
   className?: string;
+  /** 详情页首屏封面：立即加载，避免 lazy 引发滚动跳动 */
+  priority?: boolean;
 }
 
 export function RecipeCoverImage({
+  recipeId,
   name,
   coverImage,
   category,
   alt,
   className,
+  priority = false,
 }: RecipeCoverImageProps) {
+  const coverOverride = useRecipeCoverOverridesStore((s) =>
+    recipeId ? s.overrides[recipeId] : undefined
+  );
+  const resolvedCover = coverOverride ?? coverImage;
+
   const [src, setSrc] = useState(() => {
-    if (!isDefaultCoverImage(coverImage)) return coverImage;
-    if (coverImage.startsWith('/covers/')) return coverImage;
+    if (!isDefaultCoverImage(resolvedCover)) return resolvedCover;
+    if (resolvedCover.startsWith('/covers/')) return resolvedCover;
     return generateCanvasCover(name, category);
   });
 
   useEffect(() => {
     let cancelled = false;
+
+    if (coverOverride) {
+      setSrc(coverOverride);
+      return () => {
+        cancelled = true;
+      };
+    }
 
     getRecipeDisplayCover(name, coverImage).then((url) => {
       if (cancelled) return;
@@ -42,14 +60,16 @@ export function RecipeCoverImage({
     return () => {
       cancelled = true;
     };
-  }, [name, coverImage, category]);
+  }, [name, coverImage, category, coverOverride]);
 
   return (
     <img
       src={src}
       alt={alt ?? name}
-      className={clsx(className)}
-      loading="lazy"
+      className={clsx('block', className)}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding={priority ? 'sync' : 'async'}
+      fetchPriority={priority ? 'high' : 'auto'}
     />
   );
 }

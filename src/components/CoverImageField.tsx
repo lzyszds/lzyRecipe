@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, ImageIcon, Upload } from 'lucide-react';
+import { Sparkle, CircleNotch, Image, UploadSimple } from '@phosphor-icons/react';
 import { generateCoverImageDataUrlWithRetry, pickCoverFromFile } from '../lib/coverImage';
 import { isTauri } from '../lib/tauri';
 
@@ -60,7 +60,7 @@ export function CoverImageField({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium text-text-primary">
+        <label className="block text-xs font-medium text-text-secondary">
           封面图片
         </label>
         <div className="flex items-center gap-3">
@@ -69,7 +69,7 @@ export function CoverImageField({
             onClick={handlePickFile}
             className="flex items-center gap-1.5 text-sm text-text-secondary font-medium hover:text-primary"
           >
-            <Upload className="w-4 h-4" />
+            <UploadSimple size={16} weight="bold" />
             选择图片
           </button>
           <button
@@ -79,16 +79,16 @@ export function CoverImageField({
             className="flex items-center gap-1.5 text-sm text-primary font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {generating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <CircleNotch size={16} weight="bold" className="animate-spin" />
             ) : (
-              <Sparkles className="w-4 h-4" />
+              <Sparkle size={16} weight="duotone" />
             )}
             {generating ? '搜索中…' : '搜索封面'}
           </button>
         </div>
       </div>
 
-      <div className="relative aspect-video max-h-48 rounded-xl overflow-hidden bg-surface border border-surface">
+      <div className="relative aspect-video max-h-52 rounded-2xl overflow-hidden bg-surface">
         {coverImage ? (
           <img
             src={coverImage}
@@ -97,14 +97,14 @@ export function CoverImageField({
           />
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-text-secondary/60 gap-2">
-            <ImageIcon className="w-10 h-10" />
+            <Image size={40} weight="duotone" />
             <span className="text-sm">填写菜名后搜索封面，或直接选择图片</span>
           </div>
         )}
         {generating && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center px-4">
             <div className="text-white text-sm text-center flex flex-col items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <CircleNotch size={20} weight="bold" className="animate-spin" />
               <span>{progressMsg || '正在搜索…'}</span>
               <span className="text-xs text-white/70">
                 {isTauri() ? '百度图片搜索（国内网络）' : '请使用桌面应用以搜索真实图片'}
@@ -119,7 +119,7 @@ export function CoverImageField({
       <input
         value={coverImage.startsWith('data:') ? '' : coverImage}
         onChange={(e) => onCoverImageChange(e.target.value)}
-        className="input-field"
+        className="input-field !bg-surface"
         placeholder="或手动粘贴图片 URL"
       />
 
