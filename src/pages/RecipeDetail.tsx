@@ -1,37 +1,52 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Heart, Clock, ChefHat, Check, ArrowLeft } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Check, CircleNotch } from '@phosphor-icons/react';
+import { useEffect, useState } from 'react';
 import { recipes } from '../data/recipes';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { DifficultyLevel } from '../types';
 import { clsx } from 'clsx';
 import { RecipeCoverImage } from '../components/RecipeCoverImage';
+import { IconButton } from '../components/ui/IconButton';
+import { FavoriteHeart } from '../components/motion/FavoriteHeart';
+import { Button } from '../components/ui/Button';
+import { CoverRepairButton } from '../components/CoverRepairButton';
+import { AddToWeeklyPlanButton } from '../components/AddToWeeklyPlanButton';
+import { UI_ICON_WEIGHT } from '../lib/icons';
 
-const difficultyConfig: Record<DifficultyLevel, { label: string; className: string }> = {
-  easy: { label: '简单', className: 'bg-green-200 text-green-800 border-green-700' },
-  medium: { label: '中等', className: 'bg-yellow-200 text-yellow-800 border-yellow-700' },
-  hard: { label: '困难', className: 'bg-red-200 text-red-800 border-red-700' },
+const difficultyConfig: Record<DifficultyLevel, { label: string }> = {
+  easy: { label: '简单' },
+  medium: { label: '中等' },
+  hard: { label: '困难' },
 };
 
 export function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+  const [coverRepairing, setCoverRepairing] = useState(false);
+  const [coverRepairMsg, setCoverRepairMsg] = useState('');
+  const [coverRepairOk, setCoverRepairOk] = useState(true);
 
   const importedRecipes = useImportedRecipesStore((s) => s.importedRecipes);
   const allRecipes = [...recipes, ...importedRecipes];
   const recipe = allRecipes.find((r) => r.id === id);
   const { isFavorite, toggleFavorite } = useFavoritesStore();
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    setCoverRepairMsg('');
+    setCoverRepairing(false);
+  }, [id]);
+
   if (!recipe) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-text-secondary mb-4">菜谱不存在</p>
-          <button onClick={() => navigate('/')} className="btn-primary">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <p className="text-text-secondary font-medium">菜谱不存在</p>
+          <Button variant="primary" onClick={() => navigate('/')}>
             返回首页
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -41,182 +56,160 @@ export function RecipeDetail() {
   const favorite = isFavorite(recipe.id);
 
   const toggleIngredient = (index: number) => {
-    const newChecked = new Set(checkedIngredients);
-    if (newChecked.has(index)) {
-      newChecked.delete(index);
-    } else {
-      newChecked.add(index);
-    }
-    setCheckedIngredients(newChecked);
+    const next = new Set(checkedIngredients);
+    if (next.has(index)) next.delete(index);
+    else next.add(index);
+    setCheckedIngredients(next);
   };
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <div className="cartoon-header" style={{ top: 'var(--safe-top)' }}>
-        <div className="flex items-center gap-4">
-          <button
+    <div className="pb-10">
+      <div className="relative h-60 sm:h-72 w-full bg-neutral-100">
+        <RecipeCoverImage
+          recipeId={recipe.id}
+          name={recipe.name}
+          coverImage={recipe.coverImage}
+          category={recipe.category}
+          alt={recipe.name}
+          priority
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/10" />
+
+        <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between p-4 pt-[calc(1rem+var(--safe-top))]">
+          <IconButton
+            icon={<ArrowLeft size={18} weight={UI_ICON_WEIGHT} />}
+            label="返回"
             onClick={() => navigate(-1)}
-            className="cartoon-icon-btn -ml-1"
-          >
-            <ArrowLeft className="w-6 h-6 text-text-primary" strokeWidth={2.5} />
-          </button>
-          <h1 className="font-cartoon text-xl text-text-primary truncate flex-1">
-            {recipe.name}
-          </h1>
-          <button
-            onClick={() => toggleFavorite(recipe.id)}
-            className={clsx(
-              'cartoon-icon-btn',
-              favorite && 'bg-primary/10 border-primary'
-            )}
-          >
-            <Heart className={clsx('w-5 h-5', favorite && 'fill-current text-primary')} />
-          </button>
-        </div>
-      </div>
-
-      <main>
-        {/* Hero Image */}
-        <div className="relative aspect-video max-h-[400px] overflow-hidden border-b-[3px] border-outline">
-          <RecipeCoverImage
-            name={recipe.name}
-            coverImage={recipe.coverImage}
-            category={recipe.category}
-            alt={recipe.name}
-            className="w-full h-full object-cover"
+            className="!bg-black/40 !text-white backdrop-blur-md !shadow-none"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-
-          {/* Favorite Button */}
-          <button
-            onClick={() => toggleFavorite(recipe.id)}
-            className={clsx(
-              'absolute bottom-4 right-4 p-3 rounded-full border-[3px] border-outline shadow-cartoon transition-all',
-              favorite
-                ? 'bg-primary text-white'
-                : 'bg-white text-text-secondary hover:-translate-y-0.5'
-            )}
-          >
-            <Heart className={clsx('w-5 h-5', favorite && 'fill-current')} />
-          </button>
+          <div className="flex items-center gap-2">
+            <AddToWeeklyPlanButton recipeId={recipe.id} recipeName={recipe.name} />
+            <CoverRepairButton
+              recipeId={recipe.id}
+              recipeName={recipe.name}
+              category={recipe.category}
+              onRepairingChange={setCoverRepairing}
+              onProgress={setCoverRepairMsg}
+              onResult={(message, ok) => {
+                setCoverRepairMsg(message);
+                setCoverRepairOk(ok);
+                if (ok) window.setTimeout(() => setCoverRepairMsg(''), 2400);
+              }}
+            />
+          </div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          {/* Title & Meta */}
-          <div className="mb-6">
-            <h1 className="font-cartoon text-3xl text-text-primary mb-3">
-              {recipe.name}
-            </h1>
-            <p className="text-text-secondary mb-4">{recipe.description}</p>
-
-            <div className="flex flex-wrap gap-3">
-              <span
-                className={clsx(
-                  'cartoon-badge text-sm',
-                  difficulty.className
-                )}
-              >
-                {difficulty.label}
-              </span>
-              <span className="cartoon-badge bg-surface text-text-primary flex items-center gap-1.5">
-                <Clock className="w-4 h-4" />
-                {recipe.cookTime}分钟
-              </span>
-              <span className="cartoon-badge bg-accent/40 text-text-primary flex items-center gap-1.5">
-                <ChefHat className="w-4 h-4" />
-                {recipe.category}
-              </span>
+        {(coverRepairing || coverRepairMsg) && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 px-4">
+            <div className="flex flex-col items-center gap-2 text-center text-white">
+              {coverRepairing && (
+                <CircleNotch size={26} weight="bold" className="animate-spin" />
+              )}
+              <p className="text-sm font-medium leading-snug">{coverRepairMsg}</p>
+              {!coverRepairing && !coverRepairOk && (
+                <p className="text-xs text-white/75">可尝试「选择图片」手动上传</p>
+              )}
             </div>
           </div>
+        )}
+      </div>
 
-          {/* Ingredients */}
-          <section className="mb-8">
-            <h2 className="cartoon-section-title">
-              <span className="cartoon-section-bar">🥬</span>
-              食材清单
-            </h2>
-            <div className="card p-5">
-              <ul className="space-y-3">
-                {recipe.ingredients.map((ingredient, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => toggleIngredient(index)}
+      <div className="page-container relative z-10 -mt-6 space-y-5">
+        <section className="bg-white rounded-3xl p-5 shadow-card">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h1 className="text-xl font-bold text-text-primary leading-tight">
+                {recipe.name}
+              </h1>
+              <p className="text-xs text-text-secondary mt-1">
+                {recipe.category} · {recipe.cookTime} 分钟 · {difficulty.label}
+              </p>
+            </div>
+            <FavoriteHeart
+              active={favorite}
+              onClick={() => toggleFavorite(recipe.id)}
+            />
+          </div>
+
+          {recipe.description && (
+            <p className="text-sm text-neutral-500 leading-relaxed mt-3">
+              {recipe.description}
+            </p>
+          )}
+        </section>
+
+        <section className="bg-white rounded-3xl p-5 shadow-card">
+          <h2 className="text-sm font-bold text-text-primary mb-2">食材清单</h2>
+          <ul className="divide-y divide-neutral-100">
+            {recipe.ingredients.map((ingredient, index) => {
+              const checked = checkedIngredients.has(index);
+              return (
+                <li key={index}>
+                  <button
+                    type="button"
+                    onClick={() => toggleIngredient(index)}
+                    className="w-full flex items-center gap-2.5 min-h-[2.75rem] py-2.5 text-left"
+                  >
+                    <span
                       className={clsx(
-                        'w-full flex items-center gap-3 p-2 rounded-xl transition-colors border-2 border-transparent',
-                        checkedIngredients.has(index)
-                          ? 'bg-green-100 border-green-300'
-                          : 'hover:bg-surface/50 hover:border-outline/20'
+                        'w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors',
+                        checked
+                          ? 'bg-primary border-primary'
+                          : 'border-neutral-300 bg-white'
                       )}
                     >
-                      <span
-                        className={clsx(
-                          'flex-shrink-0 w-6 h-6 rounded-lg border-[3px] border-outline flex items-center justify-center transition-colors shadow-cartoon-sm',
-                          checkedIngredients.has(index)
-                            ? 'bg-secondary border-outline text-white'
-                            : 'bg-white'
-                        )}
-                      >
-                        {checkedIngredients.has(index) && (
-                          <Check className="w-3 h-3" />
-                        )}
-                      </span>
-                      <span
-                        className={clsx(
-                          'flex-1 text-left',
-                          checkedIngredients.has(index) &&
-                            'line-through text-text-secondary'
-                        )}
-                      >
-                        {ingredient.name}
-                      </span>
-                      <span className="text-text-secondary text-sm">
-                        {ingredient.amount}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
+                      {checked && <Check size={11} weight="bold" className="text-white" />}
+                    </span>
+                    <span
+                      className={clsx(
+                        'flex-1 text-sm transition-colors',
+                        checked
+                          ? 'text-neutral-400 line-through'
+                          : 'text-text-primary'
+                      )}
+                    >
+                      {ingredient.name}
+                    </span>
+                    <span
+                      className={clsx(
+                        'text-xs flex-shrink-0',
+                        checked ? 'text-neutral-300' : 'text-neutral-500'
+                      )}
+                    >
+                      {ingredient.amount}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
 
-          {/* Steps */}
-          <section className="mb-8">
-            <h2 className="cartoon-section-title">
-              <span className="cartoon-section-bar">👨‍🍳</span>
-              烹饪步骤
-            </h2>
-            <div className="space-y-4">
-              {recipe.steps.map((step) => (
-                <div
-                  key={step.order}
-                  className="card p-5 flex gap-4"
-                >
-                  <span className="flex-shrink-0 w-11 h-11 rounded-2xl bg-primary text-white border-[3px] border-outline shadow-cartoon-sm flex items-center justify-center font-cartoon text-lg">
-                    {step.order}
-                  </span>
-                  <p className="flex-1 text-text-primary leading-relaxed pt-1">
-                    {step.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
+        <section className="bg-white rounded-3xl p-5 shadow-card">
+          <h2 className="text-sm font-bold text-text-primary mb-3">做法步骤</h2>
+          <div className="space-y-3">
+            {recipe.steps.map((step) => (
+              <p
+                key={step.order}
+                className="text-sm text-neutral-600 leading-relaxed"
+              >
+                <span className="font-bold text-text-primary mr-1.5">
+                  {step.order}.
+                </span>
+                {step.description}
+              </p>
+            ))}
+          </div>
+        </section>
 
-          {/* Tips */}
-          {recipe.tips && (
-            <section className="mb-8">
-              <h2 className="cartoon-section-title">
-                <span className="cartoon-section-bar">💡</span>
-                小贴士
-              </h2>
-              <div className="bg-accent/30 border-[3px] border-outline rounded-3xl p-5 shadow-cartoon-sm">
-                <p className="text-text-primary leading-relaxed">{recipe.tips}</p>
-              </div>
-            </section>
-          )}
-        </div>
-      </main>
+        {recipe.tips && (
+          <section className="rounded-3xl bg-sage-50 p-5">
+            <h2 className="text-sm font-bold text-sage-600 mb-2">小贴士</h2>
+            <p className="text-sm text-sage-600/90 leading-relaxed">{recipe.tips}</p>
+          </section>
+        )}
+      </div>
     </div>
   );
 }

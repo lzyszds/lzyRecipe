@@ -1,5 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, ExternalLink } from 'lucide-react';
+import { ArrowSquareOut, Trash } from '@phosphor-icons/react';
+import { PageHeader } from '../components/ui/PageHeader';
+import { PageMain } from '../components/ui/PageLayout';
+import { APP_NAME } from '../lib/appBrand';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import {
@@ -9,13 +11,12 @@ import {
 } from '../store/settingsStore';
 
 const PROVIDER_OPTIONS: { value: CoverProvider; label: string; desc: string }[] = [
-  { value: 'local', label: '本地封面', desc: '完全离线，Canvas 渐变封面' },
+  { value: 'local', label: '本地封面', desc: '完全离线，自动生成柔和渐变封面' },
   { value: 'baidu', label: '百度文心生图（高级）', desc: 'AI 生成，需 API Key + Secret Key' },
-  { value: 'bing', label: '微软 Bing 图片搜索（高级）', desc: '需 Azure/Bing 密钥' },
+  { value: 'bing', label: '微软 Bing 图片搜索（高级）', desc: '需 Azure / Bing 密钥' },
 ];
 
 export function Settings() {
-  const navigate = useNavigate();
   const clearFavorites = () => useFavoritesStore.setState({ favorites: [] });
   const clearImported = useImportedRecipesStore((s) => s.clearImportedRecipes);
 
@@ -45,158 +46,142 @@ export function Settings() {
   };
 
   return (
-    <div className="min-h-screen pb-8">
-      <div
-        className="sticky top-0 bg-white/80 backdrop-blur-md z-50 px-4 pt-4 pb-3 border-b border-surface/30"
-        style={{ top: 'var(--safe-top)' }}
-      >
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-xl hover:bg-surface/50 transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6 text-text-primary" />
-          </button>
-          <h1 className="font-serif text-xl font-semibold text-text-primary">设置</h1>
-        </div>
-      </div>
+    <div className="pb-10">
+      <PageHeader title="设置" showBack />
 
-      <main className="px-4 py-6 space-y-6">
-        <section className="bg-white rounded-2xl shadow-card overflow-hidden">
-          <div className="px-4 py-4 border-b border-surface/30">
-            <h2 className="font-medium text-text-primary">封面生成</h2>
-            <p className="text-xs text-text-secondary mt-1">
-              默认使用百度图片搜索（免配置）。下方为可选的高级云服务。
+      <PageMain className="space-y-4">
+        <section className="bg-white rounded-2xl p-5 shadow-card space-y-4">
+          <div>
+            <h2 className="text-sm font-bold text-text-primary">封面生成</h2>
+            <p className="text-[11px] text-text-secondary mt-1 leading-relaxed">
+              默认优先使用百度图片搜索（免配置）。下方为可选的高级云服务。
             </p>
           </div>
 
-          <div className="p-4 space-y-4">
-            <div className="space-y-2">
-              {PROVIDER_OPTIONS.map((opt) => (
+          <div className="space-y-2">
+            {PROVIDER_OPTIONS.map((opt) => {
+              const active = coverProvider === opt.value;
+              return (
                 <label
                   key={opt.value}
-                  className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                    coverProvider === opt.value
-                      ? 'border-primary bg-primary/5'
-                      : 'border-surface hover:bg-surface/30'
+                  className={`flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-all ${
+                    active
+                      ? 'bg-sage-50 ring-1 ring-primary/25'
+                      : 'bg-surface hover:bg-neutral-100/80'
                   }`}
                 >
                   <input
                     type="radio"
                     name="coverProvider"
                     value={opt.value}
-                    checked={coverProvider === opt.value}
+                    checked={active}
                     onChange={() => setCoverProvider(opt.value)}
-                    className="mt-1"
+                    className="mt-0.5 accent-[#2d6a4f]"
                   />
                   <div>
-                    <p className="font-medium text-text-primary text-sm">{opt.label}</p>
-                    <p className="text-xs text-text-secondary mt-0.5">{opt.desc}</p>
+                    <p className="text-xs font-medium text-text-primary">{opt.label}</p>
+                    <p className="text-[11px] text-text-secondary mt-0.5">{opt.desc}</p>
                   </div>
                 </label>
-              ))}
-            </div>
+              );
+            })}
+          </div>
 
-            {coverProvider === 'baidu' && (
-              <div className="space-y-3 pt-2 border-t border-surface/30">
-                <p className="text-xs text-text-secondary">
-                  在
-                  <a
-                    href="https://cloud.baidu.com/product/wenxinworkshop"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary inline-flex items-center gap-0.5 mx-1"
-                  >
-                    百度智能云 · 文心 workshop
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                  创建应用，开通「AI作画-基础版」，获取 API Key 与 Secret Key。
-                </p>
-                <input
-                  value={baiduApiKey}
-                  onChange={(e) => setBaiduKeys(e.target.value, baiduSecretKey)}
-                  className="input-field"
-                  placeholder="百度 API Key"
-                />
-                <input
-                  type="password"
-                  value={baiduSecretKey}
-                  onChange={(e) => setBaiduKeys(baiduApiKey, e.target.value)}
-                  className="input-field"
-                  placeholder="百度 Secret Key"
-                />
-                <p className="text-xs text-amber-700 bg-amber-50 p-2 rounded-lg">
-                  百度文心生图请使用桌面应用：<code className="text-xs">npm run tauri:dev</code>
-                </p>
-              </div>
-            )}
-
-            {coverProvider === 'bing' && (
-              <div className="space-y-3 pt-2 border-t border-surface/30">
-                <p className="text-xs text-text-secondary">
-                  在
-                  <a
-                    href="https://portal.azure.cn/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-primary inline-flex items-center gap-0.5 mx-1"
-                  >
-                    Azure 中国
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                  或 Azure 国际版创建「Bing Search v7」资源，复制密钥。
-                </p>
-                <input
-                  type="password"
-                  value={bingApiKey}
-                  onChange={(e) => setBingKey(e.target.value)}
-                  className="input-field"
-                  placeholder="Bing / Azure 订阅密钥"
-                />
-                <input
-                  value={bingEndpoint}
-                  onChange={(e) => setBingEndpoint(e.target.value)}
-                  className="input-field text-sm"
-                  placeholder="搜索端点 URL"
-                />
-                <p className="text-xs text-text-secondary">
-                  默认端点适用于国际版 Azure。Azure 中国请填写控制台中的中国区端点。
-                </p>
-              </div>
-            )}
-
-            {cloudReady && (
-              <p className="text-xs text-green-700 bg-green-50 p-2 rounded-lg">
-                云服务已配置，写菜谱时点击「生成封面」即可使用。
+          {coverProvider === 'baidu' && (
+            <div className="space-y-3 pt-3 border-t border-neutral-100">
+              <p className="text-[11px] text-text-secondary leading-relaxed">
+                在
+                <a
+                  href="https://cloud.baidu.com/product/wenxinworkshop"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary inline-flex items-center gap-0.5 mx-1"
+                >
+                  百度智能云 · 文心 workshop
+                  <ArrowSquareOut size={11} weight="bold" />
+                </a>
+                创建应用，开通「AI作画-基础版」。
               </p>
-            )}
-          </div>
+              <input
+                value={baiduApiKey}
+                onChange={(e) => setBaiduKeys(e.target.value, baiduSecretKey)}
+                className="input-field !bg-surface"
+                placeholder="百度 API Key"
+              />
+              <input
+                type="password"
+                value={baiduSecretKey}
+                onChange={(e) => setBaiduKeys(baiduApiKey, e.target.value)}
+                className="input-field !bg-surface"
+                placeholder="百度 Secret Key"
+              />
+              <p className="text-[11px] text-amber-700 bg-amber-50 p-2.5 rounded-lg leading-relaxed">
+                百度文心生图仅支持桌面应用，请使用 npm run tauri:dev 运行。
+              </p>
+            </div>
+          )}
+
+          {coverProvider === 'bing' && (
+            <div className="space-y-3 pt-3 border-t border-neutral-100">
+              <p className="text-[11px] text-text-secondary leading-relaxed">
+                在
+                <a
+                  href="https://portal.azure.cn/"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary inline-flex items-center gap-0.5 mx-1"
+                >
+                  Azure 中国
+                  <ArrowSquareOut size={11} weight="bold" />
+                </a>
+                或 Azure 国际版创建「Bing Search v7」资源。
+              </p>
+              <input
+                type="password"
+                value={bingApiKey}
+                onChange={(e) => setBingKey(e.target.value)}
+                className="input-field !bg-surface"
+                placeholder="Bing / Azure 订阅密钥"
+              />
+              <input
+                value={bingEndpoint}
+                onChange={(e) => setBingEndpoint(e.target.value)}
+                className="input-field !bg-surface text-xs"
+                placeholder="搜索端点 URL"
+              />
+              <p className="text-[11px] text-text-secondary leading-relaxed">
+                默认端点适用于国际版 Azure，Azure 中国请填写中国区端点。
+              </p>
+            </div>
+          )}
+
+          {cloudReady && (
+            <p className="text-[11px] text-sage-600 bg-sage-50 p-2.5 rounded-lg">
+              云服务已配置，写菜谱时点击「搜索封面」即可使用。
+            </p>
+          )}
         </section>
 
-        <section className="bg-white rounded-2xl shadow-card overflow-hidden">
-          <div className="px-4 py-4 border-b border-surface/30">
-            <h2 className="font-medium text-text-primary">关于</h2>
-          </div>
-          <div className="px-4 py-4 space-y-2 text-sm text-text-secondary">
-            <p>应用名称：珍藏阁 · 菜谱</p>
-            <p>版本：0.1.0</p>
-            <p>API 密钥仅保存在本地，不会上传到我们的服务器。</p>
-          </div>
+        <section className="bg-white rounded-2xl p-5 shadow-card space-y-1.5">
+          <h2 className="text-sm font-bold text-text-primary mb-2">关于</h2>
+          <p className="text-xs text-text-secondary">应用名称：{APP_NAME}</p>
+          <p className="text-xs text-text-secondary">版本：0.1.0</p>
+          <p className="text-xs text-text-secondary leading-relaxed">
+            API 密钥仅保存在本地，不会上传到任何服务器。
+          </p>
         </section>
 
-        <section className="bg-white rounded-2xl shadow-card overflow-hidden">
-          <div className="px-4 py-4 border-b border-surface/30">
-            <h2 className="font-medium text-text-primary">数据管理</h2>
-          </div>
+        <section className="bg-white rounded-2xl overflow-hidden shadow-card">
           <button
+            type="button"
             onClick={handleClearAll}
-            className="w-full flex items-center gap-3 px-4 py-4 text-red-500 hover:bg-red-50 transition-colors"
+            className="w-full flex items-center gap-3 px-4 min-h-[3.5rem] text-red-500 hover:bg-red-50/60 transition-colors text-sm font-medium"
           >
-            <Trash2 className="w-5 h-5" />
+            <Trash size={18} weight="bold" />
             <span>清空收藏与导入数据</span>
           </button>
         </section>
-      </main>
+      </PageMain>
     </div>
   );
 }

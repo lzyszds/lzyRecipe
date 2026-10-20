@@ -1,7 +1,9 @@
-import { Search, X } from 'lucide-react';
+import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
+import { IconButton } from './ui/IconButton';
+import { UI_ICON_WEIGHT } from '../lib/icons';
 
 interface SearchBarProps {
   defaultValue?: string;
@@ -20,10 +22,6 @@ export function SearchBar({ defaultValue = '', className, placeholder = '搜索�
     }
   };
 
-  const handleClear = () => {
-    setKeyword('');
-  };
-
   return (
     <form onSubmit={handleSearch} className={clsx('relative', className)}>
       <input
@@ -31,17 +29,22 @@ export function SearchBar({ defaultValue = '', className, placeholder = '搜索�
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         placeholder={placeholder}
-        className="input-field pl-11 pr-10"
+        className="input-field pl-11 pr-11 rounded-2xl shadow-cozy-sm"
       />
-      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary pointer-events-none" />
+      <MagnifyingGlass
+        size={18}
+        weight={UI_ICON_WEIGHT}
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+      />
       {keyword && (
-        <button
-          type="button"
-          onClick={handleClear}
-          className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-surface rounded-full transition-colors"
-        >
-          <X className="w-4 h-4 text-text-secondary" />
-        </button>
+        <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
+          <IconButton
+            icon={<X size={16} weight={UI_ICON_WEIGHT} className="text-text-secondary" />}
+            label="清除"
+            onClick={() => setKeyword('')}
+            className="!w-8 !h-8 !shadow-none !bg-transparent"
+          />
+        </div>
       )}
     </form>
   );

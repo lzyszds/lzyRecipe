@@ -1,56 +1,50 @@
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { PageHeader } from '../components/ui/PageHeader';
 
 export function Help() {
-  const navigate = useNavigate();
-
   const sections = [
     {
       title: '浏览菜谱',
-      content: '首页可查看本周计划和精选菜谱，点击分类图标浏览不同菜系，搜索栏支持按菜名、食材搜索。',
+      content:
+        '首页可查看今日三餐、分类入口和精选菜谱；底部「分类」页可浏览全部菜谱，搜索栏支持按菜名、分类和食材搜索。',
     },
     {
       title: '写菜谱',
-      content: '在「设置」中配置百度文心 AI 生图或微软 Bing 图片搜索（国内/Azure 密钥）。写菜谱时点击「生成封面」即可；未配置时使用本地离线封面。',
+      content:
+        '点击首页右上角的「+」新建菜谱。名称、分类、时长、食材和步骤填写完成后即可保存；封面可搜索或手动选择，未选择时会自动生成。',
     },
     {
       title: '导入菜谱',
-      content: '在首页或「我的」页面点击「导入菜谱」，支持 JSON 文件导入或粘贴 JSON 数据。',
+      content:
+        '点击首页右上角的导入按钮，可从文件或粘贴 JSON 数据导入，系统会自动校验格式并按 id 去重。',
     },
     {
-      title: '收藏与计划',
-      content: '在菜谱详情页点击爱心收藏；首页本周计划可勾选完成状态，点击菜名查看详情。',
+      title: '收藏与周计划',
+      content:
+        '在菜谱卡片或详情页点击爱心收藏。底部「周计划」可按天安排早午晚三餐，支持智能填充、收藏方案、采购清单和分享图片。',
+    },
+    {
+      title: '封面来源',
+      content:
+        '默认使用免配置的百度图片搜索与内置封面；如需 AI 生图，可在「我的 → 设置」中配置百度文心或 Bing 密钥。',
     },
     {
       title: '反馈',
-      content: '如有问题或建议，欢迎通过 GitHub Issues 或邮件反馈（可在项目仓库查看联系方式）。',
+      content:
+        '如有问题或建议，欢迎通过项目仓库的 GitHub Issues 或邮件反馈。',
     },
   ];
 
   return (
-    <div className="min-h-screen">
-      <div
-        className="sticky top-0 bg-white/80 backdrop-blur-md z-50 px-4 pt-4 pb-3 border-b border-surface/30"
-        style={{ top: 'var(--safe-top)' }}
-      >
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-xl hover:bg-surface/50 transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6 text-text-primary" />
-          </button>
-          <h1 className="font-serif text-xl font-semibold text-text-primary">帮助与反馈</h1>
-        </div>
-      </div>
+    <div>
+      <PageHeader title="帮助与反馈" showBack />
 
-      <main className="px-4 py-6 space-y-4">
+      <main className="page-main space-y-3">
         {sections.map((section) => (
-          <section key={section.title} className="bg-white rounded-2xl shadow-card p-4">
-            <h2 className="font-serif text-lg font-semibold text-text-primary mb-2">
-              {section.title}
-            </h2>
-            <p className="text-sm text-text-secondary leading-relaxed">{section.content}</p>
+          <section key={section.title} className="bg-white rounded-2xl p-5 shadow-card">
+            <h2 className="text-sm font-bold text-text-primary mb-2">{section.title}</h2>
+            <p className="text-xs text-text-secondary leading-relaxed">
+              {section.content}
+            </p>
           </section>
         ))}
       </main>

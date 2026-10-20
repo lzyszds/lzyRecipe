@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { X, FileJson, Clipboard, Upload, Check, AlertCircle } from 'lucide-react';
+import { FileCode, ClipboardText, UploadSimple, Check, WarningCircle } from '@phosphor-icons/react';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { Recipe } from '../types';
 import { clsx } from 'clsx';
 import { isTauri } from '../lib/tauri';
+import { BottomSheet } from './ui/BottomSheet';
 
 interface ImportModalProps {
   isOpen: boolean;
@@ -30,8 +31,6 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
       setMode(isTauri() ? 'file' : 'paste');
     }
   }, [isOpen]);
-
-  if (!isOpen) return null;
 
   const validateAndParseRecipes = (data: unknown): Recipe[] => {
     if (!Array.isArray(data)) {
@@ -174,87 +173,72 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={handleClose}
-      />
-
-      {/* Modal */}
-      <div className="relative bg-white rounded-3xl border-[3px] border-outline shadow-cartoon-lg w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b-[3px] border-outline bg-accent/20">
-          <h2 className="font-cartoon text-xl text-text-primary flex items-center gap-2">
-            <span>📥</span> 导入菜谱
-          </h2>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="导入菜谱"
+      description="支持 JSON 文件或粘贴数据"
+      bodyClassName="space-y-4"
+    >
+      {/* Mode Tabs */}
+      <div className="flex gap-1 p-1 rounded-xl bg-surface">
+        {canUseFileImport && (
           <button
-            onClick={handleClose}
-            className="cartoon-icon-btn -mr-2"
-          >
-            <X className="w-5 h-5 text-text-secondary" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {/* Mode Tabs */}
-          <div className="flex gap-2 mb-6">
-            {canUseFileImport && (
-              <button
-                onClick={() => {
-                  setMode('file');
-                  setStatus('idle');
-                  setErrorMessage('');
-                }}
-                className={clsx(
-                  'flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-bold border-[3px] border-outline transition-all',
-                  mode === 'file'
-                    ? 'bg-primary text-white shadow-cartoon-sm'
-                    : 'bg-white text-text-secondary shadow-cartoon-sm hover:-translate-y-0.5'
-                )}
-              >
-                <FileJson className="w-5 h-5" />
-                文件导入
-              </button>
+            type="button"
+            onClick={() => {
+              setMode('file');
+              setStatus('idle');
+              setErrorMessage('');
+            }}
+            className={clsx(
+              'flex-1 flex items-center justify-center gap-2 h-9 rounded-lg text-xs font-medium transition-all',
+              mode === 'file'
+                ? 'bg-white text-text-primary shadow-cozy-sm'
+                : 'text-text-secondary'
             )}
-            <button
-              onClick={() => {
-                setMode('paste');
-                setStatus('idle');
-                setErrorMessage('');
-              }}
-              className={clsx(
-                'flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl font-bold border-[3px] border-outline transition-all',
-                mode === 'paste'
-                  ? 'bg-primary text-white shadow-cartoon-sm'
-                  : 'bg-white text-text-secondary shadow-cartoon-sm hover:-translate-y-0.5'
-              )}
-            >
-              <Clipboard className="w-5 h-5" />
-              粘贴导入
-            </button>
+          >
+            <FileCode size={16} weight="bold" />
+            文件导入
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => {
+            setMode('paste');
+            setStatus('idle');
+            setErrorMessage('');
+          }}
+          className={clsx(
+            'flex-1 flex items-center justify-center gap-2 h-9 rounded-lg text-xs font-medium transition-all',
+            mode === 'paste'
+              ? 'bg-white text-text-primary shadow-cozy-sm'
+              : 'text-text-secondary'
+          )}
+        >
+          <ClipboardText size={16} weight="bold" />
+          粘贴导入
+        </button>
+      </div>
+
+      {/* File Mode */}
+      {mode === 'file' && (
+        <div className="space-y-4">
+          <div
+            onClick={handleFileImport}
+            className="border-2 border-dashed border-neutral-200 hover:border-primary/40 hover:bg-sage-50/50 rounded-2xl p-8 text-center cursor-pointer transition-colors"
+          >
+            <UploadSimple size={40} weight="duotone" className="mx-auto mb-3 text-neutral-400" />
+            <p className="text-sm font-medium text-text-primary mb-1">
+              点击选择 JSON 文件
+            </p>
+            <p className="text-xs text-text-secondary">
+              支持从其他菜谱应用导出的 JSON 格式
+            </p>
           </div>
 
-          {/* File Mode */}
-          {mode === 'file' && (
-            <div className="space-y-4">
-              <div
-                onClick={handleFileImport}
-                className="border-[3px] border-dashed border-outline hover:border-secondary hover:bg-secondary/5 rounded-3xl p-8 text-center cursor-pointer transition-all shadow-cartoon-sm hover:-translate-y-0.5"
-              >
-                <Upload className="w-12 h-12 mx-auto mb-4 text-text-secondary" />
-                <p className="text-text-primary font-medium mb-2">
-                  点击选择 JSON 文件
-                </p>
-                <p className="text-sm text-text-secondary">
-                  支持从其他菜谱应用导出的 JSON 格式
-                </p>
-              </div>
-
-              <div className="bg-surface/50 rounded-2xl p-4 border-2 border-outline/30">
-                <p className="text-sm font-medium text-text-primary mb-2">JSON 格式说明</p>
-                <pre className="text-xs text-text-secondary overflow-x-auto">
+          <div className="bg-surface rounded-2xl p-4">
+            <p className="text-xs font-medium text-text-primary mb-2">JSON 格式说明</p>
+            <pre className="text-[11px] text-text-secondary overflow-x-auto leading-relaxed">
 {`[
   {
     "id": "recipe001",
@@ -273,54 +257,50 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
     "difficulty": "medium"
   }
 ]`}
-                </pre>
-              </div>
-            </div>
-          )}
-
-          {/* Paste Mode */}
-          {mode === 'paste' && (
-            <div className="space-y-4">
-              <textarea
-                value={pasteText}
-                onChange={(e) => setPasteText(e.target.value)}
-                placeholder='粘贴菜谱 JSON 数据，例如：\n[\n  {\n    "id": "001",\n    "name": "红烧肉",\n    ...\n  }\n]'
-                className="w-full h-48 p-4 border-[3px] border-outline rounded-2xl text-sm font-mono resize-none focus:outline-none focus:border-secondary focus:shadow-cartoon-sm"
-              />
-
-              <button
-                onClick={handlePasteImport}
-                disabled={!pasteText.trim()}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                导入菜谱
-              </button>
-            </div>
-          )}
-
-          {/* Status Messages */}
-          {status === 'success' && (
-            <div className="mt-4 flex items-center gap-3 p-4 bg-green-100 rounded-2xl text-green-800 border-2 border-green-400 font-bold">
-              <Check className="w-5 h-5 flex-shrink-0" />
-              <span className="font-medium">成功导入 {importCount} 个菜谱！</span>
-            </div>
-          )}
-
-          {status === 'error' && (
-            <div className="mt-4 flex items-start gap-3 p-4 bg-red-100 rounded-2xl text-red-800 border-2 border-red-400">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-              <span className="text-sm">{errorMessage}</span>
-            </div>
-          )}
+            </pre>
+          </div>
         </div>
+      )}
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t-[3px] border-outline bg-accent/10">
-          <p className="text-sm text-text-secondary text-center">
-            导入的菜谱将保存在本地，可在我的导入中查看
-          </p>
+      {/* Paste Mode */}
+      {mode === 'paste' && (
+        <div className="space-y-4">
+          <textarea
+            value={pasteText}
+            onChange={(e) => setPasteText(e.target.value)}
+            placeholder='粘贴菜谱 JSON 数据，例如：\n[\n  {\n    "id": "001",\n    "name": "红烧肉",\n    ...\n  }\n]'
+            className="w-full h-48 p-4 bg-surface rounded-xl text-xs font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+
+          <button
+            type="button"
+            onClick={handlePasteImport}
+            disabled={!pasteText.trim()}
+            className="w-full btn btn-md btn-primary"
+          >
+            导入菜谱
+          </button>
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* Status Messages */}
+      {status === 'success' && (
+        <div className="flex items-center gap-3 p-3.5 bg-sage-50 rounded-xl text-sage-600">
+          <Check size={18} weight="bold" className="flex-shrink-0" />
+          <span className="text-xs font-medium">成功导入 {importCount} 个菜谱</span>
+        </div>
+      )}
+
+      {status === 'error' && (
+        <div className="flex items-start gap-3 p-3.5 bg-red-50 rounded-xl text-red-600">
+          <WarningCircle size={18} weight="bold" className="flex-shrink-0 mt-0.5" />
+          <span className="text-xs leading-relaxed">{errorMessage}</span>
+        </div>
+      )}
+
+      <p className="text-[11px] text-text-secondary text-center">
+        导入的菜谱将保存在本地，可在「我的导入」中查看
+      </p>
+    </BottomSheet>
   );
 }

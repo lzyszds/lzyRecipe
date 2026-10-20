@@ -6,6 +6,7 @@ import { useFavoritesStore } from './favoritesStore';
 interface ImportedRecipesState {
   importedRecipes: Recipe[];
   addImportedRecipes: (recipes: Recipe[]) => void;
+  updateImportedRecipeCover: (recipeId: string, coverImage: string) => void;
   removeImportedRecipe: (recipeId: string) => void;
   clearImportedRecipes: () => void;
 }
@@ -22,6 +23,12 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
             importedRecipes: [...state.importedRecipes, ...newRecipes],
           };
         }),
+      updateImportedRecipeCover: (recipeId, coverImage) =>
+        set((state) => ({
+          importedRecipes: state.importedRecipes.map((r) =>
+            r.id === recipeId ? { ...r, coverImage } : r
+          ),
+        })),
       removeImportedRecipe: (recipeId: string) => {
         useFavoritesStore.getState().removeFavorite(recipeId);
         set((state) => ({

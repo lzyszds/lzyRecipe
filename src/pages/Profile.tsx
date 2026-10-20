@@ -1,9 +1,13 @@
-import { Heart, Download, Settings, HelpCircle, ChevronRight, User, FileJson } from 'lucide-react';
+import { CaretRight } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
+import { clsx } from 'clsx';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { useWeeklyPlanStore } from '../store/weeklyPlanStore';
+import { countPlanMeals } from '../lib/weeklyPlan';
 import { useUIStore } from '../store/uiStore';
+import { AppLogo, APP_NAME, APP_TAGLINE } from '../components/AppLogo';
+import { AppIcons, AppIcon, UI_ICON_WEIGHT } from '../lib/icons';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -12,71 +16,78 @@ export function Profile() {
   const plans = useWeeklyPlanStore((s) => s.plans);
   const openImportModal = useUIStore((s) => s.openImportModal);
 
-  const plannedCount = plans.filter((p) => p.recipeId).length;
+  const { planned: plannedCount } = countPlanMeals(plans);
 
   const menuItems = [
-    { icon: Heart, label: '我的收藏', value: `${favorites.length} 道`, emoji: '❤️', onClick: () => navigate('/favorites') },
-    { icon: Download, label: '我的导入', value: `${importedRecipes.length} 道`, emoji: '📥', onClick: () => navigate('/imported') },
-    { icon: FileJson, label: '导入菜谱', value: '', emoji: '📋', onClick: openImportModal },
-    { icon: Settings, label: '设置', value: '', emoji: '⚙️', onClick: () => navigate('/settings') },
-    { icon: HelpCircle, label: '帮助与反馈', value: '', emoji: '💬', onClick: () => navigate('/help') },
+    { label: '本周烹饪计划', value: `${plannedCount} 餐`, icon: AppIcons.weeklyPlan, onClick: () => navigate('/weekly-plan') },
+    { label: '我的收藏', value: `${favorites.length} 道`, icon: AppIcons.favorite, onClick: () => navigate('/favorites') },
+    { label: '我的导入', value: `${importedRecipes.length} 道`, icon: AppIcons.imported, onClick: () => navigate('/imported') },
+    { label: '导入菜谱', value: '', icon: AppIcons.importFile, onClick: openImportModal },
+    { label: '设置', value: '', icon: AppIcons.settings, onClick: () => navigate('/settings') },
+    { label: '帮助与反馈', value: '', icon: AppIcons.help, onClick: () => navigate('/help') },
   ];
 
   return (
-    <div className="min-h-screen pb-24">
-      <div className="relative px-6 pt-12 pb-10 text-white overflow-hidden border-b-[3px] border-outline bg-gradient-to-br from-primary via-primary-light to-secondary">
-        <div className="absolute -top-6 -right-6 text-8xl opacity-20 rotate-12">🍳</div>
-        <div className="absolute bottom-4 left-4 text-5xl opacity-20 -rotate-12">🥘</div>
-
-        <div className="relative flex items-center gap-4">
-          <div className="w-16 h-16 bg-white rounded-3xl border-[3px] border-outline shadow-cartoon flex items-center justify-center">
-            <User className="w-8 h-8 text-primary" strokeWidth={2.5} />
-          </div>
-          <div>
-            <h1 className="font-cartoon text-2xl">菜谱达人 🌟</h1>
-            <p className="text-white/90 text-sm mt-1 font-bold">热爱美食，享受烹饪~</p>
-          </div>
-        </div>
-
-        <div className="relative flex justify-around mt-8 bg-white rounded-3xl py-4 border-[3px] border-outline shadow-cartoon">
-          <div className="text-center">
-            <p className="text-2xl font-cartoon text-primary">{favorites.length}</p>
-            <p className="text-xs text-text-secondary font-bold">收藏菜谱</p>
-          </div>
-          <div className="w-[3px] bg-outline/20 rounded-full" />
-          <div className="text-center">
-            <p className="text-2xl font-cartoon text-secondary">{importedRecipes.length}</p>
-            <p className="text-xs text-text-secondary font-bold">导入菜谱</p>
-          </div>
-          <div className="w-[3px] bg-outline/20 rounded-full" />
-          <div className="text-center">
-            <p className="text-2xl font-cartoon text-primary-dark">{plannedCount}</p>
-            <p className="text-xs text-text-secondary font-bold">本周计划</p>
-          </div>
-        </div>
+    <div className="page-container pb-6">
+      <div className="pt-3 pb-4">
+        <h1 className="text-lg font-bold text-text-primary">个人中心</h1>
       </div>
 
-      <div className="card mx-4 -mt-5 relative z-10">
-        {menuItems.map((item, index) => (
+      <div className="bg-white rounded-3xl p-5 shadow-card grid grid-cols-3 text-center divide-x divide-neutral-100 mb-5">
+        {[
+          { value: favorites.length, label: '收藏菜谱', highlight: false },
+          { value: importedRecipes.length, label: '我的导入', highlight: false },
+          { value: plannedCount, label: '本周计划', highlight: true },
+        ].map((stat) => (
+          <div key={stat.label}>
+            <div
+              className={clsx(
+                'text-xl font-bold',
+                stat.highlight ? 'text-primary' : 'text-text-primary'
+              )}
+            >
+              {stat.value}
+            </div>
+            <div className="text-[11px] text-text-secondary mt-0.5">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-3xl overflow-hidden shadow-card divide-y divide-neutral-100 mb-5">
+        {menuItems.map((item) => (
           <button
             key={item.label}
+            type="button"
             onClick={item.onClick}
-            className={`w-full flex items-center px-4 py-4 gap-3 transition-all hover:bg-accent/20 hover:-translate-x-0.5 ${
-              index !== menuItems.length - 1 ? 'border-b-2 border-outline/15' : ''
-            }`}
+            className="w-full flex items-center gap-3 px-4 min-h-[3.25rem] text-left transition-colors hover:bg-surface/60 active:bg-surface"
           >
-            <span className="w-10 h-10 rounded-2xl bg-surface border-2 border-outline shadow-cartoon-sm flex items-center justify-center text-lg">
-              {item.emoji}
-            </span>
-            <span className="flex-1 text-left text-text-primary font-bold">
+            <AppIcon
+              icon={item.icon}
+              size={18}
+              weight="regular"
+              className="text-neutral-400 flex-shrink-0"
+            />
+            <span className="flex-1 text-sm font-medium text-text-primary">
               {item.label}
             </span>
             {item.value && (
-              <span className="cartoon-badge bg-secondary/20 text-text-secondary">{item.value}</span>
+              <span className="text-[11px] text-text-secondary">{item.value}</span>
             )}
-            <ChevronRight className="w-5 h-5 text-text-secondary/50" strokeWidth={2.5} />
+            <CaretRight
+              size={15}
+              weight={UI_ICON_WEIGHT}
+              className="text-neutral-300 flex-shrink-0"
+            />
           </button>
         ))}
+      </div>
+
+      <div className="flex items-center justify-center gap-2.5 py-4">
+        <AppLogo size={28} />
+        <div>
+          <p className="text-xs font-medium text-text-primary leading-none">{APP_NAME}</p>
+          <p className="text-[10px] text-text-secondary mt-1">{APP_TAGLINE}</p>
+        </div>
       </div>
     </div>
   );

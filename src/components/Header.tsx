@@ -1,6 +1,8 @@
-import { ArrowLeft, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { clsx } from 'clsx';
+import { PageHeader } from './ui/PageHeader';
+import { IconButton } from './ui/IconButton';
+import { Heart } from '@phosphor-icons/react';
+import { UI_ICON_WEIGHT } from '../lib/icons';
 
 interface HeaderProps {
   title?: string;
@@ -18,36 +20,20 @@ export function Header({
   const navigate = useNavigate();
 
   return (
-    <header
-      className={clsx('cartoon-header', className)}
-      style={{ top: 'var(--safe-top)' }}
-    >
-      <div className="max-w-6xl mx-auto h-14 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {showBack && (
-            <button
-              onClick={() => navigate(-1)}
-              className="cartoon-icon-btn -ml-1"
-              aria-label="返回"
-            >
-              <ArrowLeft className="w-5 h-5 text-text-primary" strokeWidth={2.5} />
-            </button>
-          )}
-          <h1 className="font-cartoon text-xl text-text-primary">
-            {title}
-          </h1>
-        </div>
-
-        {showFavorites && (
-          <button
+    <PageHeader
+      title={title}
+      showBack={showBack}
+      className={className}
+      actions={
+        showFavorites ? (
+          <IconButton
+            icon={<Heart size={20} weight={UI_ICON_WEIGHT} className="text-primary" />}
+            label="收藏"
+            tone="primary"
             onClick={() => navigate('/favorites')}
-            className="cartoon-icon-btn -mr-1"
-            aria-label="收藏"
-          >
-            <Heart className="w-5 h-5 text-primary" />
-          </button>
-        )}
-      </div>
-    </header>
+          />
+        ) : undefined
+      }
+    />
   );
 }

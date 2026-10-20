@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Trash, CircleNotch } from '@phosphor-icons/react';
 import { categories } from '../data/recipes';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { DifficultyLevel, Ingredient, Step } from '../types';
 import { CoverImageField } from '../components/CoverImageField';
+import { PageHeader } from '../components/ui/PageHeader';
+import { PageMain } from '../components/ui/PageLayout';
+import { Button } from '../components/ui/Button';
+import { IconButton } from '../components/ui/IconButton';
+import { SectionHeader } from '../components/ui/PageHeader';
 import {
   generateCoverImageDataUrlWithRetry,
   getDefaultCoverPlaceholder,
@@ -100,59 +105,48 @@ export function CreateRecipe() {
   };
 
   return (
-    <div className="min-h-screen pb-8">
-      <div
-        className="sticky top-0 bg-white/80 backdrop-blur-md z-50 px-4 pt-4 pb-3 border-b border-surface/30"
-        style={{ top: 'var(--safe-top)' }}
-      >
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 -ml-2 rounded-xl hover:bg-surface/50 transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6 text-text-primary" />
-          </button>
-          <h1 className="font-serif text-xl font-semibold text-text-primary flex-1">
-            写菜谱
-          </h1>
-          <button
+    <div className="pb-8">
+      <PageHeader
+        title="写菜谱"
+        showBack
+        actions={
+          <Button
+            variant="primary"
+            size="sm"
             onClick={handleSubmit}
             disabled={saving}
-            className="btn-primary text-sm px-4 py-2 disabled:opacity-60 flex items-center gap-2"
+            icon={saving ? <CircleNotch size={16} weight="bold" className="animate-spin" /> : undefined}
           >
-            {saving && <Loader2 className="w-4 h-4 animate-spin" />}
             {saving ? '保存中…' : '保存'}
-          </button>
-        </div>
-      </div>
+          </Button>
+        }
+      />
 
-      <main className="px-4 py-6 space-y-6">
+      <PageMain className="space-y-5">
         {error && (
-          <div className="p-4 bg-red-50 text-red-700 rounded-xl text-sm">{error}</div>
+          <div className="p-3.5 bg-red-50 text-red-600 rounded-xl text-xs font-medium">
+            {error}
+          </div>
         )}
 
-        <section className="space-y-4">
+        <section className="card card-body space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              菜谱名称 *
-            </label>
+            <label className="form-label">菜谱名称 *</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="input-field"
+              className="input-field !bg-surface"
               placeholder="例如：番茄炒蛋"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                分类
-              </label>
+              <label className="form-label">分类</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="input-field"
+                className="input-field !bg-surface"
               >
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.name}>
@@ -162,13 +156,11 @@ export function CreateRecipe() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-text-primary mb-2">
-                难度
-              </label>
+              <label className="form-label">难度</label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value as DifficultyLevel)}
-                className="input-field"
+                className="input-field !bg-surface"
               >
                 {difficultyOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -180,15 +172,13 @@ export function CreateRecipe() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              烹饪时间（分钟）
-            </label>
+            <label className="form-label">烹饪时间（分钟）</label>
             <input
               type="number"
               min={1}
               value={cookTime}
               onChange={(e) => setCookTime(Number(e.target.value))}
-              className="input-field"
+              className="input-field !bg-surface"
             />
           </div>
 
@@ -200,109 +190,122 @@ export function CreateRecipe() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-text-primary mb-2">
-              描述
-            </label>
+            <label className="form-label">描述</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="input-field min-h-24 resize-none"
+              className="input-area !bg-surface"
               placeholder="简单介绍这道菜..."
             />
           </div>
         </section>
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-serif text-lg font-semibold">食材</h2>
-            <button
-              type="button"
-              onClick={() => setIngredients((prev) => [...prev, { name: '', amount: '' }])}
-              className="flex items-center gap-1 text-sm text-primary"
-            >
-              <Plus className="w-4 h-4" />
-              添加
-            </button>
-          </div>
+        <section className="card card-body space-y-3">
+          <SectionHeader
+            title="食材"
+            action={
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<Plus size={16} weight="bold" />}
+                onClick={() => setIngredients((prev) => [...prev, { name: '', amount: '' }])}
+              >
+                添加
+              </Button>
+            }
+          />
           {ingredients.map((item, index) => (
             <div key={index} className="flex gap-2">
               <input
                 value={item.name}
                 onChange={(e) => updateIngredient(index, 'name', e.target.value)}
-                className="input-field flex-1"
+                className="input-field !bg-surface flex-1"
                 placeholder="食材名称"
               />
               <input
                 value={item.amount}
                 onChange={(e) => updateIngredient(index, 'amount', e.target.value)}
-                className="input-field w-28"
+                className="input-field !bg-surface w-24 md:w-28"
                 placeholder="用量"
               />
               {ingredients.length > 1 && (
-                <button
-                  type="button"
+                <IconButton
+                  icon={<Trash size={16} weight="bold" className="text-red-500" />}
+                  label="删除食材"
+                  tone="danger"
                   onClick={() =>
                     setIngredients((prev) => prev.filter((_, i) => i !== index))
                   }
-                  className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                />
               )}
             </div>
           ))}
         </section>
 
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-serif text-lg font-semibold">步骤</h2>
-            <button
-              type="button"
-              onClick={() =>
-                setSteps((prev) => [...prev, { order: prev.length + 1, description: '' }])
-              }
-              className="flex items-center gap-1 text-sm text-primary"
-            >
-              <Plus className="w-4 h-4" />
-              添加
-            </button>
-          </div>
+        <section className="card card-body space-y-3">
+          <SectionHeader
+            title="步骤"
+            action={
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={<Plus size={16} weight="bold" />}
+                onClick={() =>
+                  setSteps((prev) => [...prev, { order: prev.length + 1, description: '' }])
+                }
+              >
+                添加
+              </Button>
+            }
+          />
           {steps.map((item, index) => (
             <div key={index} className="flex gap-2 items-start">
-              <span className="w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0 mt-2">
+              <span className="w-7 h-7 rounded-full bg-sage-50 text-primary text-xs font-medium flex items-center justify-center flex-shrink-0 mt-2">
                 {index + 1}
               </span>
               <textarea
                 value={item.description}
                 onChange={(e) => updateStep(index, e.target.value)}
-                className="input-field flex-1 min-h-20 resize-none"
+                className="input-area !bg-surface flex-1 min-h-[5rem]"
                 placeholder={`第 ${index + 1} 步...`}
               />
               {steps.length > 1 && (
-                <button
-                  type="button"
+                <IconButton
+                  icon={<Trash size={16} weight="bold" className="text-red-500" />}
+                  label="删除步骤"
+                  tone="danger"
+                  className="mt-1"
                   onClick={() => setSteps((prev) => prev.filter((_, i) => i !== index))}
-                  className="p-3 text-red-500 hover:bg-red-50 rounded-xl"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                />
               )}
             </div>
           ))}
         </section>
 
-        <section>
-          <label className="block text-sm font-medium text-text-primary mb-2">
-            小贴士
-          </label>
+        <section className="card card-body">
+          <label className="form-label">小贴士</label>
           <textarea
             value={tips}
             onChange={(e) => setTips(e.target.value)}
-            className="input-field min-h-20 resize-none"
+            className="input-area !bg-surface min-h-[5rem]"
             placeholder="可选"
           />
         </section>
-      </main>
+
+        <Button
+          variant="primary"
+          className="w-full"
+          onClick={handleSubmit}
+          disabled={saving}
+          icon={
+            saving ? (
+              <CircleNotch size={16} weight="bold" className="animate-spin" />
+            ) : undefined
+          }
+        >
+          {saving ? '保存中…' : '保存菜谱'}
+        </Button>
+      </PageMain>
     </div>
   );
 }
