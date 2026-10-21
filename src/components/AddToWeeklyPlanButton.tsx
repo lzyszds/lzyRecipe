@@ -68,7 +68,7 @@ export function AddToWeeklyPlanButton({ recipeId, recipeName }: AddToWeeklyPlanB
         icon={<CalendarPlus size={18} weight={UI_ICON_WEIGHT} />}
         label="加入本周计划"
         onClick={handleQuickAdd}
-        className="!bg-black/40 !text-white backdrop-blur-md !shadow-none"
+        className="!bg-white/90 backdrop-blur-md !text-cocoa-900 !border-transparent !shadow-none"
       />
 
       {toast && (

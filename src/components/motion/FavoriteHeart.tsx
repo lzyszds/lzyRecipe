@@ -7,25 +7,25 @@ interface FavoriteHeartProps {
   active: boolean;
   onClick: (e: React.MouseEvent) => void;
   className?: string;
+  size?: number;
 }
 
-export function FavoriteHeart({ active, onClick, className }: FavoriteHeartProps) {
+export function FavoriteHeart({ active, onClick, className, size = 15 }: FavoriteHeartProps) {
   return (
     <IconButton
       icon={
         <Heart
-          size={20}
+          size={size}
           weight={active ? 'fill' : UI_ICON_WEIGHT}
           className={clsx(
             'transition-colors duration-150',
-            active ? 'text-red-400' : 'text-text-secondary'
+            active ? 'text-apricot-500' : 'text-cocoa-200'
           )}
         />
       }
       label={active ? '取消收藏' : '收藏'}
-      tone={active ? 'primary' : 'default'}
       onClick={onClick}
-      className={className}
+      className={clsx('!bg-white/90 backdrop-blur-md !border-oat-200/60', className)}
     />
   );
 }

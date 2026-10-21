@@ -107,7 +107,7 @@ export function CoverRepairButton({
         onClick={() => setOpen((value) => !value)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="!bg-black/40 !text-white backdrop-blur-md !shadow-none"
+        className="!bg-white/90 backdrop-blur-md !text-cocoa-900 !border-transparent !shadow-none"
       />
 
       {open && (
@@ -115,7 +115,7 @@ export function CoverRepairButton({
           role="menu"
           className={clsx(
             'absolute right-0 top-[calc(100%+0.5rem)] z-50 w-40',
-            'rounded-xl border border-neutral-100 bg-white p-1.5 shadow-float'
+            'rounded-xl border border-oat-100 bg-white p-1.5 shadow-float'
           )}
         >
           <button

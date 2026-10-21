@@ -2,7 +2,6 @@ import { MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
-import { IconButton } from './ui/IconButton';
 import { UI_ICON_WEIGHT } from '../lib/icons';
 
 interface SearchBarProps {
@@ -23,28 +22,28 @@ export function SearchBar({ defaultValue = '', className, placeholder = '搜索�
   };
 
   return (
-    <form onSubmit={handleSearch} className={clsx('relative', className)}>
+    <form onSubmit={handleSearch} className={clsx('relative flex-1', className)}>
+      <MagnifyingGlass
+        size={15}
+        weight={UI_ICON_WEIGHT}
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-cocoa-400 pointer-events-none"
+      />
       <input
         type="text"
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
         placeholder={placeholder}
-        className="input-field pl-11 pr-11 rounded-2xl shadow-cozy-sm"
-      />
-      <MagnifyingGlass
-        size={18}
-        weight={UI_ICON_WEIGHT}
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+        className="input-field !bg-white pl-9 pr-9"
       />
       {keyword && (
-        <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
-          <IconButton
-            icon={<X size={16} weight={UI_ICON_WEIGHT} className="text-text-secondary" />}
-            label="清除"
-            onClick={() => setKeyword('')}
-            className="!w-8 !h-8 !shadow-none !bg-transparent"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => setKeyword('')}
+          aria-label="清除"
+          className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center text-cocoa-400 hover:bg-oat-100 transition"
+        >
+          <X size={13} weight={UI_ICON_WEIGHT} />
+        </button>
       )}
     </form>
   );

@@ -12,9 +12,9 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: 'bg-primary text-white shadow-cozy-primary hover:bg-primary-light',
-  secondary: 'bg-white text-text-primary shadow-cozy-sm hover:bg-neutral-50',
-  ghost: 'bg-transparent text-text-secondary shadow-none hover:bg-neutral-100/70',
+  primary: 'bg-apricot-500 text-white shadow-cozy-primary hover:bg-apricot-400',
+  secondary: 'bg-white text-cocoa-900 border border-oat-200/70 shadow-cozy-sm hover:bg-oat-50',
+  ghost: 'bg-transparent text-cocoa-400 shadow-none hover:bg-oat-100/70',
   danger: 'bg-red-50 text-red-500 hover:bg-red-100',
 };
 

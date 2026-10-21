@@ -50,7 +50,7 @@ export function Settings() {
       <PageHeader title="设置" showBack />
 
       <PageMain className="space-y-4">
-        <section className="bg-white rounded-2xl p-5 shadow-card space-y-4">
+        <section className="bg-white rounded-xl p-5 shadow-card space-y-4">
           <div>
             <h2 className="text-sm font-bold text-text-primary">封面生成</h2>
             <p className="text-[11px] text-text-secondary mt-1 leading-relaxed">
@@ -67,7 +67,7 @@ export function Settings() {
                   className={`flex items-start gap-3 p-3.5 rounded-xl cursor-pointer transition-all ${
                     active
                       ? 'bg-sage-50 ring-1 ring-primary/25'
-                      : 'bg-surface hover:bg-neutral-100/80'
+                      : 'bg-surface hover:bg-oat-100/80'
                   }`}
                 >
                   <input
@@ -76,7 +76,7 @@ export function Settings() {
                     value={opt.value}
                     checked={active}
                     onChange={() => setCoverProvider(opt.value)}
-                    className="mt-0.5 accent-[#2d6a4f]"
+                    className="mt-0.5 accent-[#E58A54]"
                   />
                   <div>
                     <p className="text-xs font-medium text-text-primary">{opt.label}</p>
@@ -88,7 +88,7 @@ export function Settings() {
           </div>
 
           {coverProvider === 'baidu' && (
-            <div className="space-y-3 pt-3 border-t border-neutral-100">
+            <div className="space-y-3 pt-3 border-t border-oat-100">
               <p className="text-[11px] text-text-secondary leading-relaxed">
                 在
                 <a
@@ -122,7 +122,7 @@ export function Settings() {
           )}
 
           {coverProvider === 'bing' && (
-            <div className="space-y-3 pt-3 border-t border-neutral-100">
+            <div className="space-y-3 pt-3 border-t border-oat-100">
               <p className="text-[11px] text-text-secondary leading-relaxed">
                 在
                 <a
@@ -162,7 +162,7 @@ export function Settings() {
           )}
         </section>
 
-        <section className="bg-white rounded-2xl p-5 shadow-card space-y-1.5">
+        <section className="bg-white rounded-xl p-5 shadow-card space-y-1.5">
           <h2 className="text-sm font-bold text-text-primary mb-2">关于</h2>
           <p className="text-xs text-text-secondary">应用名称：{APP_NAME}</p>
           <p className="text-xs text-text-secondary">版本：{__APP_VERSION__}</p>
@@ -171,7 +171,7 @@ export function Settings() {
           </p>
         </section>
 
-        <section className="bg-white rounded-2xl overflow-hidden shadow-card">
+        <section className="bg-white rounded-xl overflow-hidden shadow-card">
           <button
             type="button"
             onClick={handleClearAll}

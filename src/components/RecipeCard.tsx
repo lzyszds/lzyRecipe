@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Recipe, DifficultyLevel } from '../types';
 import { clsx } from 'clsx';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { RecipeCoverImage } from './RecipeCoverImage';
 import { FavoriteHeart } from './motion/FavoriteHeart';
+import { getSuggestedSlotForRecipeId } from '../store/weeklyPlanStore';
+import { getTodayDayIndex } from '../lib/weeklyPlan';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -19,20 +21,29 @@ const difficultyLabel: Record<DifficultyLevel, string> = {
 };
 
 export function RecipeCard({ recipe, className, compact, hideFavorite }: RecipeCardProps) {
+  const navigate = useNavigate();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const favorite = isFavorite(recipe.id);
+
+  /** 「+ 餐盘」：跳转到周计划并直接打开该菜谱的排菜抽屉 */
+  const goAssign = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const slot = getSuggestedSlotForRecipeId(recipe.id, [recipe]);
+    navigate(`/weekly-plan?day=${getTodayDayIndex()}&meal=${slot}`);
+  };
 
   if (compact) {
     return (
       <div
         className={clsx(
-          'cartoon-list-item group',
+          'group bg-white rounded-xl border border-oat-100 card-shadow p-2.5 flex items-center gap-3',
           hideFavorite && 'pr-12',
           className
         )}
       >
-        <Link to={`/recipe/${recipe.id}`} className="flex items-center gap-3.5 flex-1 min-w-0">
-          <div className="relative w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 bg-neutral-100">
+        <Link to={`/recipe/${recipe.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-oat-100">
             <RecipeCoverImage
               recipeId={recipe.id}
               name={recipe.name}
@@ -44,12 +55,12 @@ export function RecipeCard({ recipe, className, compact, hideFavorite }: RecipeC
           </div>
 
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-sm text-text-primary truncate">{recipe.name}</h3>
-            <p className="text-[11px] text-text-secondary mt-0.5 line-clamp-1">
+            <h3 className="font-bold text-xs text-cocoa-900 truncate">{recipe.name}</h3>
+            <p className="text-[11px] text-cocoa-400 mt-0.5 line-clamp-1">
               {recipe.description || recipe.ingredients.slice(0, 3).map((i) => i.name).join('、')}
             </p>
-            <span className="text-[10px] text-text-secondary mt-1 block">
-              {recipe.cookTime} 分钟 · {difficultyLabel[recipe.difficulty]}
+            <span className="text-[10px] text-cocoa-400 mt-1 block truncate">
+              {recipe.category} · {recipe.cookTime}分钟 · {difficultyLabel[recipe.difficulty]}
             </span>
           </div>
         </Link>
@@ -71,13 +82,13 @@ export function RecipeCard({ recipe, className, compact, hideFavorite }: RecipeC
   return (
     <div
       className={clsx(
-        'group relative bg-white rounded-2xl overflow-hidden transition-all duration-200 shadow-[0_2px_10px_rgba(0,0,0,0.03)]',
-        'hover:shadow-cozy-hover active:scale-[0.98]',
+        'group relative bg-white rounded-xl p-2 border border-oat-100 card-shadow',
+        'transition active:scale-[0.98] flex flex-col',
         className
       )}
     >
       <Link to={`/recipe/${recipe.id}`} className="block">
-        <div className="relative h-32 md:h-36 bg-neutral-100">
+        <div className="relative h-28 rounded-lg overflow-hidden bg-oat-100">
           <RecipeCoverImage
             recipeId={recipe.id}
             name={recipe.name}
@@ -86,30 +97,42 @@ export function RecipeCard({ recipe, className, compact, hideFavorite }: RecipeC
             alt={recipe.name}
             className="w-full h-full object-cover"
           />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/15 to-transparent" />
-        </div>
-
-        <div className="p-3">
-          <h3 className="font-bold text-xs text-text-primary truncate">{recipe.name}</h3>
-          <p className="text-[11px] text-text-secondary mt-1 truncate">
-            {recipe.category} · {recipe.cookTime} 分钟
-          </p>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/10 to-transparent" />
         </div>
       </Link>
 
       {!hideFavorite && (
-        <div className="absolute top-2.5 right-2.5">
+        <div className="absolute top-4 right-4">
           <FavoriteHeart
             active={favorite}
+            size={13}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
               toggleFavorite(recipe.id);
             }}
-            className="!bg-white/80 backdrop-blur-md !w-7 !h-7"
+            className="!w-6 !h-6 !rounded-md"
           />
         </div>
       )}
+
+      <div className="px-1 pt-2 pb-0.5">
+        <Link to={`/recipe/${recipe.id}`} className="block">
+          <h3 className="font-bold text-xs text-cocoa-900 truncate">{recipe.name}</h3>
+        </Link>
+        <div className="flex items-center justify-between gap-1 mt-1.5">
+          <span className="text-[10px] text-cocoa-400 truncate">
+            {recipe.category} · {recipe.cookTime}分钟
+          </span>
+          <button
+            type="button"
+            onClick={goAssign}
+            className="shrink-0 px-2 py-0.5 rounded-md bg-apricot-50 border border-apricot-200/70 text-apricot-600 text-[10px] font-semibold hover:bg-apricot-500 hover:text-white transition-colors"
+          >
+            + 餐盘
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

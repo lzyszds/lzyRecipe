@@ -107,7 +107,7 @@ export function WeeklyPlanTemplates({ plans, onApply }: WeeklyPlanTemplatesProps
                 <button
                   type="button"
                   onClick={() => removeTemplate(tpl.id)}
-                  className="btn-icon !w-8 !h-8 !bg-white !text-neutral-400"
+                  className="btn-icon !w-8 !h-8 !bg-white !text-cocoa-400"
                   aria-label="删除方案"
                   title="删除"
                 >

@@ -40,7 +40,7 @@ export function Help() {
 
       <main className="page-main space-y-3">
         {sections.map((section) => (
-          <section key={section.title} className="bg-white rounded-2xl p-5 shadow-card">
+          <section key={section.title} className="bg-white rounded-xl p-5 shadow-card">
             <h2 className="text-sm font-bold text-text-primary mb-2">{section.title}</h2>
             <p className="text-xs text-text-secondary leading-relaxed">
               {section.content}

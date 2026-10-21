@@ -31,7 +31,7 @@ export function PageHeader({
         <div className="page-header-start">
           {showBack && (
             <IconButton
-              icon={<ArrowLeft size={20} weight={UI_ICON_WEIGHT} />}
+              icon={<ArrowLeft size={18} weight={UI_ICON_WEIGHT} />}
               label="返回"
               onClick={onBack ?? (() => navigate(-1))}
             />
@@ -53,17 +53,22 @@ interface HomeHeaderProps {
 export function HomeHeader({ search, actions }: HomeHeaderProps) {
   return (
     <header className="page-header">
-      <div className="page-container pt-2 pb-3 space-y-3.5">
+      <div className="page-container pt-2 pb-3 space-y-3">
         <div className="flex items-center justify-between gap-3 min-w-0">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-2xl font-bold tracking-tight text-text-primary truncate">
-              {APP_NAME}
-            </h1>
-            <p className="text-[11px] font-medium text-text-secondary mt-0.5 truncate">
-              {APP_TAGLINE}
-            </p>
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <span className="w-8 h-8 rounded-lg bg-apricot-500 text-white flex items-center justify-center shadow-cozy-sm flex-shrink-0">
+              <span className="text-sm font-black">萌</span>
+            </span>
+            <div className="min-w-0">
+              <h1 className="text-sm font-bold tracking-tight text-cocoa-900 truncate leading-none">
+                {APP_NAME}
+              </h1>
+              <p className="text-[10px] font-medium text-cocoa-400 mt-1 truncate">
+                {APP_TAGLINE}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">{actions}</div>
+          <div className="flex items-center gap-1.5 flex-shrink-0">{actions}</div>
         </div>
         {search}
       </div>

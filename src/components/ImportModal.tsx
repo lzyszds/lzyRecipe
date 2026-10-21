@@ -225,9 +225,9 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
         <div className="space-y-4">
           <div
             onClick={handleFileImport}
-            className="border-2 border-dashed border-neutral-200 hover:border-primary/40 hover:bg-sage-50/50 rounded-2xl p-8 text-center cursor-pointer transition-colors"
+            className="border-2 border-dashed border-oat-200 hover:border-primary/40 hover:bg-sage-50/50 rounded-xl p-8 text-center cursor-pointer transition-colors"
           >
-            <UploadSimple size={40} weight="duotone" className="mx-auto mb-3 text-neutral-400" />
+            <UploadSimple size={40} weight="duotone" className="mx-auto mb-3 text-cocoa-400" />
             <p className="text-sm font-medium text-text-primary mb-1">
               点击选择 JSON 文件
             </p>
@@ -236,7 +236,7 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
             </p>
           </div>
 
-          <div className="bg-surface rounded-2xl p-4">
+          <div className="bg-surface rounded-xl p-4">
             <p className="text-xs font-medium text-text-primary mb-2">JSON 格式说明</p>
             <pre className="text-[11px] text-text-secondary overflow-x-auto leading-relaxed">
 {`[

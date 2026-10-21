@@ -73,7 +73,7 @@ export function WeeklyPlanPickerModal({
         <MagnifyingGlass
           size={16}
           weight={UI_ICON_WEIGHT}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-cocoa-400"
         />
         <input
           value={query}
@@ -127,7 +127,7 @@ export function WeeklyPlanPickerModal({
               onClick={() => handleSelect(recipe.id)}
               className="w-full flex items-center gap-3 rounded-xl px-2.5 py-2 text-left hover:bg-surface transition-colors"
             >
-              <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-neutral-100">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-oat-100">
                 <RecipeCoverImage
                   recipeId={recipe.id}
                   name={recipe.name}

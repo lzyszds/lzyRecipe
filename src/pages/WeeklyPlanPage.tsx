@@ -1,9 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Heart, ShareNetwork, ShoppingBag, Sparkle } from '@phosphor-icons/react';
+import {
+  Heart,
+  Image,
+  FolderOpen,
+  Shuffle,
+  Sparkle,
+  Trash,
+} from '@phosphor-icons/react';
 import { clsx } from 'clsx';
 import { PageMain } from '../components/ui/PageLayout';
 import { BottomSheet } from '../components/ui/BottomSheet';
+import { AppHeader } from '../components/AppHeader';
 import { WeeklyPlanPickerModal } from '../components/WeeklyPlanPickerModal';
 import { WeeklyPlanShareBar } from '../components/WeeklyPlanShareBar';
 import { WeeklyPlanScopeToggles } from '../components/WeeklyPlanScopeToggles';
@@ -15,7 +23,6 @@ import { useWeeklyPlanStore, type MealSlot } from '../store/weeklyPlanStore';
 import {
   MEAL_SLOTS,
   WEEK_DAYS,
-  aggregatePlanIngredients,
   countPlanMeals,
   filterRecipesForMealSlot,
   formatWeekRange,
@@ -42,6 +49,15 @@ function getDayNumber(weekKey: string, dayIndex: number): number {
   return date.getDate();
 }
 
+function getDayTag(dayIndex: number, todayIndex: number): string {
+  const diff = dayIndex - todayIndex;
+  if (diff === 0) return '今天';
+  if (diff === -1) return '昨天';
+  if (diff === 1) return '明天';
+  if (diff === 2) return '后天';
+  return `周${WEEK_DAYS[dayIndex].slice(2)}`;
+}
+
 export function WeeklyPlanPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -58,7 +74,6 @@ export function WeeklyPlanPage() {
     clearMeal,
     toggleCompleted,
     fillFromFavorites,
-    smartShuffleFill,
     includeOptionalGroups,
     applyPlans,
     clearPlan,
@@ -66,8 +81,8 @@ export function WeeklyPlanPage() {
 
   const todayIndex = getTodayDayIndex();
   const [selectedDay, setSelectedDay] = useState(todayIndex);
+  const [view, setView] = useState<'day' | 'grid'>('day');
   const [picking, setPicking] = useState<PickingTarget | null>(null);
-  const [shoppingOpen, setShoppingOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [prefsOpen, setPrefsOpen] = useState(false);
 
@@ -80,21 +95,19 @@ export function WeeklyPlanPage() {
     const focusDay = Number(dayParam);
     if (!Number.isNaN(focusDay) && focusDay >= 0 && focusDay <= 6) {
       setSelectedDay(focusDay);
+      setView('day');
       setPicking({ dayIndex: focusDay, mealSlot: focusMeal ?? 'dinner' });
     }
   }, [dayParam, focusMeal]);
 
   const stats = useMemo(() => countPlanMeals(plans), [plans]);
-  const shoppingList = useMemo(
-    () => aggregatePlanIngredients(plans, allRecipes),
-    [plans, allRecipes]
-  );
 
   const favoriteRecipeIds = favorites
     .map((id) => allRecipes.find((r) => r.id === id)?.id)
     .filter(Boolean) as string[];
 
   const day = plans.find((d) => d.dayIndex === selectedDay) ?? plans[0];
+  const progress = stats.total ? Math.round((stats.planned / stats.total) * 100) : 0;
 
   const pickingRecipes = useMemo(() => {
     if (!picking) return allRecipes;
@@ -106,148 +119,257 @@ export function WeeklyPlanPage() {
       ? getMealPickerLabel(weekKey, picking.dayIndex, picking.mealSlot)
       : '';
 
+  /** 随机今日：只补齐所选日期的空档 */
+  const randomFillSelectedDay = () => {
+    if (!day) return;
+    MEAL_SLOTS.forEach((slot) => {
+      if (day[slot.key].recipeId) return;
+      const pool = filterRecipesForMealSlot(allRecipes, slot.key, includeOptionalGroups);
+      if (pool.length === 0) return;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+      assignRecipe(selectedDay, slot.key, pick.id);
+    });
+  };
+
+  const dayMealCount = day
+    ? MEAL_SLOTS.filter((slot) => day[slot.key].recipeId).length
+    : 0;
+
   return (
     <div>
-      <header className="page-header">
-        <div className="page-container pt-3 pb-3">
-          <div className="flex items-center justify-between gap-3">
+      <AppHeader />
+
+      <PageMain className="space-y-3.5">
+        {/* 本周排菜状态与操作台 */}
+        <section className="bg-white rounded-xl p-4 card-shadow border border-oat-100 space-y-3.5">
+          <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-lg font-bold text-text-primary">本周饮食计划</h1>
-              <p className="text-[11px] text-text-secondary mt-0.5">
-                {formatWeekRange(weekKey)} · 已完成 {stats.completed}/{stats.total}
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-sm font-bold text-cocoa-900">本周饮食计划</h2>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-oat-100 text-cocoa-700 font-medium">
+                  {formatWeekRange(weekKey)}
+                </span>
+              </div>
+              <p className="text-[11px] text-cocoa-400 mt-1">
+                已规划 <b className="text-apricot-600">{stats.planned}</b> / {stats.total} 餐 · 已完成{' '}
+                {stats.completed} 餐
               </p>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
+
+            <div className="bg-oat-100 p-0.5 rounded-lg flex text-[11px] font-medium shrink-0">
               <button
                 type="button"
-                onClick={() => setShoppingOpen(true)}
-                className="px-3 h-8 rounded-full bg-white text-text-primary text-xs font-medium shadow-cozy-sm flex items-center gap-1.5"
+                onClick={() => setView('day')}
+                className={clsx(
+                  'px-2.5 py-1 rounded-md transition-all',
+                  view === 'day' ? 'bg-white text-cocoa-900 shadow-cozy-sm' : 'text-cocoa-700'
+                )}
               >
-                <ShoppingBag size={14} weight={UI_ICON_WEIGHT} className="text-primary" />
-                清单 ({shoppingList.length})
+                按日
               </button>
               <button
                 type="button"
-                onClick={() => setShareOpen(true)}
-                aria-label="分享周菜单"
-                className="btn-icon !w-8 !h-8"
+                onClick={() => setView('grid')}
+                className={clsx(
+                  'px-2.5 py-1 rounded-md transition-all',
+                  view === 'grid' ? 'bg-white text-cocoa-900 shadow-cozy-sm' : 'text-cocoa-700'
+                )}
               >
-                <ShareNetwork size={15} weight={UI_ICON_WEIGHT} />
+                全周表
               </button>
             </div>
           </div>
-        </div>
-      </header>
 
-      <PageMain className="space-y-5">
-        {/* 周一至周日日期栏 */}
-        <div className="grid grid-cols-7 gap-1 bg-white p-1.5 rounded-2xl shadow-card">
-          {WEEK_DAYS.map((_, index) => {
-            const active = index === selectedDay;
-            const isToday = index === todayIndex;
-            return (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setSelectedDay(index)}
-                className={clsx(
-                  'py-2 rounded-xl flex flex-col items-center transition-colors',
-                  active ? 'bg-primary text-white' : 'text-neutral-500 hover:bg-surface'
-                )}
-              >
-                <span className={clsx('text-[10px]', active ? 'opacity-80' : 'opacity-70')}>
-                  {isToday ? '今' : WEEK_DAYS[index].slice(2)}
-                </span>
-                <span className="text-xs font-bold mt-0.5">
-                  {getDayNumber(weekKey, index)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* 当日三餐 */}
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-text-primary">
-              {WEEK_DAYS[selectedDay]}
-              {selectedDay === todayIndex ? ' · 今天' : ''}
-            </h2>
-            <span className="text-[11px] text-text-secondary">
-              {MEAL_SLOTS.filter((s) => day?.[s.key].recipeId).length}/3 餐已安排
-            </span>
+          <div className="w-full h-1.5 bg-oat-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-apricot-500 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
           </div>
 
-          {day &&
-            MEAL_SLOTS.map((slot) => {
-              const entry = day[slot.key];
-              const recipe = allRecipes.find((r) => r.id === entry.recipeId);
-              return (
-                <WeeklyPlanMealRow
-                  key={slot.key}
-                  mealSlot={slot.key}
-                  recipe={recipe}
-                  completed={entry.completed}
-                  onOpen={() =>
-                    setPicking({ dayIndex: day.dayIndex, mealSlot: slot.key })
-                  }
-                  onNavigate={() => recipe && navigate(`/recipe/${recipe.id}`)}
-                  onClear={() => clearMeal(day.dayIndex, slot.key)}
-                  onToggleComplete={() => toggleCompleted(day.dayIndex, slot.key)}
-                />
-              );
-            })}
-        </div>
-
-        {/* 快捷排菜工具 */}
-        <section className="bg-white rounded-2xl p-4 shadow-card space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-text-primary">快捷排菜工具</h3>
-            <button
-              type="button"
-              onClick={() => setPrefsOpen(true)}
-              className="text-xs font-medium text-primary"
-            >
-              品类开关与模板 →
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => smartShuffleFill(allRecipes, 'all')}
-              disabled={allRecipes.length === 0}
-              className="h-11 rounded-xl bg-sage-50 text-sage-600 text-xs font-semibold flex items-center justify-center gap-1.5 disabled:opacity-50"
-            >
-              <Sparkle size={14} weight="fill" />
-              智能随机填满本周
-            </button>
+          <div className="grid grid-cols-4 gap-2 pt-0.5">
             <button
               type="button"
               onClick={() => fillFromFavorites(favoriteRecipeIds)}
               disabled={favoriteRecipeIds.length === 0}
-              className="h-11 rounded-xl bg-surface text-text-primary text-xs font-medium flex items-center justify-center gap-1.5 disabled:opacity-50"
+              className="py-2 px-1 rounded-lg bg-oat-50 border border-oat-100 flex flex-col items-center gap-1 active:scale-95 transition disabled:opacity-40 disabled:pointer-events-none"
             >
-              <Heart size={14} weight="fill" className="text-primary" />
-              用「我的收藏」填满
+              <Heart size={16} weight={UI_ICON_WEIGHT} className="text-apricot-500" />
+              <span className="text-[10px] font-medium text-cocoa-700">收藏填满</span>
+            </button>
+            <button
+              type="button"
+              onClick={randomFillSelectedDay}
+              disabled={allRecipes.length === 0}
+              className="py-2 px-1 rounded-lg bg-oat-50 border border-oat-100 flex flex-col items-center gap-1 active:scale-95 transition disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <Shuffle size={16} weight={UI_ICON_WEIGHT} className="text-apricot-500" />
+              <span className="text-[10px] font-medium text-cocoa-700">随机今日</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setPrefsOpen(true)}
+              className="py-2 px-1 rounded-lg bg-oat-50 border border-oat-100 flex flex-col items-center gap-1 active:scale-95 transition"
+            >
+              <FolderOpen size={16} weight={UI_ICON_WEIGHT} className="text-cocoa-700" />
+              <span className="text-[10px] font-medium text-cocoa-700">套用模板</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShareOpen(true)}
+              className="py-2 px-1 rounded-lg bg-oat-50 border border-oat-100 flex flex-col items-center gap-1 active:scale-95 transition"
+            >
+              <Image size={16} weight={UI_ICON_WEIGHT} className="text-cocoa-700" />
+              <span className="text-[10px] font-medium text-cocoa-700">导出长图</span>
             </button>
           </div>
-
-          {stats.planned > 0 && (
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[11px] text-text-secondary">
-                已安排 {stats.planned}/{stats.total} 餐
-              </span>
-              <button
-                type="button"
-                onClick={clearPlan}
-                className="text-[11px] font-medium text-red-500"
-              >
-                清空本周
-              </button>
-            </div>
-          )}
         </section>
+
+        {view === 'day' ? (
+          <div className="space-y-3 anim-fade">
+            {/* 周一至周日选择器 */}
+            <div className="grid grid-cols-7 gap-1 bg-white p-1.5 rounded-xl card-shadow border border-oat-100">
+              {WEEK_DAYS.map((_, index) => {
+                const active = index === selectedDay;
+                const dayPlan = plans.find((d) => d.dayIndex === index);
+                const filled = dayPlan
+                  ? MEAL_SLOTS.filter((slot) => dayPlan[slot.key].recipeId).length
+                  : 0;
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setSelectedDay(index)}
+                    className={clsx(
+                      'py-2 rounded-lg flex flex-col items-center transition-colors',
+                      active ? 'bg-apricot-500 text-white' : 'text-cocoa-700 hover:bg-oat-50'
+                    )}
+                  >
+                    <span
+                      className={clsx(
+                        'text-[9px]',
+                        active ? 'text-white/80' : 'text-cocoa-400'
+                      )}
+                    >
+                      {getDayTag(index, todayIndex)}
+                    </span>
+                    <span className="text-xs font-bold mt-0.5">
+                      {getDayNumber(weekKey, index)}
+                    </span>
+                    <span
+                      className={clsx(
+                        'text-[9px] mt-0.5',
+                        active ? 'text-white/90' : 'text-apricot-500 font-semibold'
+                      )}
+                    >
+                      {filled}/3
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 所选日期的三餐 */}
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between px-0.5">
+                <h2 className="text-xs font-bold text-cocoa-900">
+                  {WEEK_DAYS[selectedDay]}
+                  {selectedDay === todayIndex ? ' · 今天' : ''}
+                </h2>
+                <span className="text-[11px] text-cocoa-400">{dayMealCount}/3 餐已安排</span>
+              </div>
+
+              {day &&
+                MEAL_SLOTS.map((slot) => {
+                  const entry = day[slot.key];
+                  const recipe = allRecipes.find((r) => r.id === entry.recipeId);
+                  return (
+                    <WeeklyPlanMealRow
+                      key={slot.key}
+                      mealSlot={slot.key}
+                      recipe={recipe}
+                      completed={entry.completed}
+                      onOpen={() => setPicking({ dayIndex: day.dayIndex, mealSlot: slot.key })}
+                      onNavigate={() => recipe && navigate(`/recipe/${recipe.id}`)}
+                      onClear={() => clearMeal(day.dayIndex, slot.key)}
+                      onToggleComplete={() => toggleCompleted(day.dayIndex, slot.key)}
+                    />
+                  );
+                })}
+
+              {stats.planned > 0 && (
+                <div className="flex items-center justify-between px-0.5 pt-1">
+                  <span className="text-[11px] text-cocoa-400">
+                    已完成 {stats.completed} / {stats.planned} 餐
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm('确定要清空本周全部安排吗？')) clearPlan();
+                    }}
+                    className="text-[11px] font-medium text-red-500 flex items-center gap-1"
+                  >
+                    <Trash size={12} weight={UI_ICON_WEIGHT} />
+                    清空本周
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl p-3 card-shadow border border-oat-100 space-y-2 anim-fade">
+            <div className="grid grid-cols-4 text-[10px] font-bold text-cocoa-400 pb-1.5 border-b border-oat-100 text-center">
+              <span className="text-left pl-1">日期</span>
+              <span>早餐</span>
+              <span>午餐</span>
+              <span>晚餐</span>
+            </div>
+            <div className="divide-y divide-oat-100/70 text-[11px]">
+              {WEEK_DAYS.map((dayName, index) => {
+                const dayPlan = plans.find((d) => d.dayIndex === index);
+                const cells = MEAL_SLOTS.map((slot) =>
+                  dayPlan?.[slot.key].recipeId
+                    ? allRecipes.find((r) => r.id === dayPlan[slot.key].recipeId)?.name ?? '—'
+                    : '—'
+                );
+                return (
+                  <button
+                    key={dayName}
+                    type="button"
+                    onClick={() => {
+                      setSelectedDay(index);
+                      setView('day');
+                    }}
+                    className={clsx(
+                      'w-full grid grid-cols-4 items-center py-2 text-center gap-1.5 rounded-lg px-1 transition-colors hover:bg-oat-50',
+                      index === todayIndex && 'bg-apricot-50/50'
+                    )}
+                  >
+                    <span className="font-bold text-left text-cocoa-900 truncate">
+                      {dayName.slice(2)}{' '}
+                      <span className="text-[9px] font-normal text-cocoa-400">
+                        {getDayNumber(weekKey, index)}日
+                      </span>
+                    </span>
+                    {cells.map((name, i) => (
+                      <span
+                        key={MEAL_SLOTS[i].key}
+                        className={clsx(
+                          'py-1 px-1 rounded bg-oat-50 truncate',
+                          name === '—'
+                            ? 'text-cocoa-200'
+                            : 'text-cocoa-900 font-medium'
+                        )}
+                      >
+                        {name}
+                      </span>
+                    ))}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </PageMain>
 
       <WeeklyPlanPickerModal
@@ -265,40 +387,16 @@ export function WeeklyPlanPage() {
       />
 
       <BottomSheet
-        isOpen={shoppingOpen}
-        onClose={() => setShoppingOpen(false)}
-        title="本周采购清单"
-        description="同名食材已自动合并"
-        bodyClassName="space-y-1"
-      >
-        {shoppingList.length === 0 ? (
-          <p className="text-center text-xs text-text-secondary py-8">
-            安排三餐后，这里会自动汇总本周食材
-          </p>
-        ) : (
-          <ul className="divide-y divide-neutral-100">
-            {shoppingList.map((item) => (
-              <li key={item.name} className="py-3 flex items-start justify-between gap-4">
-                <span className="text-sm font-medium text-text-primary">{item.name}</span>
-                <span className="text-xs text-text-secondary text-right">
-                  {item.details || '适量'}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </BottomSheet>
-
-      <BottomSheet
         isOpen={shareOpen}
         onClose={() => setShareOpen(false)}
-        title="分享周菜单"
+        title="导出本周菜单长图"
         description={formatWeekRange(weekKey)}
         bodyClassName="space-y-4"
       >
-        <div className="rounded-2xl bg-surface p-6 text-center space-y-1">
-          <p className="text-sm font-bold text-text-primary">本周菜单长图</p>
-          <p className="text-xs text-text-secondary">{formatWeekRange(weekKey)}</p>
+        <div className="bg-white p-5 rounded-xl border border-oat-200 space-y-1 text-center">
+          <Image size={24} weight={UI_ICON_WEIGHT} className="text-apricot-500 mx-auto" />
+          <p className="text-sm font-bold text-cocoa-900 pt-1">本周饮食计划长图</p>
+          <p className="text-[10px] text-cocoa-400">{formatWeekRange(weekKey)}</p>
         </div>
         <WeeklyPlanShareBar
           weekKey={weekKey}
@@ -311,12 +409,45 @@ export function WeeklyPlanPage() {
       <BottomSheet
         isOpen={prefsOpen}
         onClose={() => setPrefsOpen(false)}
-        title="排菜偏好与周模板"
+        title="套用模板与候选品类"
         bodyClassName="space-y-5"
       >
         <WeeklyPlanScopeToggles />
-        <div className="h-px bg-neutral-100" />
+        <div className="h-px bg-oat-100" />
         <WeeklyPlanTemplates plans={plans} onApply={applyPlans} />
+        <div className="pt-1">
+          <button
+            type="button"
+            onClick={() => {
+              if (confirm('确定要重新智能随机安排本周空档吗？')) {
+                const pool = allRecipes;
+                if (pool.length > 0) {
+                  MEAL_SLOTS.forEach((slot) => {
+                    plans.forEach((d) => {
+                      if (d[slot.key].recipeId) return;
+                      const candidates = filterRecipesForMealSlot(
+                        pool,
+                        slot.key,
+                        includeOptionalGroups
+                      );
+                      if (candidates.length === 0) return;
+                      assignRecipe(
+                        d.dayIndex,
+                        slot.key,
+                        candidates[Math.floor(Math.random() * candidates.length)].id
+                      );
+                    });
+                  });
+                }
+                setPrefsOpen(false);
+              }
+            }}
+            className="w-full h-10 rounded-xl bg-apricot-50 border border-apricot-200/70 text-apricot-600 text-xs font-semibold flex items-center justify-center gap-1.5"
+          >
+            <Sparkle size={14} weight="fill" />
+            智能随机填满本周空档
+          </button>
+        </div>
       </BottomSheet>
     </div>
   );

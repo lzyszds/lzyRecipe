@@ -43,7 +43,7 @@ export function RecipeDetail() {
     return (
       <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="text-center space-y-4">
-          <p className="text-text-secondary font-medium">菜谱不存在</p>
+          <p className="text-cocoa-400 text-xs font-medium">菜谱不存在</p>
           <Button variant="primary" onClick={() => navigate('/')}>
             返回首页
           </Button>
@@ -64,7 +64,7 @@ export function RecipeDetail() {
 
   return (
     <div className="pb-10">
-      <div className="relative h-60 sm:h-72 w-full bg-neutral-100">
+      <div className="relative h-48 sm:h-60 w-full bg-oat-100">
         <RecipeCoverImage
           recipeId={recipe.id}
           name={recipe.name}
@@ -74,14 +74,14 @@ export function RecipeDetail() {
           priority
           className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/10" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/10" />
 
         <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between p-4 pt-[calc(1rem+var(--safe-top))]">
           <IconButton
-            icon={<ArrowLeft size={18} weight={UI_ICON_WEIGHT} />}
+            icon={<ArrowLeft size={16} weight={UI_ICON_WEIGHT} />}
             label="返回"
             onClick={() => navigate(-1)}
-            className="!bg-black/40 !text-white backdrop-blur-md !shadow-none"
+            className="!bg-white/90 backdrop-blur-md !text-cocoa-900 !border-transparent !shadow-none"
           />
           <div className="flex items-center gap-2">
             <AddToWeeklyPlanButton recipeId={recipe.id} recipeName={recipe.name} />
@@ -101,112 +101,106 @@ export function RecipeDetail() {
         </div>
 
         {(coverRepairing || coverRepairMsg) && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/45 px-4">
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-cocoa-900/45 px-4">
             <div className="flex flex-col items-center gap-2 text-center text-white">
               {coverRepairing && (
                 <CircleNotch size={26} weight="bold" className="animate-spin" />
               )}
-              <p className="text-sm font-medium leading-snug">{coverRepairMsg}</p>
+              <p className="text-xs font-medium leading-snug">{coverRepairMsg}</p>
               {!coverRepairing && !coverRepairOk && (
-                <p className="text-xs text-white/75">可尝试「选择图片」手动上传</p>
+                <p className="text-[11px] text-white/75">可尝试「选择图片」手动上传</p>
               )}
             </div>
           </div>
         )}
       </div>
 
-      <div className="page-container relative z-10 -mt-6 space-y-5">
-        <section className="bg-white rounded-3xl p-5 shadow-card">
+      <div className="page-container relative z-10 -mt-5 space-y-3">
+        <section className="bg-white rounded-xl p-4 card-shadow border border-oat-100">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-text-primary leading-tight">
+              <h1 className="text-base font-bold text-cocoa-900 leading-tight">
                 {recipe.name}
               </h1>
-              <p className="text-xs text-text-secondary mt-1">
-                {recipe.category} · {recipe.cookTime} 分钟 · {difficulty.label}
+              <p className="text-[11px] text-cocoa-400 mt-1">
+                {recipe.category} · {recipe.cookTime}分钟 · {difficulty.label}
               </p>
             </div>
             <FavoriteHeart
               active={favorite}
+              size={16}
               onClick={() => toggleFavorite(recipe.id)}
+              className="!w-8 !h-8"
             />
           </div>
 
           {recipe.description && (
-            <p className="text-sm text-neutral-500 leading-relaxed mt-3">
+            <p className="text-xs text-cocoa-700 leading-relaxed mt-3">
               {recipe.description}
             </p>
           )}
         </section>
 
-        <section className="bg-white rounded-3xl p-5 shadow-card">
-          <h2 className="text-sm font-bold text-text-primary mb-2">食材清单</h2>
-          <ul className="divide-y divide-neutral-100">
-            {recipe.ingredients.map((ingredient, index) => {
-              const checked = checkedIngredients.has(index);
-              return (
-                <li key={index}>
-                  <button
-                    type="button"
-                    onClick={() => toggleIngredient(index)}
-                    className="w-full flex items-center gap-2.5 min-h-[2.75rem] py-2.5 text-left"
+        <section className="bg-white p-3.5 rounded-xl border border-oat-100 space-y-2">
+          <h2 className="text-xs font-bold text-cocoa-900">
+            食材清单（点击勾选备菜）
+          </h2>
+          {recipe.ingredients.map((ingredient, index) => {
+            const checked = checkedIngredients.has(index);
+            return (
+              <button
+                key={index}
+                type="button"
+                onClick={() => toggleIngredient(index)}
+                className="w-full p-2 rounded-lg bg-oat-50 flex items-center justify-between gap-3 text-left transition-colors"
+              >
+                <span className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={clsx(
+                      'w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors',
+                      checked
+                        ? 'bg-apricot-500 border-apricot-500 text-white'
+                        : 'border-cocoa-400 bg-white text-transparent'
+                    )}
                   >
-                    <span
-                      className={clsx(
-                        'w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 transition-colors',
-                        checked
-                          ? 'bg-primary border-primary'
-                          : 'border-neutral-300 bg-white'
-                      )}
-                    >
-                      {checked && <Check size={11} weight="bold" className="text-white" />}
-                    </span>
-                    <span
-                      className={clsx(
-                        'flex-1 text-sm transition-colors',
-                        checked
-                          ? 'text-neutral-400 line-through'
-                          : 'text-text-primary'
-                      )}
-                    >
-                      {ingredient.name}
-                    </span>
-                    <span
-                      className={clsx(
-                        'text-xs flex-shrink-0',
-                        checked ? 'text-neutral-300' : 'text-neutral-500'
-                      )}
-                    >
-                      {ingredient.amount}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                    <Check size={10} weight="bold" />
+                  </span>
+                  <span
+                    className={clsx(
+                      'text-xs truncate transition-colors',
+                      checked ? 'text-cocoa-400 line-through' : 'text-cocoa-900'
+                    )}
+                  >
+                    {ingredient.name}
+                  </span>
+                </span>
+                <span
+                  className={clsx(
+                    'text-[11px] flex-shrink-0',
+                    checked ? 'text-cocoa-200' : 'text-cocoa-400'
+                  )}
+                >
+                  {ingredient.amount}
+                </span>
+              </button>
+            );
+          })}
         </section>
 
-        <section className="bg-white rounded-3xl p-5 shadow-card">
-          <h2 className="text-sm font-bold text-text-primary mb-3">做法步骤</h2>
-          <div className="space-y-3">
-            {recipe.steps.map((step) => (
-              <p
-                key={step.order}
-                className="text-sm text-neutral-600 leading-relaxed"
-              >
-                <span className="font-bold text-text-primary mr-1.5">
-                  {step.order}.
-                </span>
-                {step.description}
-              </p>
-            ))}
-          </div>
+        <section className="bg-white p-3.5 rounded-xl border border-oat-100 space-y-2 leading-relaxed text-cocoa-700">
+          <h2 className="text-xs font-bold text-cocoa-900 mb-1">做法步骤</h2>
+          {recipe.steps.map((step) => (
+            <p key={step.order} className="text-xs text-cocoa-700 leading-relaxed">
+              <span className="font-bold text-cocoa-900 mr-1">{step.order}.</span>
+              {step.description}
+            </p>
+          ))}
         </section>
 
         {recipe.tips && (
-          <section className="rounded-3xl bg-sage-50 p-5">
-            <h2 className="text-sm font-bold text-sage-600 mb-2">小贴士</h2>
-            <p className="text-sm text-sage-600/90 leading-relaxed">{recipe.tips}</p>
+          <section className="rounded-xl bg-apricot-50 border border-apricot-200/60 p-3.5">
+            <h2 className="text-xs font-bold text-apricot-600 mb-1.5">小贴士</h2>
+            <p className="text-xs text-cocoa-700 leading-relaxed">{recipe.tips}</p>
           </section>
         )}
       </div>
