@@ -78,37 +78,46 @@ jobs:
         id: sdk
         shell: bash
         run: |
-          # GitHub 的 ubuntu 镜像自带 Android SDK 与 sdkmanager，直接用，避免额外安装出错
+          # 直接使用 GitHub ubuntu 镜像预装的 Android SDK（含 sdkmanager），不再调用 setup-android：
+          # 该 action 在当前镜像上会执行 sdkmanager --update 并因缺少 `tools` 包而失败
           SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
-          if [ ! -x "$SDK/cmdline-tools/latest/bin/sdkmanager" ] && [ ! -x "$SDK/cmdline-tools/16.0/bin/sdkmanager" ]; then
-            echo "::warning::未找到 sdkmanager，使用 setup-android 安装"
-            echo "need_setup=true" >> "$GITHUB_OUTPUT"
+          SDKM=$(ls "$SDK"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | head -n1)
+          if [ -z "$SDKM" ]; then
+            echo "::error::未找到 sdkmanager（$SDK/cmdline-tools/*/bin/sdkmanager）"
+            ls "$SDK" 2>/dev/null || true
+            exit 1
           fi
           echo "sdk=$SDK" >> "$GITHUB_OUTPUT"
+          echo "sdkmanager=$SDKM" >> "$GITHUB_OUTPUT"
           echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
-          ls "$SDK/ndk" 2>/dev/null || true
-          echo "预装 NDK 列表结束"
-
-      - name: Setup Android SDK (fallback)
-        if: steps.sdk.outputs.need_setup == 'true'
-        uses: android-actions/setup-android@v3
+          echo "sdkmanager: $SDKM"
+          {
+            echo "### Android SDK 环境"
+            echo "- SDK: \`$SDK\`"
+            echo "- sdkmanager: \`$SDKM\`"
+            echo "- 已装 NDK: $(ls "$SDK/ndk" 2>/dev/null | tr '
+' ' ')"
+            echo "- 平台: $(ls "$SDK/platforms" 2>/dev/null | tr '
+' ' ')"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Install NDK
         shell: bash
         run: |
           set -o pipefail
           SDK="${{ steps.sdk.outputs.sdk }}"
+          SDKM="${{ steps.sdk.outputs.sdkmanager }}"
           if [ -d "$SDK/ndk/$NDK_VERSION" ]; then
             echo "NDK $NDK_VERSION 已预装"
           else
-            SDKM=$(ls "$SDK"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | head -n1)
             echo "使用 $SDKM 安装 NDK $NDK_VERSION"
             yes | "$SDKM" --licenses > /dev/null 2>&1 || true
             "$SDKM" --install "ndk;$NDK_VERSION" "platforms;android-36" "build-tools;36.0.0" 2>&1 | tail -n 20
           fi
           echo "NDK_HOME=$SDK/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
           echo "ANDROID_NDK_HOME=$SDK/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+          echo "- 使用 NDK: \`$SDK/ndk/$NDK_VERSION\`" >> "$GITHUB_STEP_SUMMARY"
           ls "$SDK/ndk/$NDK_VERSION" | head -3
 
       - name: Write signing keystore
