@@ -270,6 +270,18 @@ console.log(`\x1b[32m[√]\x1b[0m APK 输出目录: ${releaseDir}`);
 if (!existsSync(join(projectRoot, 'lzyrecipe.keystore'))) {
   fail('未找到签名文件 lzyrecipe.keystore');
 }
+
+// 签名口令存在 keystore.properties（不进仓库）；缺失时按本机签名文件补齐，
+// 避免 build.gradle.kts 里的占位符被当成真实口令
+const keystorePropsPath = join(projectRoot, 'keystore.properties');
+if (!existsSync(keystorePropsPath)) {
+  writeFileSync(
+    keystorePropsPath,
+    ['storePassword=lzyrecipe123', 'keyAlias=lzyrecipe', 'keyPassword=lzyrecipe123', ''].join('\n'),
+    'utf8'
+  );
+  console.log('\x1b[32m[√]\x1b[0m 已生成 keystore.properties（签名口令）');
+}
 console.log('\x1b[32m[√]\x1b[0m 签名文件: lzyrecipe.keystore');
 
 // 公共环境变量

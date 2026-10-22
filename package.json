@@ -1,7 +1,7 @@
 {
   "name": "lzyrecipe",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,7 +17,11 @@
     "android:build": "node scripts/build-android.mjs",
     "android:build:debug": "node scripts/build-android.mjs debug",
     "android:build:fast": "node scripts/build-android.mjs --skip-rust",
-    "android:build:open": "node scripts/build-android.mjs --open"
+    "android:build:open": "node scripts/build-android.mjs --open",
+    "android:build:patch": "node scripts/build-android.mjs --bump=patch",
+    "android:build:minor": "node scripts/build-android.mjs --bump=minor",
+    "android:build:major": "node scripts/build-android.mjs --bump=major",
+    "release:tag": "node scripts/release-tag.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
