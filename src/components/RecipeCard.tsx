@@ -1,11 +1,10 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Recipe, DifficultyLevel } from '../types';
 import { clsx } from 'clsx';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { RecipeCoverImage } from './RecipeCoverImage';
 import { FavoriteHeart } from './motion/FavoriteHeart';
-import { getSuggestedSlotForRecipeId } from '../store/weeklyPlanStore';
-import { getTodayDayIndex } from '../lib/weeklyPlan';
+import { openAddToMealPlan } from '../lib/addToMealPlan';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -21,16 +20,14 @@ const difficultyLabel: Record<DifficultyLevel, string> = {
 };
 
 export function RecipeCard({ recipe, className, compact, hideFavorite }: RecipeCardProps) {
-  const navigate = useNavigate();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const favorite = isFavorite(recipe.id);
 
-  /** 「+ 餐盘」：跳转到周计划并直接打开该菜谱的排菜抽屉 */
-  const goAssign = (e: React.MouseEvent) => {
+  /** 「+ 餐盘」：就地弹出选择日期与餐次，不再跳转到周计划页 */
+  const openPlanSheet = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const slot = getSuggestedSlotForRecipeId(recipe.id, [recipe]);
-    navigate(`/weekly-plan?day=${getTodayDayIndex()}&meal=${slot}`);
+    openAddToMealPlan(recipe);
   };
 
   if (compact) {
@@ -126,7 +123,7 @@ export function RecipeCard({ recipe, className, compact, hideFavorite }: RecipeC
           </span>
           <button
             type="button"
-            onClick={goAssign}
+            onClick={openPlanSheet}
             className="shrink-0 px-2 py-0.5 rounded-md bg-apricot-50 border border-apricot-200/70 text-apricot-600 text-[10px] font-semibold hover:bg-apricot-500 hover:text-white transition-colors"
           >
             + 餐盘

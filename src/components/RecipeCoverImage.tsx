@@ -62,6 +62,9 @@ export function RecipeCoverImage({
     };
   }, [name, coverImage, category, coverOverride]);
 
+  // React 18 只认小写 fetchpriority，写成 camelCase 会触发“未知属性”警告
+  const imgAttrs = { fetchpriority: priority ? 'high' : 'auto' } as Record<string, string>;
+
   return (
     <img
       src={src}
@@ -69,7 +72,7 @@ export function RecipeCoverImage({
       className={clsx('block', className)}
       loading={priority ? 'eager' : 'lazy'}
       decoding={priority ? 'sync' : 'async'}
-      fetchPriority={priority ? 'high' : 'auto'}
+      {...imgAttrs}
     />
   );
 }

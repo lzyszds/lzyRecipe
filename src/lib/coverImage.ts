@@ -44,7 +44,7 @@ const MORANDI = {
   default: { c1: '#E8ECEC', c2: '#D2DADA' },
 };
 
-function getDishStyle(name: string, category?: string) {
+export function getDishStyle(name: string, category?: string) {
   if (name.includes('番茄') && name.includes('蛋')) {
     return { emoji: '🍅🥚', ...MORANDI.tomato };
   }
