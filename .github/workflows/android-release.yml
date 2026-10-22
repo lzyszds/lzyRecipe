@@ -61,7 +61,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -73,10 +73,19 @@ jobs:
         with:
           workspaces: src-tauri -> target
 
-      - name: Setup Android SDK and NDK
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          ndk-version: ${{ env.NDK_VERSION }}
+
+      - name: Install NDK
+        shell: bash
+        run: |
+          # 不通过 setup-android 的 ndk-version 参数安装：它会先执行 sdkmanager --update，
+          # 在新版 cmdline-tools 上会因找不到 `tools` 包而失败
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager --install "ndk;$NDK_VERSION" "platform-tools" > /dev/null
+          echo "NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$NDK_VERSION" >> "$GITHUB_ENV"
+          ls "$ANDROID_HOME/ndk/$NDK_VERSION" | head -3
 
       - name: Write signing keystore
         shell: bash
