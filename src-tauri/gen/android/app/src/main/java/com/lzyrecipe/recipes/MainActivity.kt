@@ -1,6 +1,7 @@
 package com.lzyrecipe.recipes
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
 import android.webkit.JavascriptInterface
@@ -16,15 +17,18 @@ class MainActivity : TauriActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    // 不让 WebView 绘制到状态栏下方，由系统保留状态栏区域
-    WindowCompat.setDecorFitsSystemWindows(window, true)
+    // 窗口背景设为页面底色，避免首帧绘制前系统栏区域出现未定义颜色
+    window.setBackgroundDrawable(ColorDrawable(APP_BACKGROUND))
 
+    // 全版本统一走边到边：内容铺到系统栏下方，状态栏区域直接显示页面自身的顶部背景
+    // （首页/菜谱库是吸顶头、详情页是整幅大图），不会再出现与页面不一致的色带
+    useEdgeToEdgeSystemBars()
     applySystemBarPadding(findViewById(android.R.id.content))
   }
 
   override fun onWebViewCreate(webView: WebView) {
     super.onWebViewCreate(webView)
-    webView.fitsSystemWindows = true
+    webView.fitsSystemWindows = false
     webView.addJavascriptInterface(StatusBarBridge(), "AndroidStatusBar")
   }
 
@@ -33,10 +37,30 @@ class MainActivity : TauriActivity() {
     @JavascriptInterface
     fun setStatusBar(color: String, darkIcons: Boolean) {
       runOnUiThread {
-        window.statusBarColor = Color.parseColor(color)
-        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars =
-          darkIcons
+        // 系统栏透明，颜色来自页面本身；这里只需保证图标明暗与窗口底色兜底一致
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+          isAppearanceLightStatusBars = darkIcons
+          isAppearanceLightNavigationBars = darkIcons
+        }
+        try {
+          window.setBackgroundDrawable(ColorDrawable(Color.parseColor(color)))
+        } catch (e: IllegalArgumentException) {
+          // 颜色格式异常时保留原窗口底色
+        }
       }
+    }
+  }
+
+  // 边到边显示：系统栏透明、内容铺满到系统栏下方，由窗口底色 + 页面背景兜底
+  @Suppress("DEPRECATION")
+  private fun useEdgeToEdgeSystemBars() {
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+    window.statusBarColor = Color.TRANSPARENT
+    window.navigationBarColor = Color.TRANSPARENT
+    window.isNavigationBarContrastEnforced = false
+    WindowInsetsControllerCompat(window, window.decorView).apply {
+      isAppearanceLightStatusBars = true
+      isAppearanceLightNavigationBars = true
     }
   }
 
@@ -57,5 +81,10 @@ class MainActivity : TauriActivity() {
       insets
     }
     ViewCompat.requestApplyInsets(view)
+  }
+
+  private companion object {
+    // 与 tailwind.config.js 中 oat-50 (#FCF9F5) 保持一致
+    const val APP_BACKGROUND: Int = 0xFFFCF9F5.toInt()
   }
 }

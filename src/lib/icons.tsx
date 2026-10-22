@@ -18,6 +18,7 @@ import {
   CalendarBlank,
   GridFour,
   Lightbulb,
+  NotePencil,
   ListChecks,
   DownloadSimple,
   Heart,
@@ -111,6 +112,7 @@ export const AppIcons = {
   settings: Gear,
   help: ChatCircle,
   sparkle: Sparkle,
+  notes: NotePencil,
 };
 
 interface AppIconProps {

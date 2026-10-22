@@ -21,6 +21,8 @@ export interface Recipe {
   cookTime: number;
   difficulty: 'easy' | 'medium' | 'hard';
   createdAt: string;
+  /** 由 AI 生成（写菜谱页一键生成时写入，列表里会加个小标记） */
+  aiGenerated?: boolean;
 }
 
 export interface Category {

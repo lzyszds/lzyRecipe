@@ -1,4 +1,5 @@
 import java.util.Properties
+import java.io.File
 
 plugins {
     id("com.android.application")
@@ -13,15 +14,32 @@ val tauriProperties = Properties().apply {
     }
 }
 
+// 签名口令不写进仓库：本地在仓库根目录放 keystore.properties，CI 由工作流重写本文件里的占位符。
+// 文件格式（与 build.gradle.kts 同级目录或仓库根目录均可）：
+//   storePassword=xxx
+//   keyAlias=xxx
+//   keyPassword=xxx
+val keystoreProperties = Properties().apply {
+    val candidates = listOf(
+        File(rootProject.projectDir, "../../../keystore.properties"),
+        File(rootProject.projectDir, "keystore.properties"),
+    )
+    val propFile = candidates.firstOrNull { it.exists() }
+    if (propFile != null) propFile.inputStream().use { load(it) }
+}
+fun keystoreValue(key: String, fallback: String): String =
+    keystoreProperties.getProperty(key)?.takeIf { it.isNotBlank() } ?: fallback
+
 android {
     compileSdk = 36
     namespace = "com.lzyrecipe.recipes"
     signingConfigs {
         create("release") {
             storeFile = file("../../../../lzyrecipe.keystore")
-            storePassword = "lzyrecipe123"
-            keyAlias = "lzyrecipe"
-            keyPassword = "lzyrecipe123"
+            // 占位符由 GitHub Actions 用 Secrets 替换；本地通过 keystore.properties 提供
+            storePassword = keystoreValue("storePassword", "KEYSTORE_PASSWORD")
+            keyAlias = keystoreValue("keyAlias", "KEY_ALIAS")
+            keyPassword = keystoreValue("keyPassword", "KEY_PASSWORD")
         }
     }
     defaultConfig {

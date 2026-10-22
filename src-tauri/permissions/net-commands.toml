@@ -1,0 +1,7 @@
+[[permission]]
+identifier = "allow-net-commands"
+description = "允许通用网络请求与语音识别（同步、AI 调用）"
+commands.allow = [
+  "http_request",
+  "speech_to_text"
+]
