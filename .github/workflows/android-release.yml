@@ -96,10 +96,8 @@ jobs:
             echo "### Android SDK 环境"
             echo "- SDK: \`$SDK\`"
             echo "- sdkmanager: \`$SDKM\`"
-            echo "- 已装 NDK: $(ls "$SDK/ndk" 2>/dev/null | tr '
-' ' ')"
-            echo "- 平台: $(ls "$SDK/platforms" 2>/dev/null | tr '
-' ' ')"
+            echo "- 已装 NDK: $(ls "$SDK/ndk" 2>/dev/null | paste -sd, -)"
+            echo "- 平台: $(ls "$SDK/platforms" 2>/dev/null | paste -sd, -)"
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Install NDK
