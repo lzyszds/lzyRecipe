@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, CircleNotch } from '@phosphor-icons/react';
+import { ArrowLeft, Check, CircleNotch, Sparkle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { recipes } from '../data/recipes';
 import { useFavoritesStore } from '../store/favoritesStore';
@@ -12,6 +12,7 @@ import { FavoriteHeart } from '../components/motion/FavoriteHeart';
 import { Button } from '../components/ui/Button';
 import { CoverRepairButton } from '../components/CoverRepairButton';
 import { AddToWeeklyPlanButton } from '../components/AddToWeeklyPlanButton';
+import { RecipeQaSheet } from '../components/RecipeQaSheet';
 import { UI_ICON_WEIGHT } from '../lib/icons';
 
 const difficultyConfig: Record<DifficultyLevel, { label: string }> = {
@@ -27,6 +28,7 @@ export function RecipeDetail() {
   const [coverRepairing, setCoverRepairing] = useState(false);
   const [coverRepairMsg, setCoverRepairMsg] = useState('');
   const [coverRepairOk, setCoverRepairOk] = useState(true);
+  const [qaOpen, setQaOpen] = useState(false);
 
   const importedRecipes = useImportedRecipesStore((s) => s.importedRecipes);
   const allRecipes = [...recipes, ...importedRecipes];
@@ -203,7 +205,27 @@ export function RecipeDetail() {
             <p className="text-xs text-cocoa-700 leading-relaxed">{recipe.tips}</p>
           </section>
         )}
+
+        {/* AI 问答：围绕这道菜回答做法、替换食材等问题 */}
+        <button
+          type="button"
+          onClick={() => setQaOpen(true)}
+          className="w-full rounded-xl bg-white border border-oat-100 px-3.5 py-3 flex items-center gap-2.5 text-left active:scale-[0.99] transition card-shadow"
+        >
+          <span className="w-8 h-8 rounded-lg bg-apricot-50 text-apricot-500 flex items-center justify-center flex-shrink-0">
+            <Sparkle size={16} weight="fill" />
+          </span>
+          <span className="flex-1 min-w-0">
+            <span className="block text-xs font-bold text-cocoa-900">问 AI</span>
+            <span className="block text-[11px] text-cocoa-400 mt-0.5 truncate">
+              火候、替换食材、调整份量，随时提问
+            </span>
+          </span>
+          <span className="text-[11px] font-medium text-apricot-600 shrink-0">去提问</span>
+        </button>
       </div>
+
+      <RecipeQaSheet recipe={recipe} isOpen={qaOpen} onClose={() => setQaOpen(false)} />
     </div>
   );
 }

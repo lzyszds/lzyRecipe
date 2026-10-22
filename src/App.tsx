@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Home } from './pages/Home';
@@ -11,15 +12,29 @@ import { AllRecipes } from './pages/AllRecipes';
 import { CreateRecipe } from './pages/CreateRecipe';
 import { Settings } from './pages/Settings';
 import { Help } from './pages/Help';
+import { Notes } from './pages/Notes';
 import { WeeklyPlanPage } from './pages/WeeklyPlanPage';
 import { ImportModal } from './components/ImportModal';
 import { BottomNav } from './components/BottomNav';
 import { AnimatedPage } from './components/motion/AnimatedPage';
 import { useUIStore } from './store/uiStore';
 import { ScrollToTop } from './components/ScrollToTop';
+import { syncNativeStatusBar } from './lib/statusBar';
+import { startAutoSync } from './lib/cloudSync';
+import { AddToMealPlanProvider } from './components/AddToMealPlanProvider';
+
+/** 页面切换动画结束后同步一次原生状态栏颜色（原生端只在启动时设置一次，切页会残留上一页颜色） */
+function useStatusBarSync() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    const timer = window.setTimeout(syncNativeStatusBar, 360);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
+}
 
 function AppRoutes() {
   const location = useLocation();
+  useStatusBarSync();
   const showBottomNav = ['/', '/recipes', '/weekly-plan', '/profile'].includes(
     location.pathname
   );
@@ -118,6 +133,14 @@ function AppRoutes() {
             }
           />
           <Route
+            path="/notes"
+            element={
+              <AnimatedPage className="page-shell">
+                <Notes />
+              </AnimatedPage>
+            }
+          />
+          <Route
             path="/help"
             element={
               <AnimatedPage className="page-shell">
@@ -135,11 +158,16 @@ function AppRoutes() {
 export default function App() {
   const { isImportOpen, closeImportModal } = useUIStore();
 
+  useEffect(() => {
+    startAutoSync();
+  }, []);
+
   return (
     <>
       <Router>
         <AppRoutes />
       </Router>
+      <AddToMealPlanProvider />
       <ImportModal isOpen={isImportOpen} onClose={closeImportModal} />
     </>
   );

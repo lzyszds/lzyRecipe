@@ -4,6 +4,7 @@ import {
   CaretDown,
   Check,
   ForkKnife,
+  NotePencil,
   Plus,
   ShoppingBag,
   X,
@@ -71,8 +72,8 @@ export function AppHeader() {
 
   return (
     <>
-      <header className="page-header">
-        <div className="page-container py-2.5 flex items-center justify-between gap-3">
+      <header className="page-header !border-b-0">
+        <div className="page-container py-2.5 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => navigate('/profile')}
@@ -94,6 +95,16 @@ export function AppHeader() {
             </span>
           </button>
 
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => navigate('/notes')}
+            aria-label="笔记"
+            title="笔记"
+            className="w-8 h-8 rounded-lg bg-white border border-oat-200/70 card-shadow flex items-center justify-center text-apricot-500 active:scale-95 transition flex-shrink-0"
+          >
+            <NotePencil size={14} weight={UI_ICON_WEIGHT} />
+          </button>
           <button
             type="button"
             onClick={() => setCartOpen(true)}
@@ -105,6 +116,7 @@ export function AppHeader() {
               {checkedCount}/{items.length}
             </span>
           </button>
+          </div>
         </div>
       </header>
 

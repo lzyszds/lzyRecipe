@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Trash, CircleNotch } from '@phosphor-icons/react';
+import { Sparkle, Plus, Trash, CircleNotch } from '@phosphor-icons/react';
 import { categories } from '../data/recipes';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
+import { useSettingsStore, isAiConfigured } from '../store/settingsStore';
 import { DifficultyLevel, Ingredient, Step } from '../types';
 import { CoverImageField } from '../components/CoverImageField';
 import { PageHeader } from '../components/ui/PageHeader';
@@ -10,10 +11,12 @@ import { PageMain } from '../components/ui/PageLayout';
 import { Button } from '../components/ui/Button';
 import { IconButton } from '../components/ui/IconButton';
 import { SectionHeader } from '../components/ui/PageHeader';
+import { BottomSheet } from '../components/ui/BottomSheet';
 import {
   generateCoverImageDataUrlWithRetry,
   getDefaultCoverPlaceholder,
 } from '../lib/coverImage';
+import { generateRecipeDraft, normalizeDraft } from '../lib/aiRecipes';
 
 const difficultyOptions: { value: DifficultyLevel; label: string }[] = [
   { value: 'easy', label: '简单' },
@@ -38,6 +41,52 @@ export function CreateRecipe() {
   const [steps, setSteps] = useState<Step[]>([{ order: 1, description: '' }]);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [aiGenerated, setAiGenerated] = useState(false);
+
+  // AI 一键生成
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiIdea, setAiIdea] = useState('');
+  const [aiServings, setAiServings] = useState('2 人份');
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState('');
+  // 订阅设置变化：在设置页填完 Key 返回后立即生效
+  const aiSettings = useSettingsStore((s) => s.ai);
+  const aiReady = isAiConfigured(aiSettings);
+
+  const handleAiGenerate = async () => {
+    if (!aiIdea.trim()) {
+      setAiError('先写一个菜名或食材，例如「番茄牛腩」「剩下的鸡胸肉」');
+      return;
+    }
+    setAiBusy(true);
+    setAiError('');
+    try {
+      const draft = await generateRecipeDraft({
+        idea: aiIdea,
+        category,
+        servings: aiServings,
+      });
+      const form = normalizeDraft(draft, aiIdea);
+      setName(form.name);
+      if (form.category && categories.some((c) => c.name === form.category)) {
+        setCategory(form.category);
+      }
+      setDescription(form.description);
+      setCookTime(form.cookTime);
+      setDifficulty(form.difficulty);
+      setTips(form.tips);
+      setIngredients(form.ingredients);
+      setSteps(form.steps.map((description, index) => ({ order: index + 1, description })));
+      setCoverImage('');
+      setAiGenerated(true);
+      setAiOpen(false);
+      setAiIdea('');
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setAiBusy(false);
+    }
+  };
 
   const updateIngredient = (index: number, field: keyof Ingredient, value: string) => {
     setIngredients((prev) =>
@@ -97,6 +146,7 @@ export function CreateRecipe() {
         cookTime: cookTime || 30,
         difficulty,
         createdAt: new Date().toISOString().split('T')[0],
+        ...(aiGenerated ? { aiGenerated: true } : {}),
       },
     ]);
 
@@ -128,6 +178,30 @@ export function CreateRecipe() {
             {error}
           </div>
         )}
+
+        <section className="card card-body flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs font-bold text-cocoa-900 flex items-center gap-1">
+              <Sparkle size={14} weight="fill" className="text-apricot-500" />
+              AI 一键生成
+            </p>
+            <p className="text-[11px] text-cocoa-400 mt-1">
+              {aiReady ? '给个菜名或食材，自动写好食材、步骤和小贴士' : '需先在「设置 → AI 助手」里配置接口和 Key'}
+            </p>
+          </div>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="shrink-0"
+            onClick={() => {
+              setAiError('');
+              setAiOpen(true);
+            }}
+            disabled={!aiReady}
+          >
+            生成
+          </Button>
+        </section>
 
         <section className="card card-body space-y-4">
           <div>
@@ -306,6 +380,54 @@ export function CreateRecipe() {
           {saving ? '保存中…' : '保存菜谱'}
         </Button>
       </PageMain>
+
+      <BottomSheet
+        isOpen={aiOpen}
+        onClose={() => !aiBusy && setAiOpen(false)}
+        title="AI 写菜谱"
+        description="生成后可继续修改，再点保存"
+        bodyClassName="space-y-3"
+      >
+        <div>
+          <label className="form-label">菜名或现有食材</label>
+          <textarea
+            value={aiIdea}
+            onChange={(e) => setAiIdea(e.target.value)}
+            className="input-area !min-h-[5rem] bg-white"
+            placeholder="例如：番茄牛腩 / 冰箱里有鸡蛋、青椒和米饭"
+            disabled={aiBusy}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <label className="form-label !mb-0 shrink-0">份量</label>
+          <input
+            value={aiServings}
+            onChange={(e) => setAiServings(e.target.value)}
+            className="input-field bg-white flex-1"
+            placeholder="2 人份"
+            disabled={aiBusy}
+          />
+        </div>
+        {aiError && (
+          <p className="text-[11px] text-red-500 bg-red-50 rounded-lg p-2.5 leading-relaxed">
+            {aiError}
+          </p>
+        )}
+        <Button
+          className="w-full"
+          onClick={handleAiGenerate}
+          disabled={aiBusy}
+          icon={
+            aiBusy ? (
+              <CircleNotch size={16} weight="bold" className="animate-spin" />
+            ) : (
+              <Sparkle size={16} weight="fill" />
+            )
+          }
+        >
+          {aiBusy ? '正在生成…' : '生成菜谱'}
+        </Button>
+      </BottomSheet>
     </div>
   );
 }

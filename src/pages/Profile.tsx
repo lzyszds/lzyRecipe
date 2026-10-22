@@ -23,6 +23,7 @@ export function Profile() {
     { label: '我的收藏', value: `${favorites.length} 道`, icon: AppIcons.favorite, onClick: () => navigate('/favorites') },
     { label: '我的导入', value: `${importedRecipes.length} 道`, icon: AppIcons.imported, onClick: () => navigate('/imported') },
     { label: '导入菜谱', value: '', icon: AppIcons.importFile, onClick: openImportModal },
+    { label: '笔记', value: '', icon: AppIcons.notes, onClick: () => navigate('/notes') },
     { label: '设置', value: '', icon: AppIcons.settings, onClick: () => navigate('/settings') },
     { label: '帮助与反馈', value: '', icon: AppIcons.help, onClick: () => navigate('/help') },
   ];

@@ -121,10 +121,13 @@ body {
   }
 
   /* ── Layout ── */
+  /* 不透明底色：Android 边到边时头部会延伸到状态栏下方，半透明会让状态栏区域颜色不一致 */
   .page-header {
-    @apply sticky z-40 top-0 bg-oat-50/95 backdrop-blur-md
+    @apply sticky z-40 top-0 bg-oat-50
            border-b border-oat-100;
     padding-top: var(--safe-top);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
   }
 
   .page-header-row {
