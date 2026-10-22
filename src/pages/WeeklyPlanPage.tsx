@@ -13,6 +13,7 @@ import { PageMain } from '../components/ui/PageLayout';
 import { BottomSheet } from '../components/ui/BottomSheet';
 import { AppHeader } from '../components/AppHeader';
 import { WeeklyPlanPickerModal } from '../components/WeeklyPlanPickerModal';
+import { getDayNumber, getDayTag } from '../lib/weeklyPlanDate';
 import { WeeklyPlanShareBar } from '../components/WeeklyPlanShareBar';
 import { WeeklyPlanScopeToggles } from '../components/WeeklyPlanScopeToggles';
 import { WeeklyPlanTemplates } from '../components/WeeklyPlanTemplates';
@@ -39,23 +40,6 @@ interface PickingTarget {
 function parseMealSlot(value: string | null): MealSlot | null {
   if (value === 'breakfast' || value === 'lunch' || value === 'dinner') return value;
   return null;
-}
-
-function getDayNumber(weekKey: string, dayIndex: number): number {
-  const monday = new Date(`${weekKey}T00:00:00`);
-  if (Number.isNaN(monday.getTime())) return dayIndex + 1;
-  const date = new Date(monday);
-  date.setDate(monday.getDate() + dayIndex);
-  return date.getDate();
-}
-
-function getDayTag(dayIndex: number, todayIndex: number): string {
-  const diff = dayIndex - todayIndex;
-  if (diff === 0) return '今天';
-  if (diff === -1) return '昨天';
-  if (diff === 1) return '明天';
-  if (diff === 2) return '后天';
-  return `周${WEEK_DAYS[dayIndex].slice(2)}`;
 }
 
 export function WeeklyPlanPage() {

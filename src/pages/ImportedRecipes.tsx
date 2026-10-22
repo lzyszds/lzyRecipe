@@ -8,8 +8,10 @@ import { IconButton } from '../components/ui/IconButton';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { useUIStore } from '../store/uiStore';
 import { UI_ICON_WEIGHT } from '../lib/icons';
+import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 export function ImportedRecipes() {
+  useScrollRestoration('/imported');
   const navigate = useNavigate();
   const { importedRecipes, clearImportedRecipes, removeImportedRecipe } = useImportedRecipesStore();
   const openImportModal = useUIStore((s) => s.openImportModal);

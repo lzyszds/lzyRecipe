@@ -1,18 +1,27 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-/** 路由切换时滚到页面顶部，避免沿用上一页的 scroll 位置 */
+/** 自己管理滚动位置的列表页：由 useScrollRestoration 负责回顶/恢复，这里不再插手 */
+const SELF_MANAGED_PATHS = ['/recipes', '/search', '/category', '/favorites', '/imported'];
+
+function isSelfManaged(pathname: string) {
+  return SELF_MANAGED_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+/**
+ * 非列表页切换时把滚动位置归零，避免新页面沿用上一页的 scroll 位置。
+ * 列表页自己会处理（首次进入回顶、返回时恢复原位置），这里必须跳过：
+ * 否则页面切换瞬间的“归零”会触发滚动事件，把列表页刚记录的离开位置覆盖成 0。
+ */
 export function ScrollToTop() {
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    // 仅真正的页面切换时回到顶部；同页切换查询参数（如分类筛选）保持滚动
+  useLayoutEffect(() => {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
+    if (isSelfManaged(pathname)) return;
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-
-    // 内部滚动容器由各自页面通过 sessionStorage 维护位置，这里交给页面自行恢复
   }, [pathname]);
 
   return null;

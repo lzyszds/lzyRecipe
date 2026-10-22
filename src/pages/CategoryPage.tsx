@@ -9,6 +9,7 @@ import { IconButton } from '../components/ui/IconButton';
 import { useAllRecipes, getCategoriesWithCounts } from '../lib/recipes';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { getCategoryIcon, UI_ICON_WEIGHT } from '../lib/icons';
+import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 export function CategoryPage() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export function CategoryPage() {
   const favorites = useFavoritesStore((s) => s.favorites);
 
   const decodedName = decodeURIComponent(name ?? '');
+  useScrollRestoration(`/category/${encodeURIComponent(decodedName)}`);
   const categoryRecipes = allRecipes.filter((r) => r.category === decodedName);
   const CategoryIconComponent = getCategoryIcon(decodedName);
 

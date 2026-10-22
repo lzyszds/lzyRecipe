@@ -7,8 +7,10 @@ import { useFavoritesStore } from '../store/favoritesStore';
 import { recipes } from '../data/recipes';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { UI_ICON_WEIGHT } from '../lib/icons';
+import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 export function Favorites() {
+  useScrollRestoration('/favorites');
   const { favorites, removeFavorite } = useFavoritesStore();
   const importedRecipes = useImportedRecipesStore((s) => s.importedRecipes);
   const allRecipes = [...recipes, ...importedRecipes];

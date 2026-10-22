@@ -11,6 +11,11 @@ node_modules
 dist
 dist-ssr
 release/android
+
+# 安卓签名（不进仓库，口径见 README「应用更新」）
+keystore.properties
+lzyrecipe.keystore
+*.jks
 build-log*.txt
 *.local
 
@@ -24,3 +29,7 @@ build-log*.txt
 *.njsproj
 *.sln
 *.sw?
+# 本机开发环境（cargo 镜像/代理、Claude 本地设置、打包调试日志）
+.cargo/
+src-tauri/.cargo/
+.claude/

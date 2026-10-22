@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { BookOpen, Heart, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { clsx } from 'clsx';
@@ -8,12 +8,9 @@ import { Button } from '../components/ui/Button';
 import { AppHeader } from '../components/AppHeader';
 import { useAllRecipes, getCategoriesWithCounts } from '../lib/recipes';
 import { UI_ICON_WEIGHT } from '../lib/icons';
+import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 const ALL = '全部';
-
-// 模块级缓存：切到菜谱详情再返回时，保留所选分类与滚动位置
-let cachedCategory = ALL;
-let cachedScrollTop = 0;
 
 export function AllRecipes() {
   const allRecipes = useAllRecipes();
@@ -23,36 +20,15 @@ export function AllRecipes() {
 
   const queryCategory = searchParams.get('category');
   const activeCategory =
-    queryCategory && categories.some((c) => c.name === queryCategory)
-      ? queryCategory
-      : cachedCategory;
+    queryCategory && categories.some((c) => c.name === queryCategory) ? queryCategory : ALL;
 
-  useEffect(() => {
-    cachedCategory = activeCategory;
-  }, [activeCategory]);
-
-  // 记录 / 恢复滚动位置
-  useEffect(() => {
-    const onScroll = () => {
-      cachedScrollTop = window.scrollY;
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    const restore = () => {
-      if (cachedScrollTop > 0) window.scrollTo({ top: cachedScrollTop, behavior: 'instant' });
-    };
-    const timer = window.setTimeout(restore, 60);
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.clearTimeout(timer);
-    };
-  }, []);
+  // 按分类分别记忆滚动位置：详情页返回时停在原来的位置
+  useScrollRestoration(
+    activeCategory === ALL ? '/recipes' : `/recipes?category=${encodeURIComponent(activeCategory)}`
+  );
 
   const selectCategory = (name: string) => {
     if (name === activeCategory) return;
-    cachedCategory = name;
-    cachedScrollTop = 0;
     window.scrollTo({ top: 0, behavior: 'instant' });
     if (name === ALL) setSearchParams({}, { replace: true });
     else setSearchParams({ category: name }, { replace: true });
@@ -77,8 +53,8 @@ export function AllRecipes() {
       <AppHeader />
 
       <PageMain className="space-y-3">
-        {/* 搜索 + 分类胶囊（吸顶） */}
-        <div className="sticky top-[calc(var(--safe-top)+3.25rem)] z-30 -mx-4 px-4 py-1 bg-oat-50/95 backdrop-blur-md space-y-2.5">
+        {/* 搜索 + 分类胶囊（吸顶，不透明底色避免滚动时与头部/状态栏出现色差） */}
+        <div className="sticky top-[calc(var(--safe-top)+3.25rem)] z-30 -mx-4 px-4 py-1 bg-oat-50 space-y-2.5">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <MagnifyingGlass

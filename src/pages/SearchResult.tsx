@@ -6,10 +6,12 @@ import { RecipeCard } from '../components/RecipeCard';
 import { SearchBar } from '../components/SearchBar';
 import { recipes } from '../data/recipes';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
+import { useScrollRestoration } from '../hooks/useScrollRestoration';
 
 export function SearchResult() {
   const [searchParams] = useSearchParams();
   const keyword = searchParams.get('keyword') || '';
+  useScrollRestoration(keyword ? `/search?keyword=${encodeURIComponent(keyword)}` : '/search');
   const importedRecipes = useImportedRecipesStore((s) => s.importedRecipes);
   const allRecipes = [...recipes, ...importedRecipes];
 
