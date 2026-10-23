@@ -33,9 +33,9 @@ export const DEFAULT_SYNC: CloudSyncConfig = {
 };
 
 export const DEFAULT_AI: AiSettings = {
-  baseUrl: 'https://api.openai.com/v1',
+  baseUrl: 'https://integrate.api.nvidia.com/v1',
   apiKey: '',
-  model: 'gpt-4o-mini',
+  model: 'meta/llama-3.1-70b-instruct',
 };
 
 export const useSettingsStore = create<SettingsState>()(

@@ -52,22 +52,25 @@ interface AiSettingsModalProps {
 
 const PRESETS = [
   {
-    name: 'OpenAI (官方)',
-    baseUrl: 'https://api.openai.com/v1',
-    model: 'gpt-4o-mini',
-    desc: '全球顶尖大模型，推荐 gpt-4o-mini 高性价比极速响应',
+    id: 'custom',
+    name: '自定义接口 (OpenAI 规范)',
+    baseUrl: '',
+    model: '',
+    desc: '自由填写任意兼容 OpenAI /chat/completions 规范的 API 接口',
   },
   {
+    id: 'nvidia',
     name: 'NVIDIA NIM',
     baseUrl: 'https://integrate.api.nvidia.com/v1',
     model: 'meta/llama-3.1-70b-instruct',
-    desc: '英伟达云端高性能微服务，支持 Llama 3.1、Nemotron 等，含免费额度',
+    desc: '英伟达云端高性能微服务，支持 Llama 3.1、Nemotron 等，含免费体验额度',
   },
   {
-    name: '自定义接口',
-    baseUrl: '',
-    model: '',
-    desc: '支持任何标准兼容 OpenAI 规范的第三方中转或私有化部署接口',
+    id: 'siliconflow',
+    name: '硅基流动',
+    baseUrl: 'https://api.siliconflow.cn/v1',
+    model: 'deepseek-ai/DeepSeek-V3',
+    desc: '国内优质模型托管平台，支持 DeepSeek-V3/R1、Qwen 等，极速响应',
   },
 ];
 
@@ -80,9 +83,16 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
   const { ai, setAi, sync } = useSettingsStore();
   const syncConfigured = isSyncConfigured(sync);
 
-  const [baseUrl, setBaseUrl] = useState(ai.baseUrl || 'https://api.openai.com/v1');
+  const getPresetId = (url: string) => {
+    if (url === 'https://integrate.api.nvidia.com/v1') return 'nvidia';
+    if (url === 'https://api.siliconflow.cn/v1') return 'siliconflow';
+    return 'custom';
+  };
+
+  const [baseUrl, setBaseUrl] = useState(ai.baseUrl || 'https://integrate.api.nvidia.com/v1');
   const [apiKey, setApiKey] = useState(ai.apiKey || '');
-  const [model, setModel] = useState(ai.model || 'gpt-4o-mini');
+  const [model, setModel] = useState(ai.model || 'meta/llama-3.1-70b-instruct');
+  const [selectedPresetId, setSelectedPresetId] = useState<string>(getPresetId(ai.baseUrl || ''));
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [syncingCloud, setSyncingCloud] = useState(false);
@@ -101,9 +111,11 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
 
   useEffect(() => {
     if (visible) {
-      setBaseUrl(ai.baseUrl || 'https://api.openai.com/v1');
+      const currentUrl = ai.baseUrl || 'https://integrate.api.nvidia.com/v1';
+      setBaseUrl(currentUrl);
       setApiKey(ai.apiKey || '');
-      setModel(ai.model || 'gpt-4o-mini');
+      setModel(ai.model || 'meta/llama-3.1-70b-instruct');
+      setSelectedPresetId(getPresetId(currentUrl));
       setTestResult(null);
       setViewMode('form');
       setSearchQuery('');
@@ -112,19 +124,27 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
   }, [visible, ai]);
 
   const handleApplyPreset = (preset: (typeof PRESETS)[0]) => {
-    if (preset.baseUrl) {
+    setSelectedPresetId(preset.id);
+    if (preset.id === 'custom') {
+      toast({ type: 'info', message: '已切换为自定义接口（支持任意 OpenAI API 格式）' });
+    } else {
       setBaseUrl(preset.baseUrl);
       setModel(preset.model);
+      toast({ type: 'info', message: `已应用 ${preset.name} 预设` });
     }
     setRemoteModels([]);
     setTestResult(null);
-    toast({ type: 'info', message: `已应用 ${preset.name} 预设` });
+  };
+
+  const handleBaseUrlChange = (text: string) => {
+    setBaseUrl(text);
+    setSelectedPresetId(getPresetId(text.trim()));
   };
 
   const handleSave = async () => {
-    const finalBaseUrl = baseUrl.trim() || 'https://api.openai.com/v1';
+    const finalBaseUrl = baseUrl.trim() || 'https://integrate.api.nvidia.com/v1';
     const finalApiKey = apiKey.trim();
-    const finalModel = model.trim() || 'gpt-4o-mini';
+    const finalModel = model.trim() || 'meta/llama-3.1-70b-instruct';
 
     setAi({
       baseUrl: finalBaseUrl,
@@ -150,9 +170,9 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
       toast({ type: 'warning', message: '请先在「设置 - 云同步」中配置私人密钥' });
       return;
     }
-    const finalBaseUrl = baseUrl.trim() || 'https://api.openai.com/v1';
+    const finalBaseUrl = baseUrl.trim() || 'https://integrate.api.nvidia.com/v1';
     const finalApiKey = apiKey.trim();
-    const finalModel = model.trim() || 'gpt-4o-mini';
+    const finalModel = model.trim() || 'meta/llama-3.1-70b-instruct';
 
     setAi({
       baseUrl: finalBaseUrl,
@@ -290,16 +310,16 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
       <SafeAreaView edges={['bottom']} style={styles.safeArea}>
         {viewMode === 'form' ? (
           <>
-            {/* 顶部标题栏 */}
-            <View style={styles.header}>
-              <View style={styles.titleRow}>
+            {/* 顶部标题栏：清晰规范的左右布局 */}
+            <View style={styles.formHeader}>
+              <View style={styles.formHeaderLeft}>
                 <View style={styles.iconBadge}>
                   <Sparkles size={18} color="#FFFFFF" />
                 </View>
-                <View>
-                  <Text style={styles.sheetTitle}>AI 智能厨师配置</Text>
-                  <Text style={styles.sheetSubtitle}>
-                    标准 OpenAI 兼容规范 · 支持 NVIDIA NIM 与云端同步
+                <View style={styles.titleTextWrap}>
+                  <Text style={styles.sheetTitle}>AI 助手配置</Text>
+                  <Text style={styles.sheetSubtitle} numberOfLines={1}>
+                    OpenAI 格式 · 支持 NVIDIA/硅基/自定义
                   </Text>
                 </View>
               </View>
@@ -307,6 +327,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 onPress={onClose}
                 style={styles.closeBtn}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                activeOpacity={0.7}
               >
                 <X size={18} color={Palette.inkMuted} />
               </TouchableOpacity>
@@ -327,11 +348,10 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                   contentContainerStyle={styles.presetsRow}
                 >
                   {PRESETS.map((p) => {
-                    const isSelected =
-                      p.baseUrl ? baseUrl === p.baseUrl : !baseUrl;
+                    const isSelected = selectedPresetId === p.id;
                     return (
                       <TouchableOpacity
-                        key={p.name}
+                        key={p.id}
                         style={[
                           styles.presetChip,
                           isSelected && styles.presetChipActive,
@@ -361,15 +381,15 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 </View>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="https://api.openai.com/v1"
+                  placeholder="https://integrate.api.nvidia.com/v1"
                   placeholderTextColor={Palette.cocoa[400]}
                   value={baseUrl}
-                  onChangeText={setBaseUrl}
+                  onChangeText={handleBaseUrlChange}
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
                 <Text style={styles.inputHint}>
-                  如 NVIDIA NIM 地址填 https://integrate.api.nvidia.com/v1
+                  支持任何遵循 OpenAI /chat/completions 规范的 API 接口
                 </Text>
               </View>
 
@@ -473,7 +493,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 </View>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="gpt-4o-mini 或 meta/llama-3.1-70b-instruct"
+                  placeholder="meta/llama-3.1-70b-instruct 或 deepseek-ai/DeepSeek-V3"
                   placeholderTextColor={Palette.cocoa[400]}
                   value={model}
                   onChangeText={setModel}
@@ -541,29 +561,31 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
             </ScrollView>
           </>
         ) : (
-          /* 模型选择视图 */
+          /* 模型选择视图：标准对称三列顶部栏 */
           <View style={styles.pickerContainer}>
-            {/* 顶栏 */}
-            <View style={styles.header}>
+            <View style={styles.pickerHeader}>
               <TouchableOpacity
                 onPress={() => setViewMode('form')}
-                style={styles.backBtn}
+                style={styles.pickerNavBtn}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                activeOpacity={0.7}
               >
                 <ChevronLeft size={20} color={Palette.cocoa[700]} />
-                <Text style={styles.backBtnText}>返回配置</Text>
               </TouchableOpacity>
-              <View style={styles.pickerTitleBox}>
+
+              <View style={styles.pickerTitleCenter}>
                 <Text style={styles.sheetTitle}>选择可用模型</Text>
                 <Text style={styles.sheetSubtitle}>
-                  共 {remoteModels.length} 个模型
+                  共 {remoteModels.length} 个模型 · 点击即选
                 </Text>
               </View>
+
               <TouchableOpacity
                 onPress={() => loadModels(true)}
-                style={styles.refreshBtn}
+                style={styles.pickerNavBtn}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 disabled={fetchingModels}
+                activeOpacity={0.7}
               >
                 {fetchingModels ? (
                   <ActivityIndicator size="small" color={Palette.primary} />
@@ -734,7 +756,9 @@ const styles = StyleSheet.create({
   safeArea: {
     width: '100%',
   },
-  header: {
+
+  // 表单主视图顶栏
+  formHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -744,10 +768,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: Palette.dockBorder,
   },
-  titleRow: {
+  formHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    flex: 1,
+    marginRight: 12,
   },
   iconBadge: {
     width: 36,
@@ -756,6 +782,9 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.primary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  titleTextWrap: {
+    flex: 1,
   },
   sheetTitle: {
     fontSize: 16,
@@ -768,34 +797,39 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   closeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     backgroundColor: Palette.oat[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backBtn: {
+
+  // 模型选择器顶栏（对称三列布局）
+  pickerHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 14,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Palette.dockBorder,
   },
-  backBtnText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: Palette.cocoa[700],
-  },
-  pickerTitleBox: {
-    alignItems: 'center',
-  },
-  refreshBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(217, 107, 56, 0.08)',
+  pickerNavBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Palette.oat[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
+  pickerTitleCenter: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 8,
+  },
+
   scrollArea: {
     maxHeight: 540,
   },
@@ -820,7 +854,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   presetChipActive: {
-    backgroundColor: 'rgba(217, 107, 56, 0.1)',
+    backgroundColor: 'rgba(217, 107, 56, 0.12)',
     borderColor: Palette.primary,
   },
   presetChipText: {
@@ -830,6 +864,7 @@ const styles = StyleSheet.create({
   },
   presetChipTextActive: {
     color: Palette.primary,
+    fontWeight: '700',
   },
   inputGroup: {
     gap: 6,
@@ -1004,7 +1039,7 @@ const styles = StyleSheet.create({
 
   // Picker 样式
   pickerContainer: {
-    height: 560,
+    height: 580,
   },
   searchWrapper: {
     paddingHorizontal: 16,

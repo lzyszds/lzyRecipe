@@ -152,6 +152,8 @@ export function parseModelInfo(id: string, ownedBy = '', baseUrl = ''): RemoteMo
   let freeBadge: string | undefined;
   if (baseUrl.includes('nvidia.com')) {
     freeBadge = '含免费体验额度';
+  } else if (baseUrl.includes('siliconflow.cn') && (id.includes('free') || id.includes('THUDM') || id.includes('Qwen2.5-7B'))) {
+    freeBadge = '免费/高性价比';
   } else if (id.includes('free') || id.includes('mini') || id.includes('flash')) {
     freeBadge = '免费/高性价比';
   }
@@ -161,21 +163,21 @@ export function parseModelInfo(id: string, ownedBy = '', baseUrl = ''): RemoteMo
     typeBadge = '视觉多模态';
   } else if (/code|coder|starcoder/.test(lower)) {
     typeBadge = '代码专家';
-  } else if (/reason|o1|o3|thinking/.test(lower)) {
+  } else if (/reason|r1|o1|o3|thinking/.test(lower)) {
     typeBadge = '深度推理';
   } else if (/embed/.test(lower)) {
     typeBadge = '向量检索';
   }
 
   const isRecommended = Boolean(
-    id === 'gpt-4o-mini' ||
-    id === 'gpt-4o' ||
     id === 'meta/llama-3.1-70b-instruct' ||
     id === 'nvidia/llama-3.1-nemotron-70b-instruct' ||
+    id === 'deepseek-ai/DeepSeek-V3' ||
+    id === 'deepseek-ai/DeepSeek-R1' ||
+    id === 'Qwen/Qwen2.5-72B-Instruct' ||
     id === 'meta/llama-3.2-11b-vision-instruct' ||
     id === 'google/gemma-3-12b-it' ||
-    id === 'mistralai/mixtral-8x22b-v0.1' ||
-    id === 'deepseek-chat'
+    id === 'mistralai/mixtral-8x22b-v0.1'
   );
 
   const cleanName = id.includes('/') ? id.split('/').pop() || id : id;
