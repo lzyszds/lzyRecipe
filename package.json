@@ -16,6 +16,8 @@
     "lint": "bun run --filter lzyrecipe-mobile lint",
     "typecheck": "bun run --filter lzyrecipe-mobile typecheck",
     "doctor": "bunx expo-doctor@latest",
+    "eas:login": "bun run --cwd mobile eas:login",
+    "build:android": "bun run --cwd mobile build:android",
     "covers": "node scripts/generate-covers.mjs",
     "covers:photos": "node scripts/fetch-covers.mjs",
     "recipes:ai": "node scripts/generate-recipes-ai.mjs"
