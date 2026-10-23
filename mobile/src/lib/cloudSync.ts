@@ -11,6 +11,7 @@ import {
 import { Recipe } from '../types';
 import { getAllRecipes } from './recipes';
 import { useBentoStore } from '../store/bentoStore';
+import { wrapCorsProxy } from './proxyUrl';
 
 /** 同步内容快照：服务端按密钥区分用户，多端完全一致 */
 export interface SyncPayload {
@@ -71,7 +72,7 @@ async function requestJson<T>(
   const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? 30000);
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(wrapCorsProxy(url), {
       method: options.method ?? 'GET',
       headers: options.headers,
       body: options.json ? JSON.stringify(options.json) : undefined,

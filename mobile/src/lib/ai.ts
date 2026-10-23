@@ -1,4 +1,5 @@
 import { AiSettings } from '@/store/settingsStore';
+import { wrapCorsProxy } from './proxyUrl';
 
 export interface AiMessage {
   role: 'system' | 'user' | 'assistant';
@@ -28,7 +29,7 @@ export async function chatWithAi(
   if (!config.apiKey?.trim()) throw new AiError('请先在设置中填写 AI API Key');
   if (!config.model?.trim()) throw new AiError('请先在设置中填写模型名称');
 
-  const endpoint = chatEndpoint(config.baseUrl);
+  const endpoint = wrapCorsProxy(chatEndpoint(config.baseUrl));
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? 60000);
 
@@ -203,7 +204,8 @@ export async function fetchRemoteModels(
     throw new AiError('请先输入有效的 API 基础地址');
   }
 
-  const modelsEndpoint = base.endsWith('/v1') ? `${base}/models` : `${base}/v1/models`;
+  const targetUrl = base.endsWith('/v1') ? `${base}/models` : `${base}/v1/models`;
+  const modelsEndpoint = wrapCorsProxy(targetUrl);
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15000);
@@ -220,7 +222,7 @@ export async function fetchRemoteModels(
 
     if (!res.ok) {
       if (!base.endsWith('/v1')) {
-        const fallbackRes = await fetch(`${base}/models`, {
+        const fallbackRes = await fetch(wrapCorsProxy(`${base}/models`), {
           method: 'GET',
           headers: {
             Accept: 'application/json',

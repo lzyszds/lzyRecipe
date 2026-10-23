@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useSettingsStore } from '../store/settingsStore';
+import { wrapCorsProxy } from './proxyUrl';
 
 export interface UploadResult {
   ok: boolean;
@@ -30,7 +31,7 @@ export async function uploadImageFile(fileUri: string): Promise<string> {
     type,
   } as any);
 
-  const res = await fetch(`${endpoint}/upload`, {
+  const res = await fetch(wrapCorsProxy(`${endpoint}/upload`), {
     method: 'POST',
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

@@ -1,5 +1,6 @@
 import { chatWithAi } from './ai';
 import { useSettingsStore, isAiConfigured } from '../store/settingsStore';
+import { wrapCorsProxy } from './proxyUrl';
 
 const MOBILE_UA =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
@@ -19,7 +20,7 @@ export async function searchBaiduImages(
       finalWord
     )}&pn=${page * count}&rn=${count}`;
 
-    const res = await fetch(url, {
+    const res = await fetch(wrapCorsProxy(url), {
       headers: {
         'User-Agent': MOBILE_UA,
         Accept: 'application/json, text/plain, */*',
