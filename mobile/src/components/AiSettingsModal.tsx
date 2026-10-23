@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
   TouchableOpacity,
   Pressable,
   TextInput,
@@ -11,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
+import { BottomSheetModal } from './BottomSheetModal';
 import {
   Sparkles,
   X,
@@ -150,19 +149,14 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
   };
 
   return (
-    <Modal
+    <BottomSheetModal
       visible={visible}
-      transparent
-      animationType="slide"
-      statusBarTranslucent={true}
-      onRequestClose={onClose}
+      onClose={onClose}
+      sheetStyle={styles.sheet}
     >
-      <StatusBar style="light" animated />
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <SafeAreaView edges={['bottom']} style={styles.safeArea}>
-            {/* 顶部标题栏 */}
-            <View style={styles.header}>
+      <SafeAreaView edges={['bottom']} style={styles.safeArea}>
+        {/* 顶部标题栏 */}
+        <View style={styles.header}>
               <View style={styles.titleRow}>
                 <View style={styles.iconBadge}>
                   <Sparkles size={18} color="#FFFFFF" />
@@ -349,9 +343,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
               </View>
             </ScrollView>
           </SafeAreaView>
-        </Pressable>
-      </Pressable>
-    </Modal>
+    </BottomSheetModal>
   );
 };
 

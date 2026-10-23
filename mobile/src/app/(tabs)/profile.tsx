@@ -60,7 +60,7 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>厨房掌勺人</Text>
-            <Text style={styles.profileBio}>认真做饭，好好生活 🌿</Text>
+            <Text style={styles.profileBio}>认真做饭，好好生活</Text>
           </View>
         </View>
 

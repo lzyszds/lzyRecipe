@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Heart, Sparkles, ChefHat, Calendar, ChevronRight } from 'lucide-react-native';
+import { Search, Heart, Sparkles, ChefHat, Calendar, ChevronRight, ShoppingCart } from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeCard } from '@/components/RecipeCard';
 import { useBentoStore } from '@/store/bentoStore';
@@ -130,8 +130,9 @@ export default function HomeScreen() {
 
           {groceryToday.length > 0 && (
             <View style={styles.groceryNoticeBar}>
+              <ShoppingCart size={13} color={Palette.primary} />
               <Text style={styles.groceryNoticeText} numberOfLines={1}>
-                🛒 今日急需备菜：{groceryToday.map((i) => i.name).slice(0, 3).join('、')}等 {groceryToday.length} 项食材
+                今日急需备菜：{groceryToday.map((i) => i.name).slice(0, 3).join('、')}等 {groceryToday.length} 项食材
               </Text>
             </View>
           )}

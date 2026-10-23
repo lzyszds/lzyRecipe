@@ -1,21 +1,21 @@
 import { Recipe, Category } from '../types';
 
 export const categories: Category[] = [
-  { id: '1', name: '川菜', icon: '🌶️', count: 30 },
-  { id: '2', name: '粤菜', icon: '🥘', count: 20 },
-  { id: '3', name: '湘菜', icon: '🔥', count: 15 },
-  { id: '4', name: '鲁菜', icon: '🥢', count: 15 },
-  { id: '5', name: '西餐', icon: '🍽️', count: 20 },
-  { id: '6', name: '甜点', icon: '🍰', count: 25 },
-  { id: '7', name: '饮品', icon: '🥤', count: 15 },
-  { id: '8', name: '家常菜', icon: '🏠', count: 35 },
-  { id: '9', name: '海鲜', icon: '🦐', count: 30 },
-  { id: '10', name: '早餐', icon: '🍳', count: 12 },
-  { id: '11', name: '汤', icon: '🍲', count: 15 },
-  { id: '12', name: '肉类', icon: '🥩', count: 25 },
-  { id: '13', name: '蔬菜', icon: '🥬', count: 18 },
-  { id: '14', name: '主食', icon: '🍜', count: 12 },
-  { id: '15', name: '调料', icon: '🧂', count: 8 },
+  { id: '1', name: '川菜', icon: 'chili', count: 30 },
+  { id: '2', name: '粤菜', icon: 'casserole', count: 20 },
+  { id: '3', name: '湘菜', icon: 'flame', count: 15 },
+  { id: '4', name: '鲁菜', icon: 'chopsticks', count: 15 },
+  { id: '5', name: '西餐', icon: 'western', count: 20 },
+  { id: '6', name: '甜点', icon: 'dessert', count: 25 },
+  { id: '7', name: '饮品', icon: 'drink', count: 15 },
+  { id: '8', name: '家常菜', icon: 'home', count: 35 },
+  { id: '9', name: '海鲜', icon: 'seafood', count: 30 },
+  { id: '10', name: '早餐', icon: 'breakfast', count: 12 },
+  { id: '11', name: '汤', icon: 'soup', count: 15 },
+  { id: '12', name: '肉类', icon: 'meat', count: 25 },
+  { id: '13', name: '蔬菜', icon: 'vegetable', count: 18 },
+  { id: '14', name: '主食', icon: 'noodle', count: 12 },
+  { id: '15', name: '调料', icon: 'spice', count: 8 },
 ];
 
 export const recipes: Recipe[] = [

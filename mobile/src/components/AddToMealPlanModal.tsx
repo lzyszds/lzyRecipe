@@ -3,17 +3,23 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
-  TouchableOpacity,
   Pressable,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { X, Check, Calendar, Sparkles } from 'lucide-react-native';
-import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
-import { useBentoStore, MealType } from '@/store/bentoStore';
-import { useAllRecipes } from '@/lib/recipes';
+import {
+  X,
+  Sunrise,
+  Sun,
+  Moon,
+  Clock,
+  Utensils,
+  Sparkles,
+  CalendarDays,
+  PlusCircle,
+} from 'lucide-react-native';
+import { useMealPlanSheetStore } from '../store/mealPlanSheetStore';
+import { useBentoStore, MealType } from '../store/bentoStore';
 import { RecipeImage } from './RecipeImage';
+import { BottomSheetModal } from './BottomSheetModal';
 import {
   getTodayString,
   getMondayOf,
@@ -21,19 +27,12 @@ import {
   formatMonthDay,
   getWeekdayName,
   isToday,
-} from '@/lib/bentoDate';
-import { toast } from '@/store/feedbackStore';
-import { Palette } from '@/constants/theme';
-
-const MEAL_SLOTS: { key: MealType; label: string; icon: string }[] = [
-  { key: 'breakfast', label: '早餐', icon: '🍳' },
-  { key: 'lunch', label: '午餐', icon: '🍱' },
-  { key: 'dinner', label: '晚餐', icon: '🍲' },
-];
+} from '../lib/bentoDate';
+import { toast } from '../store/feedbackStore';
+import { Palette, Radius } from '../constants/theme';
 
 export const AddToMealPlanModal: React.FC = () => {
   const { targetRecipe, closeSheet } = useMealPlanSheetStore();
-  const allRecipes = useAllRecipes();
   const {
     getDayBento,
     addDishesToMeal,
@@ -45,33 +44,24 @@ export const AddToMealPlanModal: React.FC = () => {
   const weekDates = useMemo(() => getWeekDates(mondayStr), [mondayStr]);
 
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
-  const [selectedSlot, setSelectedSlot] = useState<MealType>('dinner');
 
   useEffect(() => {
     if (targetRecipe) {
       setSelectedDate(todayStr);
-      // 根据菜系智能推断
-      if (['早餐', '饮品', '甜点'].includes(targetRecipe.category)) {
-        setSelectedSlot('breakfast');
-      } else {
-        setSelectedSlot('dinner');
-      }
     }
   }, [targetRecipe, todayStr]);
 
   if (!targetRecipe) return null;
 
   const currentDayBento = getDayBento(selectedDate);
-  const existingDishes = currentDayBento[selectedSlot] || [];
 
-  const handleConfirm = () => {
-    addDishesToMeal(selectedDate, selectedSlot, [targetRecipe.id]);
+  const handleSelectSlot = (slotKey: MealType, slotLabel: string) => {
+    addDishesToMeal(selectedDate, slotKey, [targetRecipe.id]);
     const dayLabel = `${formatMonthDay(selectedDate)} ${getWeekdayName(selectedDate)}`;
-    const slotLabel = MEAL_SLOTS.find((s) => s.key === selectedSlot)?.label || '';
     closeSheet();
     toast({
       type: 'success',
-      message: `🎉 已将「${targetRecipe.name}」排入【${dayLabel} ${slotLabel}】便当！`,
+      message: `已将「${targetRecipe.name}」排入【${dayLabel} ${slotLabel}】`,
     });
   };
 
@@ -80,197 +70,199 @@ export const AddToMealPlanModal: React.FC = () => {
     closeSheet();
     toast({
       type: 'success',
-      message: `🍱 太省心啦！已将「${targetRecipe.name}」排入周一至周五的全部午餐！`,
+      message: `已将「${targetRecipe.name}」排入本周周一至周五午餐便当`,
     });
   };
 
+  const slotsConfig: {
+    key: MealType;
+    label: string;
+    sublabel: string;
+    icon: typeof Sunrise;
+    color: string;
+    bg: string;
+    borderColor: string;
+  }[] = [
+    {
+      key: 'breakfast',
+      label: '早餐',
+      sublabel: '晨间营养活力',
+      icon: Sunrise,
+      color: Palette.honey[500],
+      bg: 'rgba(230, 168, 74, 0.08)',
+      borderColor: 'rgba(230, 168, 74, 0.3)',
+    },
+    {
+      key: 'lunch',
+      label: '午餐',
+      sublabel: '便当元气充电',
+      icon: Sun,
+      color: Palette.sage[600],
+      bg: 'rgba(124, 154, 126, 0.08)',
+      borderColor: 'rgba(124, 154, 126, 0.3)',
+    },
+    {
+      key: 'dinner',
+      label: '晚餐',
+      sublabel: '温热犒劳慢品',
+      icon: Moon,
+      color: Palette.primary,
+      bg: 'rgba(217, 107, 56, 0.08)',
+      borderColor: 'rgba(217, 107, 56, 0.3)',
+    },
+  ];
+
   return (
-    <Modal
+    <BottomSheetModal
       visible={Boolean(targetRecipe)}
-      transparent
-      animationType="slide"
-      statusBarTranslucent={true}
-      onRequestClose={closeSheet}
+      onClose={closeSheet}
+      sheetStyle={styles.sheetContainer}
     >
-      <StatusBar style="light" animated />
-      <Pressable style={styles.overlay} onPress={closeSheet}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <SafeAreaView edges={['bottom']}>
-            {/* 顶栏 */}
-            <View style={styles.sheetHeader}>
-              <View>
-                <Text style={styles.sheetTitle}>排入便当盒</Text>
-                <Text style={styles.sheetSubtitle}>选择要把这道美味安排在哪一天哪一餐</Text>
-              </View>
-              <TouchableOpacity
-                onPress={closeSheet}
-                style={styles.closeBtn}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <X size={18} color={Palette.cocoa[400]} />
-              </TouchableOpacity>
-            </View>
+      <View style={styles.content}>
+        {/* 顶部标题与关闭 */}
+        <View style={styles.sheetHeader}>
+          <View style={styles.headerLeft}>
+            <CalendarDays size={18} color={Palette.cocoa[900]} />
+            <Text style={styles.sheetTitle}>一键排入便当盒</Text>
+          </View>
+          <Pressable
+            onPress={closeSheet}
+            style={styles.closeBtn}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <X size={18} color={Palette.cocoa[400]} />
+          </Pressable>
+        </View>
 
-            {/* 菜品小卡片 */}
-            <View style={styles.recipeCard}>
-              <View style={styles.thumbWrapper}>
-                <RecipeImage
-                  coverImage={targetRecipe.coverImage}
-                  name={targetRecipe.name}
-                  category={targetRecipe.category}
-                />
+        {/* 待排菜品卡片 */}
+        <View style={styles.recipeCard}>
+          <View style={styles.thumbWrapper}>
+            <RecipeImage
+              coverImage={targetRecipe.coverImage}
+              name={targetRecipe.name}
+              category={targetRecipe.category}
+            />
+          </View>
+          <View style={styles.recipeInfo}>
+            <Text style={styles.recipeName} numberOfLines={1}>
+              {targetRecipe.name}
+            </Text>
+            <View style={styles.recipeMetaRow}>
+              <View style={styles.metaTag}>
+                <Clock size={11} color={Palette.cocoa[400]} />
+                <Text style={styles.metaText}>{targetRecipe.cookTime}分钟</Text>
               </View>
-              <View style={styles.recipeInfo}>
-                <Text style={styles.recipeName} numberOfLines={1}>
-                  {targetRecipe.name}
+              <View style={styles.metaTag}>
+                <Utensils size={11} color={Palette.cocoa[400]} />
+                <Text style={styles.metaText}>
+                  {targetRecipe.ingredients?.length || 0} 种食材
                 </Text>
-                <Text style={styles.recipeMeta}>
-                  {targetRecipe.category} · ⏱ {targetRecipe.cookTime}分钟 · {targetRecipe.ingredients.length} 种配料
-                </Text>
               </View>
+              <Text style={styles.categoryText}>{targetRecipe.category}</Text>
             </View>
+          </View>
+        </View>
 
-            {/* 星期日期横排选择 */}
-            <Text style={styles.sectionLabel}>选择排入日期</Text>
-            <View style={styles.daysRow}>
-              {weekDates.map((dateStr) => {
-                const isSelected = selectedDate === dateStr;
-                const today = isToday(dateStr);
-                const dayBento = getDayBento(dateStr);
-                const total =
-                  dayBento.breakfast.length +
-                  dayBento.lunch.length +
-                  dayBento.dinner.length;
+        {/* 1. 选择安排日期 */}
+        <Text style={styles.sectionLabel}>选择排入日期</Text>
+        <View style={styles.daysRow}>
+          {weekDates.map((dateStr) => {
+            const isSelected = selectedDate === dateStr;
+            const today = isToday(dateStr);
+            const dayBento = getDayBento(dateStr);
+            const total =
+              dayBento.breakfast.length +
+              dayBento.lunch.length +
+              dayBento.dinner.length;
 
-                return (
-                  <TouchableOpacity
-                    key={dateStr}
-                    style={[
-                      styles.dayItem,
-                      isSelected && styles.dayItemActive,
-                    ]}
-                    onPress={() => setSelectedDate(dateStr)}
-                    activeOpacity={0.75}
-                  >
-                    <Text
-                      style={[
-                        styles.dayTag,
-                        isSelected && styles.dayTagActive,
-                      ]}
-                    >
-                      {today ? '今' : getWeekdayName(dateStr).replace('周', '')}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.dayDate,
-                        isSelected && styles.dayDateActive,
-                      ]}
-                    >
-                      {formatMonthDay(dateStr)}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.dayCount,
-                        isSelected && styles.dayCountActive,
-                      ]}
-                    >
-                      {total}菜
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            {/* 餐次切换 */}
-            <Text style={styles.sectionLabel}>选择餐次</Text>
-            <View style={styles.slotsRow}>
-              {MEAL_SLOTS.map((slot) => {
-                const isSelected = selectedSlot === slot.key;
-                return (
-                  <TouchableOpacity
-                    key={slot.key}
-                    style={[
-                      styles.slotBtn,
-                      isSelected && styles.slotBtnActive,
-                    ]}
-                    onPress={() => setSelectedSlot(slot.key)}
-                    activeOpacity={0.8}
-                  >
-                    <Text style={styles.slotIcon}>{slot.icon}</Text>
-                    <Text
-                      style={[
-                        styles.slotLabel,
-                        isSelected && styles.slotLabelActive,
-                      ]}
-                    >
-                      {slot.label}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            {/* 状态与快捷操作 */}
-            <View style={styles.statusBox}>
-              <Text style={styles.statusText} numberOfLines={1}>
-                {formatMonthDay(selectedDate)} {getWeekdayName(selectedDate)} · {
-                  MEAL_SLOTS.find((s) => s.key === selectedSlot)?.label
-                }：
-                {existingDishes.length > 0 ? (
-                  <Text style={styles.statusHasDishes}>
-                    已有 {existingDishes.length} 道菜（将组合为多菜餐盘）
-                  </Text>
-                ) : (
-                  <Text style={styles.statusEmpty}>暂无安排，随时添菜</Text>
-                )}
-              </Text>
-            </View>
-
-            {/* 上班族快捷：午餐带饭 */}
-            <View style={styles.btnRow}>
-              <TouchableOpacity
-                style={styles.workdayBtn}
-                onPress={handleApplyWorkdayLunch}
-                activeOpacity={0.8}
+            return (
+              <Pressable
+                key={dateStr}
+                style={[styles.dayItem, isSelected && styles.dayItemActive]}
+                onPress={() => setSelectedDate(dateStr)}
               >
-                <Sparkles size={14} color={Palette.primary} />
-                <Text style={styles.workdayBtnText}>一键周一至五午餐带饭</Text>
-              </TouchableOpacity>
+                <Text style={[styles.dayTag, isSelected && styles.dayTagActive]}>
+                  {today ? '今' : getWeekdayName(dateStr).replace('周', '')}
+                </Text>
+                <Text style={[styles.dayDate, isSelected && styles.dayDateActive]}>
+                  {formatMonthDay(dateStr)}
+                </Text>
+                <Text style={[styles.dayCount, isSelected && styles.dayCountActive]}>
+                  {total}菜
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
 
-              <TouchableOpacity
-                style={styles.confirmBtn}
-                onPress={handleConfirm}
-                activeOpacity={0.85}
+        {/* 2. 点击直接安排餐次 (一键排入) */}
+        <Text style={styles.sectionLabel}>
+          点击餐次即可一键加入 ({formatMonthDay(selectedDate)} {getWeekdayName(selectedDate)})
+        </Text>
+        <View style={styles.slotsColumn}>
+          {slotsConfig.map((slot) => {
+            const SlotIcon = slot.icon;
+            const existingCount = currentDayBento[slot.key]?.length || 0;
+
+            return (
+              <Pressable
+                key={slot.key}
+                style={[
+                  styles.slotActionCard,
+                  { backgroundColor: slot.bg, borderColor: slot.borderColor },
+                ]}
+                onPress={() => handleSelectSlot(slot.key, slot.label)}
               >
-                <Check size={16} color="#FFFFFF" strokeWidth={2.5} />
-                <Text style={styles.confirmBtnText}>放入便当格</Text>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
+                <View style={styles.slotCardLeft}>
+                  <View style={[styles.slotIconWrap, { backgroundColor: '#FFFFFF' }]}>
+                    <SlotIcon size={20} color={slot.color} />
+                  </View>
+                  <View>
+                    <View style={styles.slotTitleRow}>
+                      <Text style={styles.slotLabel}>{slot.label}</Text>
+                      {existingCount > 0 ? (
+                        <View style={styles.slotCountBadge}>
+                          <Text style={styles.slotCountText}>已有 {existingCount} 道菜</Text>
+                        </View>
+                      ) : (
+                        <Text style={styles.slotEmptyHint}>空闲餐格</Text>
+                      )}
+                    </View>
+                    <Text style={styles.slotSub}>{slot.sublabel}</Text>
+                  </View>
+                </View>
+
+                <View style={[styles.addSlotBtn, { backgroundColor: slot.color }]}>
+                  <PlusCircle size={15} color="#FFFFFF" />
+                  <Text style={styles.addSlotBtnText}>排入{slot.label}</Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {/* 快捷方式：周一至五午餐 */}
+        <Pressable
+          style={styles.workdayShortcut}
+          onPress={handleApplyWorkdayLunch}
+        >
+          <Sparkles size={15} color={Palette.primary} />
+          <Text style={styles.workdayShortcutText}>
+            上班族快捷：一键排入周一至周五午餐带饭
+          </Text>
         </Pressable>
-      </Pressable>
-    </Modal>
+      </View>
+    </BottomSheetModal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    justifyContent: 'flex-end',
+  sheetContainer: {
+    paddingBottom: 28,
   },
-  sheet: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+  content: {
     paddingHorizontal: 20,
     paddingTop: 18,
-    paddingBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 20,
   },
   sheetHeader: {
     flexDirection: 'row',
@@ -278,15 +270,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 14,
   },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   sheetTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '800',
     color: Palette.cocoa[900],
-  },
-  sheetSubtitle: {
-    fontSize: 11,
-    color: Palette.cocoa[400],
-    marginTop: 2,
   },
   closeBtn: {
     width: 32,
@@ -300,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Palette.oat[50],
-    borderRadius: 14,
+    borderRadius: Radius.lg,
     padding: 10,
     gap: 12,
     borderWidth: 1,
@@ -308,24 +300,39 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   thumbWrapper: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
+    width: 50,
+    height: 50,
+    borderRadius: Radius.md,
     overflow: 'hidden',
     backgroundColor: Palette.oat[100],
   },
   recipeInfo: {
     flex: 1,
+    gap: 4,
   },
   recipeName: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '700',
     color: Palette.cocoa[900],
   },
-  recipeMeta: {
+  recipeMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  metaTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  metaText: {
     fontSize: 11,
     color: Palette.cocoa[400],
-    marginTop: 2,
+  },
+  categoryText: {
+    fontSize: 11,
+    color: Palette.cocoa[700],
+    fontWeight: '600',
   },
   sectionLabel: {
     fontSize: 12,
@@ -336,7 +343,7 @@ const styles = StyleSheet.create({
   daysRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 14,
+    marginBottom: 16,
     gap: 4,
   },
   dayItem: {
@@ -376,95 +383,88 @@ const styles = StyleSheet.create({
   dayCountActive: {
     color: 'rgba(255, 255, 255, 0.8)',
   },
-  slotsRow: {
-    flexDirection: 'row',
+  slotsColumn: {
     gap: 10,
-    marginBottom: 12,
-  },
-  slotBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: 12,
-    backgroundColor: Palette.oat[50],
-    borderWidth: 1,
-    borderColor: Palette.dockBorder,
-    gap: 6,
-  },
-  slotBtnActive: {
-    backgroundColor: 'rgba(217, 107, 56, 0.12)',
-    borderColor: Palette.primary,
-  },
-  slotIcon: {
-    fontSize: 14,
-  },
-  slotLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Palette.cocoa[700],
-  },
-  slotLabelActive: {
-    color: Palette.primary,
-  },
-  statusBox: {
-    backgroundColor: Palette.oat[50],
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
     marginBottom: 16,
   },
-  statusText: {
-    fontSize: 12,
+  slotActionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+  },
+  slotCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  slotIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  slotTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  slotLabel: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: Palette.cocoa[900],
+  },
+  slotCountBadge: {
+    backgroundColor: 'rgba(0, 0, 0, 0.06)',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: Radius.sm,
+  },
+  slotCountText: {
+    fontSize: 10.5,
+    fontWeight: '700',
     color: Palette.cocoa[700],
   },
-  statusHasDishes: {
-    color: Palette.primary,
-    fontWeight: '700',
-  },
-  statusEmpty: {
+  slotEmptyHint: {
+    fontSize: 11,
     color: Palette.cocoa[400],
   },
-  btnRow: {
-    flexDirection: 'row',
-    gap: 10,
+  slotSub: {
+    fontSize: 11,
+    color: Palette.cocoa[400],
+    marginTop: 2,
   },
-  workdayBtn: {
-    flex: 1,
+  addSlotBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: Radius.full,
+  },
+  addSlotBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  workdayShortcut: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 44,
-    borderRadius: 14,
+    gap: 6,
+    paddingVertical: 12,
     backgroundColor: 'rgba(217, 107, 56, 0.08)',
+    borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: 'rgba(217, 107, 56, 0.25)',
-    gap: 4,
   },
-  workdayBtnText: {
+  workdayShortcutText: {
     fontSize: 12,
     fontWeight: '700',
     color: Palette.primary,
-  },
-  confirmBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 44,
-    borderRadius: 14,
-    backgroundColor: Palette.primary,
-    gap: 6,
-    shadowColor: Palette.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  confirmBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
   },
 });

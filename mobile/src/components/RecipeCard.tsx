@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Heart, Clock, Plus, Check } from 'lucide-react-native';
+import { Heart, Clock, CalendarPlus } from 'lucide-react-native';
 import { Recipe, DifficultyLevel } from '../types';
 import { RecipeImage } from './RecipeImage';
 import { useFavoritesStore } from '../store/favoritesStore';
-import { useBentoStore } from '../store/bentoStore';
 import { useMealPlanSheetStore } from '../store/mealPlanSheetStore';
 import { toast } from '../store/feedbackStore';
 import { Palette } from '../constants/theme';
@@ -24,9 +23,7 @@ const difficultyLabel: Record<DifficultyLevel, string> = {
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { isInPool, togglePool } = useBentoStore();
   const favorite = isFavorite(recipe.id);
-  const inPool = isInPool(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -40,19 +37,13 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
     toggleFavorite(recipe.id);
     toast({
       type: 'info',
-      message: favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`,
+      message: favorite ? '已取消收藏' : `已收藏「${recipe.name}」`,
     });
   };
 
-  const handleAddToPlan = (e: any) => {
+  const handleOpenPlanModal = (e: any) => {
     e?.stopPropagation?.();
-    const added = togglePool(recipe.id);
-    toast({
-      type: added ? 'success' : 'info',
-      message: added
-        ? `🍱「${recipe.name}」已放入想吃候选池`
-        : `已从候选池移出「${recipe.name}」`,
-    });
+    useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
   const handleLongPress = () => {
@@ -150,21 +141,12 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
             <Text style={styles.categoryBadgeText}>{recipe.category}</Text>
           </View>
           <TouchableOpacity
-            style={[styles.addPlanBtn, inPool && styles.addPlanBtnActive]}
-            onPress={handleAddToPlan}
+            style={styles.addPlanBtn}
+            onPress={handleOpenPlanModal}
             activeOpacity={0.8}
           >
-            {inPool ? (
-              <>
-                <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
-                <Text style={styles.addPlanBtnTextActive}>已加</Text>
-              </>
-            ) : (
-              <>
-                <Plus size={11} color={Palette.primary} strokeWidth={2.5} />
-                <Text style={styles.addPlanBtnText}>餐盘</Text>
-              </>
-            )}
+            <CalendarPlus size={11} color={Palette.primary} strokeWidth={2.5} />
+            <Text style={styles.addPlanBtnText}>排餐</Text>
           </TouchableOpacity>
         </View>
       </View>

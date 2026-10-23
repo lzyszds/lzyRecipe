@@ -85,10 +85,10 @@ export function formatGroceryToText(
   weekItems: GroceryItem[]
 ): string {
   const range = formatWeekRange(mondayStr);
-  const lines: string[] = [`🛒【家庭一周便当 · 采购清单】(${range})`];
+  const lines: string[] = [`【家庭一周便当 · 采购清单】(${range})`];
 
   if (todayItems.length > 0) {
-    lines.push('\n⚡【今日急需用料】');
+    lines.push('\n【今日急需用料】');
     todayItems.forEach((item) => {
       const amountStr = item.amounts.length > 0 ? ` (${item.amounts.join('+')})` : '';
       lines.push(`• ${item.name}${amountStr}  [配菜: ${item.dishNames.join('、')}]`);
@@ -96,7 +96,7 @@ export function formatGroceryToText(
   }
 
   if (weekItems.length > 0) {
-    lines.push('\n📦【本周备货食材】');
+    lines.push('\n【本周备货食材】');
     weekItems.forEach((item) => {
       const amountStr = item.amounts.length > 0 ? ` (${item.amounts.join('+')})` : '';
       lines.push(`• ${item.name}${amountStr}  [配菜: ${item.dishNames.join('、')}]`);
@@ -107,6 +107,6 @@ export function formatGroceryToText(
     lines.push('\n（暂未安排菜品，清单为空）');
   }
 
-  lines.push('\n💡 来自 志得食谱·便当盒');
+  lines.push('\n来自 志得食谱·便当盒');
   return lines.join('\n');
 }

@@ -3,15 +3,14 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
   TouchableOpacity,
   Pressable,
   FlatList,
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import { X, Search, Check, Heart, Zap, Sparkles, Plus } from 'lucide-react-native';
+import { BottomSheetModal } from './BottomSheetModal';
 import { useBentoStore, MealType } from '@/store/bentoStore';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useAllRecipes } from '@/lib/recipes';
@@ -118,7 +117,7 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
     applyLunchBentoToWorkdays(targetDate, recipeId);
     toast({
       type: 'success',
-      message: '🍱 已将该菜品排入本周一至周五的全部午餐！',
+      message: '已将该菜品排入本周一至周五全部午餐便当',
     });
     onClose();
   };
@@ -130,19 +129,14 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
   }`;
 
   return (
-    <Modal
+    <BottomSheetModal
       visible={visible}
-      transparent
-      animationType="slide"
-      statusBarTranslucent={true}
-      onRequestClose={onClose}
+      onClose={onClose}
+      sheetStyle={styles.sheet}
     >
-      <StatusBar style="light" animated />
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <SafeAreaView edges={['bottom']} style={styles.safeArea}>
-            {/* 顶栏 */}
-            <View style={styles.header}>
+      <SafeAreaView edges={['bottom']} style={styles.safeArea}>
+        {/* 顶栏 */}
+        <View style={styles.header}>
               <View>
                 <Text style={styles.sheetTitle}>放入便当格</Text>
                 <Text style={styles.sheetSubtitle}>目标餐位：{targetLabel}</Text>
@@ -196,7 +190,7 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
                     activeTab === 'fast' && styles.tabItemTextActive,
                   ]}
                 >
-                  ⚡ 快手菜 (≤20分)
+                  快手菜 (≤20分)
                 </Text>
               </TouchableOpacity>
 
@@ -319,9 +313,7 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
               </TouchableOpacity>
             </View>
           </SafeAreaView>
-        </Pressable>
-      </Pressable>
-    </Modal>
+    </BottomSheetModal>
   );
 };
 

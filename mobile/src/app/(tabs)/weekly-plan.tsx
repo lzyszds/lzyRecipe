@@ -22,6 +22,9 @@ import {
   Calendar,
   Utensils,
   X,
+  Sunrise,
+  Sun,
+  Moon,
 } from 'lucide-react-native';
 import { useBentoStore, MealType } from '@/store/bentoStore';
 import { useAllRecipes } from '@/lib/recipes';
@@ -42,10 +45,15 @@ import { buildGroceryList, formatGroceryToText } from '@/lib/grocery';
 import * as Clipboard from 'expo-clipboard';
 import { Palette } from '@/constants/theme';
 
-const MEALS_CONFIG: { type: MealType; label: string; icon: string; hint: string }[] = [
-  { type: 'breakfast', label: '早餐', icon: '🍳', hint: '轻食、早点、营养' },
-  { type: 'lunch', label: '午餐', icon: '🍱', hint: '主食、炒菜、便当' },
-  { type: 'dinner', label: '晚餐', icon: '🍲', hint: '硬菜、靓汤、时蔬' },
+const MEALS_CONFIG: {
+  type: MealType;
+  label: string;
+  icon: typeof Sunrise;
+  hint: string;
+}[] = [
+  { type: 'breakfast', label: '早餐', icon: Sunrise, hint: '轻食、早点、营养' },
+  { type: 'lunch', label: '午餐', icon: Sun, hint: '主食、炒菜、便当' },
+  { type: 'dinner', label: '晚餐', icon: Moon, hint: '硬菜、靓汤、时蔬' },
 ];
 
 export default function WeeklyPlanScreen() {
@@ -116,7 +124,7 @@ export default function WeeklyPlanScreen() {
     if (ok) {
       const count = smartFillEmptySlots(mondayStr, allRecipes);
       if (count > 0) {
-        toast({ type: 'success', message: `✨ 已为您智能填满 ${count} 个空便当位！` });
+        toast({ type: 'success', message: `已为您智能填满 ${count} 个空便当位！` });
       } else {
         toast({ type: 'info', message: '本周所有便当位都已经排满啦！' });
       }
@@ -152,7 +160,7 @@ export default function WeeklyPlanScreen() {
     await Clipboard.setStringAsync(text);
     toast({
       type: 'success',
-      message: '✅ 采购清单已复制，可直接发微信给家人！',
+      message: '采购清单已复制，可直接发微信给家人！',
     });
   };
 
@@ -318,13 +326,13 @@ export default function WeeklyPlanScreen() {
         </View>
 
         {/* 早、中、晚三格便当 */}
-        {MEALS_CONFIG.map(({ type, label, icon, hint }) => {
+        {MEALS_CONFIG.map(({ type, label, icon: MealIcon, hint }) => {
           const items = currentBento[type] || [];
           return (
             <View key={type} style={styles.mealSlotCard}>
               <View style={styles.mealSlotHeader}>
                 <View style={styles.mealTitleRow}>
-                  <Text style={styles.mealIcon}>{icon}</Text>
+                  <MealIcon size={16} color={Palette.primary} />
                   <Text style={styles.mealTitle}>{label}</Text>
                   <Text style={styles.mealHint}>({items.length}道)</Text>
                 </View>
@@ -370,7 +378,7 @@ export default function WeeklyPlanScreen() {
                               type: isEaten ? 'info' : 'success',
                               message: isEaten
                                 ? `已取消「${dish.name}」打卡`
-                                : `😋 哇！已打卡吃掉「${dish.name}」`,
+                                : `已打卡吃掉「${dish.name}」`,
                             });
                           }}
                           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
@@ -411,8 +419,8 @@ export default function WeeklyPlanScreen() {
                               {dish.name}
                             </Text>
                             <Text style={styles.dishSubtext}>
-                              {dish.category} · ⏱ {dish.cookTime}分钟
-                              {isEaten && ' · ✅ 已吃掉'}
+                              {dish.category} · {dish.cookTime}分钟
+                              {isEaten && ' · 已吃掉'}
                             </Text>
                           </View>
                         </TouchableOpacity>

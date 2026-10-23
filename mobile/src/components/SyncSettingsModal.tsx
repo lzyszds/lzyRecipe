@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Modal,
   TouchableOpacity,
   Pressable,
   TextInput,
@@ -12,7 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
+import { BottomSheetModal } from './BottomSheetModal';
 import { confirm, toast } from '@/store/feedbackStore';
 import {
   Cloud,
@@ -172,19 +171,14 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
   const isSyncing = status === 'syncing';
 
   return (
-    <Modal
+    <BottomSheetModal
       visible={visible}
-      transparent
-      animationType="slide"
-      statusBarTranslucent={true}
-      onRequestClose={onClose}
+      onClose={onClose}
+      sheetStyle={styles.sheet}
     >
-      <StatusBar style="light" animated />
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <SafeAreaView edges={['bottom']}>
-            {/* 顶栏 */}
-            <View style={styles.header}>
+      <SafeAreaView edges={['bottom']}>
+        {/* 顶栏 */}
+        <View style={styles.header}>
               <View style={styles.titleRow}>
                 <View style={styles.iconCircle}>
                   <Cloud size={18} color={Palette.primary} />
@@ -390,9 +384,7 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
               )}
             </ScrollView>
           </SafeAreaView>
-        </Pressable>
-      </Pressable>
-    </Modal>
+    </BottomSheetModal>
   );
 };
 

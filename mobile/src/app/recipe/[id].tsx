@@ -17,16 +17,19 @@ import {
   Circle,
   CalendarPlus,
   Lightbulb,
+  Camera,
+  Edit3,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
-import { useBentoStore } from '@/store/bentoStore';
+import { useImportedRecipesStore } from '@/store/importedRecipesStore';
 import { toast } from '@/store/feedbackStore';
 import { RecipeImage } from '@/components/RecipeImage';
+import { RecipeCoverModal } from '@/components/RecipeCoverModal';
+import { RecipeEditModal } from '@/components/RecipeEditModal';
 import { DifficultyLevel } from '@/types';
-import { Palette } from '@/constants/theme';
-import { Plus, Check, Bookmark } from 'lucide-react-native';
+import { Palette, Radius } from '@/constants/theme';
 
 const difficultyConfig: Record<DifficultyLevel, { label: string }> = {
   easy: { label: '简单' },
@@ -43,6 +46,8 @@ export default function RecipeDetailScreen() {
   const { isFavorite, toggleFavorite } = useFavoritesStore();
 
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+  const [coverModalVisible, setCoverModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   if (!recipe) {
@@ -88,19 +93,6 @@ export default function RecipeDetailScreen() {
     setCheckedIngredients(next);
   };
 
-  const { isInPool, togglePool } = useBentoStore();
-  const inPool = isInPool(recipe.id);
-
-  const handleTogglePool = () => {
-    const added = togglePool(recipe.id);
-    toast({
-      type: added ? 'success' : 'info',
-      message: added
-        ? `🍱「${recipe.name}」已放入想吃候选池！`
-        : `已从想吃候选池移出「${recipe.name}」`,
-    });
-  };
-
   const handleAddToWeeklyPlan = () => {
     useMealPlanSheetStore.getState().openSheet(recipe);
   };
@@ -142,6 +134,13 @@ export default function RecipeDetailScreen() {
             <View style={styles.topRightActions}>
               <TouchableOpacity
                 style={styles.iconCircle}
+                onPress={() => setEditModalVisible(true)}
+                activeOpacity={0.8}
+              >
+                <Edit3 size={16} color={Palette.cocoa[700]} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.iconCircle}
                 onPress={() => toggleFavorite(recipe.id)}
                 activeOpacity={0.8}
               >
@@ -173,6 +172,14 @@ export default function RecipeDetailScreen() {
             name={recipe.name}
             category={recipe.category}
           />
+          <TouchableOpacity
+            style={styles.changeCoverBtn}
+            onPress={() => setCoverModalVisible(true)}
+            activeOpacity={0.85}
+          >
+            <Camera size={13} color="#FFFFFF" />
+            <Text style={styles.changeCoverText}>更换封面</Text>
+          </TouchableOpacity>
         </View>
 
         {/* 菜谱主信息卡 */}
@@ -280,21 +287,12 @@ export default function RecipeDetailScreen() {
       {/* 底部固定操作栏 */}
       <SafeAreaView style={styles.bottomBar} edges={['bottom']}>
         <TouchableOpacity
-          style={[styles.todayPlateBtn, inPool && styles.todayPlateBtnActive]}
-          onPress={handleTogglePool}
+          style={styles.editRecipeBtn}
+          onPress={() => setEditModalVisible(true)}
           activeOpacity={0.8}
         >
-          {inPool ? (
-            <>
-              <Check size={16} color="#FFFFFF" strokeWidth={2.5} />
-              <Text style={styles.todayPlateBtnTextActive}>已在想吃池</Text>
-            </>
-          ) : (
-            <>
-              <Plus size={16} color={Palette.primary} strokeWidth={2.5} />
-              <Text style={styles.todayPlateBtnText}>放进想吃池</Text>
-            </>
-          )}
+          <Edit3 size={15} color={Palette.cocoa[900]} />
+          <Text style={styles.editRecipeBtnText}>编辑菜谱</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -306,6 +304,27 @@ export default function RecipeDetailScreen() {
           <Text style={styles.schedulePlanBtnText}>排入便当盒</Text>
         </TouchableOpacity>
       </SafeAreaView>
+
+      {/* 封面替换弹窗 */}
+      <RecipeCoverModal
+        visible={coverModalVisible}
+        onClose={() => setCoverModalVisible(false)}
+        recipeName={recipe.name}
+        category={recipe.category}
+        currentCover={recipe.coverImage}
+        onSelectCover={(newCover) => {
+          useImportedRecipesStore
+            .getState()
+            .updateImportedRecipeCover(recipe.id, newCover, recipe);
+        }}
+      />
+
+      {/* 菜谱编辑弹窗 */}
+      <RecipeEditModal
+        visible={editModalVisible}
+        onClose={() => setEditModalVisible(false)}
+        recipe={recipe}
+      />
     </View>
   );
 }
@@ -559,30 +578,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-  todayPlateBtn: {
+  changeCoverBtn: {
+    position: 'absolute',
+    bottom: 12,
+    right: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(34, 30, 28, 0.75)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Radius.full,
+  },
+  changeCoverText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  editRecipeBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Palette.primarySoft,
+    backgroundColor: Palette.oat[100],
     borderRadius: 16,
     height: 44,
     gap: 6,
     borderWidth: 1,
-    borderColor: Palette.primary,
+    borderColor: Palette.dockBorder,
   },
-  todayPlateBtnActive: {
-    backgroundColor: Palette.primary,
-  },
-  todayPlateBtnText: {
-    fontSize: 12.5,
-    fontWeight: '800',
-    color: Palette.primary,
-  },
-  todayPlateBtnTextActive: {
-    fontSize: 12.5,
-    fontWeight: '800',
-    color: '#FFFFFF',
+  editRecipeBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
   },
   schedulePlanBtn: {
     flex: 1.2,

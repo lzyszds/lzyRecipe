@@ -5,12 +5,12 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Modal,
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Plus, FileText, Trash2, X } from 'lucide-react-native';
+import { BottomSheetModal } from '@/components/BottomSheetModal';
 import { useNotesStore, activeNotes, Note } from '@/store/notesStore';
 import { confirm, toast } from '@/store/feedbackStore';
 import { Palette } from '@/constants/theme';
@@ -111,50 +111,46 @@ export default function NotesScreen() {
       />
 
       {/* 新增笔记弹窗 */}
-      <Modal
+      <BottomSheetModal
         visible={modalVisible}
-        transparent
-        animationType="slide"
-        statusBarTranslucent={true}
-        onRequestClose={() => setModalVisible(false)}
+        onClose={() => setModalVisible(false)}
+        sheetStyle={styles.modalSheet}
       >
-        <View style={styles.modalOverlay}>
-          <SafeAreaView style={styles.modalSheet} edges={['bottom']}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>记录新灵感</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <X size={20} color={Palette.cocoa[400]} />
-              </TouchableOpacity>
-            </View>
-
-            <TextInput
-              style={styles.modalTitleInput}
-              placeholder="笔记标题（如：做糖醋排骨的独门秘诀）"
-              placeholderTextColor={Palette.cocoa[400]}
-              value={title}
-              onChangeText={setTitle}
-            />
-
-            <TextInput
-              style={styles.modalContentInput}
-              placeholder="写下心得体会、火候或改良用量..."
-              placeholderTextColor={Palette.cocoa[400]}
-              multiline
-              textAlignVertical="top"
-              value={content}
-              onChangeText={setContent}
-            />
-
-            <TouchableOpacity
-              style={styles.modalSubmitBtn}
-              onPress={handleCreate}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.modalSubmitBtnText}>保存笔记</Text>
+        <SafeAreaView edges={['bottom']}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>记录新灵感</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <X size={20} color={Palette.cocoa[400]} />
             </TouchableOpacity>
-          </SafeAreaView>
-        </View>
-      </Modal>
+          </View>
+
+          <TextInput
+            style={styles.modalTitleInput}
+            placeholder="笔记标题（如：做糖醋排骨的独门秘诀）"
+            placeholderTextColor={Palette.cocoa[400]}
+            value={title}
+            onChangeText={setTitle}
+          />
+
+          <TextInput
+            style={styles.modalContentInput}
+            placeholder="写下心得体会、火候或改良用量..."
+            placeholderTextColor={Palette.cocoa[400]}
+            multiline
+            textAlignVertical="top"
+            value={content}
+            onChangeText={setContent}
+          />
+
+          <TouchableOpacity
+            style={styles.modalSubmitBtn}
+            onPress={handleCreate}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.modalSubmitBtnText}>保存笔记</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
+      </BottomSheetModal>
     </SafeAreaView>
   );
 }

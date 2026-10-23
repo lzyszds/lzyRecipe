@@ -29,6 +29,12 @@ export const Palette = {
   dockBorder: 'rgba(255, 255, 255, 0.12)',
 
   // 兼容旧属性映射
+  honey: {
+    500: '#E6A84A',
+  },
+  sand: {
+    100: '#F5EBE1',
+  },
   oat: {
     50: '#F5F2EB', // 统一为 canvas
     100: '#F3EFE8',
@@ -50,6 +56,22 @@ export const Palette = {
   },
   card: '#FFFFFF',
 };
+
+export const Radius = {
+  none: 0,
+  sm: 6,
+  md: 10,
+  lg: 16,
+  xl: 20,
+  full: 9999,
+} as const;
+
+export const Typography = {
+  titleLarge: { fontSize: 20, fontWeight: '800' as const },
+  titleMedium: { fontSize: 16, fontWeight: '700' as const },
+  bodyMedium: { fontSize: 14, fontWeight: '400' as const },
+  caption: { fontSize: 12, color: Palette.inkMuted },
+} as const;
 
 export const Colors = {
   light: {

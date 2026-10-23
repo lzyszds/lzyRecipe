@@ -7,7 +7,8 @@ import { useFavoritesStore } from './favoritesStore';
 interface ImportedRecipesState {
   importedRecipes: Recipe[];
   addImportedRecipes: (recipes: Recipe[]) => void;
-  updateImportedRecipeCover: (recipeId: string, coverImage: string) => void;
+  saveOrUpdateRecipe: (recipe: Recipe) => void;
+  updateImportedRecipeCover: (recipeId: string, coverImage: string, fallbackRecipe?: Recipe) => void;
   removeImportedRecipe: (recipeId: string) => void;
   clearImportedRecipes: () => void;
 }
@@ -24,12 +25,40 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
             importedRecipes: [...state.importedRecipes, ...newRecipes],
           };
         }),
-      updateImportedRecipeCover: (recipeId, coverImage) =>
-        set((state) => ({
-          importedRecipes: state.importedRecipes.map((r) =>
-            r.id === recipeId ? { ...r, coverImage } : r
-          ),
-        })),
+      saveOrUpdateRecipe: (recipe: Recipe) =>
+        set((state) => {
+          const exists = state.importedRecipes.some((r) => r.id === recipe.id);
+          if (exists) {
+            return {
+              importedRecipes: state.importedRecipes.map((r) =>
+                r.id === recipe.id ? recipe : r
+              ),
+            };
+          }
+          return {
+            importedRecipes: [...state.importedRecipes, recipe],
+          };
+        }),
+      updateImportedRecipeCover: (recipeId, coverImage, fallbackRecipe) =>
+        set((state) => {
+          const exists = state.importedRecipes.some((r) => r.id === recipeId);
+          if (exists) {
+            return {
+              importedRecipes: state.importedRecipes.map((r) =>
+                r.id === recipeId ? { ...r, coverImage } : r
+              ),
+            };
+          }
+          if (fallbackRecipe) {
+            return {
+              importedRecipes: [
+                ...state.importedRecipes,
+                { ...fallbackRecipe, coverImage },
+              ],
+            };
+          }
+          return state;
+        }),
       removeImportedRecipe: (recipeId: string) => {
         useFavoritesStore.getState().removeFavorite(recipeId);
         set((state) => ({

@@ -22,6 +22,8 @@ import {
   Check,
   Plus,
   Zap,
+  CalendarPlus,
+  CookingPot,
 } from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeImage } from '@/components/RecipeImage';
@@ -90,18 +92,12 @@ const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
-    toast({ type: 'info', message: favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」` });
+    toast({ type: 'info', message: favorite ? '已取消收藏' : `已收藏「${recipe.name}」` });
   };
 
-  const handleTogglePlate = (e: any) => {
+  const handleOpenPlanModal = (e: any) => {
     e?.stopPropagation?.();
-    const added = togglePool(recipe.id);
-    toast({
-      type: added ? 'success' : 'info',
-      message: added
-        ? `🍱「${recipe.name}」已放入想吃候选池`
-        : `已从想吃候选池移出「${recipe.name}」`,
-    });
+    useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
   const handleLongPress = () => {
@@ -174,21 +170,12 @@ const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
           </Text>
 
           <TouchableOpacity
-            style={[styles.plateActionBtn, inPool && styles.plateActionBtnActive]}
-            onPress={handleTogglePlate}
+            style={styles.plateActionBtn}
+            onPress={handleOpenPlanModal}
             activeOpacity={0.8}
           >
-            {inPool ? (
-              <>
-                <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
-                <Text style={styles.plateActionBtnTextActive}>已选</Text>
-              </>
-            ) : (
-              <>
-                <Plus size={11} color={Palette.primary} strokeWidth={2.5} />
-                <Text style={styles.plateActionBtnText}>想吃</Text>
-              </>
-            )}
+            <CalendarPlus size={11} color={Palette.primary} strokeWidth={2.5} />
+            <Text style={styles.plateActionBtnText}>排餐</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -214,18 +201,12 @@ const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
-    toast({ type: 'info', message: favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」` });
+    toast({ type: 'info', message: favorite ? '已取消收藏' : `已收藏「${recipe.name}」` });
   };
 
-  const handleTogglePlate = (e: any) => {
+  const handleOpenPlanModal = (e: any) => {
     e?.stopPropagation?.();
-    const added = togglePool(recipe.id);
-    toast({
-      type: added ? 'success' : 'info',
-      message: added
-        ? `🍱「${recipe.name}」已放入想吃候选池`
-        : `已从想吃候选池移出「${recipe.name}」`,
-    });
+    useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
   return (
@@ -278,21 +259,12 @@ const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
         </Text>
 
         <TouchableOpacity
-          style={[styles.plateActionBtnLarge, inPool && styles.plateActionBtnLargeActive]}
-          onPress={handleTogglePlate}
+          style={styles.plateActionBtnLarge}
+          onPress={handleOpenPlanModal}
           activeOpacity={0.8}
         >
-          {inPool ? (
-            <>
-              <Check size={12} color="#FFFFFF" strokeWidth={2.5} />
-              <Text style={styles.plateActionBtnTextActive}>已在想吃池</Text>
-            </>
-          ) : (
-            <>
-              <Plus size={12} color={Palette.primary} strokeWidth={2.5} />
-              <Text style={styles.plateActionBtnText}>+ 放进想吃池</Text>
-            </>
-          )}
+          <CalendarPlus size={12} color={Palette.primary} strokeWidth={2.5} />
+          <Text style={styles.plateActionBtnText}>排入便当</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -546,13 +518,13 @@ export default function RecipesScreen() {
             )}
           </View>
 
-          {/* 快捷快手过滤：⚡ 30分内 */}
+          {/* 快捷快手过滤：30分内 */}
           <TouchableOpacity
             style={[styles.quickTagBtn, onlyFast && styles.quickTagBtnActive]}
             onPress={() => {
               const next = !onlyFast;
               setOnlyFast(next);
-              showToast(next ? '⚡ 已筛选：30分钟内快手菜' : '已显示全部时长');
+              showToast(next ? '已筛选：30分钟内快手菜' : '已显示全部时长');
             }}
             activeOpacity={0.8}
           >
@@ -568,13 +540,13 @@ export default function RecipesScreen() {
             </Text>
           </TouchableOpacity>
 
-          {/* 快捷收藏过滤：❤️ */}
+          {/* 快捷收藏过滤 */}
           <TouchableOpacity
             style={[styles.quickFavBtn, onlyFav && styles.quickFavBtnActive]}
             onPress={() => {
               const next = !onlyFav;
               setOnlyFav(next);
-              showToast(next ? '❤️ 仅显示已收藏菜谱' : '已关闭收藏筛选');
+              showToast(next ? '仅显示已收藏菜谱' : '已关闭收藏筛选');
             }}
             activeOpacity={0.8}
           >
@@ -735,7 +707,7 @@ export default function RecipesScreen() {
             }}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyEmoji}>🥣</Text>
+                <CookingPot size={42} color={Palette.cocoa[400]} />
                 <Text style={styles.emptyTitle}>暂无匹配菜谱</Text>
                 <Text style={styles.emptySubtitle}>
                   试试清空上方筛选条件或换个搜索词
