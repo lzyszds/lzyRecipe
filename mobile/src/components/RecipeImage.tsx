@@ -42,6 +42,24 @@ function getMorandiStyle(name: string, category?: string) {
   return { emoji: catEmoji || '🍲', bg: Palette.oat[100] };
 }
 
+import { useSettingsStore } from '../store/settingsStore';
+
+export function resolveCoverUrl(coverImage?: string): string | null {
+  if (!coverImage) return null;
+  if (
+    coverImage.startsWith('http://') ||
+    coverImage.startsWith('https://') ||
+    coverImage.startsWith('data:image/')
+  ) {
+    return coverImage;
+  }
+  const endpoint = (
+    useSettingsStore.getState().sync?.endpoint?.trim() || 'https://sync.lzyszds.cn'
+  ).replace(/\/+$/, '');
+  const cleanPath = coverImage.startsWith('/') ? coverImage : `/${coverImage}`;
+  return `${endpoint}${cleanPath}`;
+}
+
 export const RecipeImage: React.FC<RecipeImageProps> = ({
   coverImage,
   name,
@@ -50,7 +68,7 @@ export const RecipeImage: React.FC<RecipeImageProps> = ({
   containerStyle,
 }) => {
   const localSource = coverImage ? getLocalCoverSource(coverImage) : null;
-  const isRemote = coverImage && (coverImage.startsWith('http://') || coverImage.startsWith('https://') || coverImage.startsWith('data:image/'));
+  const remoteUrl = resolveCoverUrl(coverImage);
 
   if (localSource) {
     return (
@@ -63,10 +81,10 @@ export const RecipeImage: React.FC<RecipeImageProps> = ({
     );
   }
 
-  if (isRemote) {
+  if (remoteUrl) {
     return (
       <Image
-        source={{ uri: coverImage }}
+        source={{ uri: remoteUrl }}
         style={[styles.image, style]}
         contentFit="cover"
         transition={200}
