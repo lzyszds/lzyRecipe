@@ -20,8 +20,10 @@ import {
   Check,
   X,
   UploadCloud,
+  ZoomIn,
 } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
+import { ImagePreviewModal } from './ImagePreviewModal';
 import { Palette, Radius } from '../constants/theme';
 import { pickAndUploadImage, takePhotoAndUpload } from '../lib/upload';
 import { searchBaiduImages, generateAiFoodImage, persistImageToServer } from '../lib/coverImage';
@@ -69,6 +71,7 @@ export const RecipeCoverModal: React.FC<RecipeCoverModalProps> = ({
 
   // 提交中状态
   const [saving, setSaving] = useState(false);
+  const [zoomUrl, setZoomUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -281,6 +284,7 @@ export const RecipeCoverModal: React.FC<RecipeCoverModalProps> = ({
                     key={`${imgUrl}-${idx}`}
                     style={[styles.gridItem, isSelected && styles.gridItemSelected]}
                     onPress={() => setSelectedBaiduUrl(imgUrl)}
+                    onLongPress={() => setZoomUrl(imgUrl)}
                   >
                     <Image
                       source={{ uri: imgUrl }}
@@ -289,9 +293,18 @@ export const RecipeCoverModal: React.FC<RecipeCoverModalProps> = ({
                       transition={150}
                     />
                     {isSelected && (
-                      <View style={styles.gridItemBadge}>
-                        <Check size={14} color="#FFFFFF" strokeWidth={3} />
-                      </View>
+                      <>
+                        <View style={styles.gridItemBadge}>
+                          <Check size={14} color="#FFFFFF" strokeWidth={3} />
+                        </View>
+                        <Pressable
+                          style={styles.gridItemZoom}
+                          onPress={() => setZoomUrl(imgUrl)}
+                          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                        >
+                          <ZoomIn size={12} color="#FFFFFF" />
+                        </Pressable>
+                      </>
                     )}
                   </Pressable>
                 );
@@ -336,19 +349,29 @@ export const RecipeCoverModal: React.FC<RecipeCoverModalProps> = ({
           <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
             <View style={styles.aiPreviewContainer}>
               {aiImageUrl ? (
-                <View style={styles.aiImageWrapper}>
+                <Pressable
+                  style={styles.aiImageWrapper}
+                  onPress={() => setZoomUrl(aiImageUrl)}
+                  disabled={aiGenerating}
+                >
                   <Image
                     source={{ uri: aiImageUrl }}
                     style={styles.aiPreviewImage}
                     contentFit="cover"
                   />
+                  {!aiGenerating && (
+                    <View style={styles.aiZoomHint}>
+                      <ZoomIn size={12} color="#FFFFFF" />
+                      <Text style={styles.aiZoomHintText}>轻触放大预览</Text>
+                    </View>
+                  )}
                   {aiGenerating && (
                     <View style={styles.aiGeneratingOverlay}>
                       <ActivityIndicator size="large" color="#FFFFFF" />
                       <Text style={styles.aiGeneratingText}>正在重绘美食大片...</Text>
                     </View>
                   )}
-                </View>
+                </Pressable>
               ) : (
                 <View style={styles.aiEmptyBox}>
                   <Sparkles size={36} color={Palette.sage[500]} />
@@ -466,6 +489,15 @@ export const RecipeCoverModal: React.FC<RecipeCoverModalProps> = ({
           </ScrollView>
         )}
       </View>
+
+      {/* 放大预览弹窗 */}
+      <ImagePreviewModal
+        visible={Boolean(zoomUrl)}
+        onClose={() => setZoomUrl(null)}
+        coverImage={zoomUrl || undefined}
+        title={recipeName}
+        category={category}
+      />
     </BottomSheetModal>
   );
 };
@@ -605,6 +637,34 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  gridItemZoom: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  aiZoomHint: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  aiZoomHintText: {
+    fontSize: 11,
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
   loadMoreBtn: {
     width: '100%',

@@ -19,6 +19,7 @@ import {
   Lightbulb,
   Camera,
   Edit3,
+  ZoomIn,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
@@ -28,6 +29,7 @@ import { toast } from '@/store/feedbackStore';
 import { RecipeImage } from '@/components/RecipeImage';
 import { RecipeCoverModal } from '@/components/RecipeCoverModal';
 import { RecipeEditModal } from '@/components/RecipeEditModal';
+import { ImagePreviewModal } from '@/components/ImagePreviewModal';
 import { DifficultyLevel } from '@/types';
 import { Palette, Radius } from '@/constants/theme';
 
@@ -48,6 +50,7 @@ export default function RecipeDetailScreen() {
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const [coverModalVisible, setCoverModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [previewImageVisible, setPreviewImageVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   if (!recipe) {
@@ -167,11 +170,29 @@ export default function RecipeDetailScreen() {
       >
         {/* 顶部大封面 */}
         <View style={styles.coverWrapper}>
-          <RecipeImage
-            coverImage={recipe.coverImage}
-            name={recipe.name}
-            category={recipe.category}
-          />
+          <TouchableOpacity
+            style={styles.coverImagePressable}
+            activeOpacity={0.92}
+            onPress={() => setPreviewImageVisible(true)}
+          >
+            <RecipeImage
+              coverImage={recipe.coverImage}
+              name={recipe.name}
+              category={recipe.category}
+            />
+          </TouchableOpacity>
+
+          {/* 放大预览按钮 */}
+          <TouchableOpacity
+            style={styles.zoomPreviewBtn}
+            onPress={() => setPreviewImageVisible(true)}
+            activeOpacity={0.85}
+          >
+            <ZoomIn size={12} color="#FFFFFF" />
+            <Text style={styles.zoomPreviewText}>大图</Text>
+          </TouchableOpacity>
+
+          {/* 更换封面按钮 */}
           <TouchableOpacity
             style={styles.changeCoverBtn}
             onPress={() => setCoverModalVisible(true)}
@@ -324,6 +345,15 @@ export default function RecipeDetailScreen() {
         visible={editModalVisible}
         onClose={() => setEditModalVisible(false)}
         recipe={recipe}
+      />
+
+      {/* 高清大图放大预览弹窗 */}
+      <ImagePreviewModal
+        visible={previewImageVisible}
+        onClose={() => setPreviewImageVisible(false)}
+        coverImage={recipe.coverImage}
+        title={recipe.name}
+        category={recipe.category}
       />
     </View>
   );
@@ -578,17 +608,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
+  coverImagePressable: {
+    width: '100%',
+    height: '100%',
+  },
+  zoomPreviewBtn: {
+    position: 'absolute',
+    bottom: 28,
+    left: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(34, 30, 28, 0.72)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  zoomPreviewText: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
   changeCoverBtn: {
     position: 'absolute',
-    bottom: 12,
+    bottom: 28,
     right: 14,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(34, 30, 28, 0.75)',
+    backgroundColor: 'rgba(34, 30, 28, 0.78)',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: Radius.full,
+    borderRadius: 999,
   },
   changeCoverText: {
     fontSize: 12,

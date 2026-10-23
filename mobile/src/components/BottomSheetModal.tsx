@@ -8,6 +8,7 @@ import {
   Dimensions,
   StyleProp,
   ViewStyle,
+  PanResponder,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -22,7 +23,9 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 /**
  * 原生质感底部抽屉：
- * 遮罩背景原地渐现（绝不跟随从底部滑出），仅内容卡片自底部平滑滑入
+ * 1. 遮罩背景原地渐现（绝不跟随从底部滑出），内容卡片自底部平滑滑入；
+ * 2. 支持全区域平滑下滑拖拽关闭（Drag to Close），顶部设有原生胶囊拖拽条；
+ * 3. 智能手势判定：拖动距离 > 80px 或向下甩动初速度 > 0.4 立即顺滑滑落退出，否则弹性复位。
  */
 export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   visible,
@@ -32,6 +35,79 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
 }) => {
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const [isRendered, setIsRendered] = useState(visible);
+
+  // 顶部拖拽条响应器：零延迟即时捕获手势
+  const handlePanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponderCapture: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponderCapture: () => true,
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dy > 0) {
+          translateY.setValue(gestureState.dy);
+        } else {
+          // 向上轻微阻尼
+          translateY.setValue(gestureState.dy * 0.15);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy > 80 || gestureState.vy > 0.4) {
+          Animated.timing(translateY, {
+            toValue: SCREEN_HEIGHT,
+            duration: 180,
+            useNativeDriver: true,
+          }).start(() => {
+            onClose();
+          });
+        } else {
+          Animated.spring(translateY, {
+            toValue: 0,
+            damping: 24,
+            stiffness: 300,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+    })
+  ).current;
+
+  // 弹窗卡片背景响应器：仅在明显向下拖动时接管
+  const bodyPanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // 向下滑动超过 12px 且垂直位移明显大于水平位移时接管
+        return (
+          gestureState.dy > 12 &&
+          Math.abs(gestureState.dy) > Math.abs(gestureState.dx * 1.5)
+        );
+      },
+      onPanResponderMove: (_, gestureState) => {
+        if (gestureState.dy > 0) {
+          translateY.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        if (gestureState.dy > 100 || gestureState.vy > 0.45) {
+          Animated.timing(translateY, {
+            toValue: SCREEN_HEIGHT,
+            duration: 180,
+            useNativeDriver: true,
+          }).start(() => {
+            onClose();
+          });
+        } else {
+          Animated.spring(translateY, {
+            toValue: 0,
+            damping: 24,
+            stiffness: 300,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     if (visible) {
@@ -74,8 +150,15 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
             sheetStyle,
             { transform: [{ translateY }] },
           ]}
-          onStartShouldSetResponder={() => true}
+          {...bodyPanResponder.panHandlers}
         >
+          {/* 原生触感拖拽把手区：拖拽或点击均可操作 */}
+          <View
+            style={styles.handleContainer}
+            {...handlePanResponder.panHandlers}
+          >
+            <View style={styles.handleBar} />
+          </View>
           {children}
         </Animated.View>
       </View>
@@ -100,5 +183,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 18,
     elevation: 20,
+  },
+  handleContainer: {
+    width: '100%',
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    paddingTop: 6,
+  },
+  handleBar: {
+    width: 38,
+    height: 4.5,
+    borderRadius: 3,
+    backgroundColor: 'rgba(0, 0, 0, 0.16)',
   },
 });

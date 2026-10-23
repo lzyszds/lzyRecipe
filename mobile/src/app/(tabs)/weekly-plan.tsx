@@ -51,10 +51,10 @@ const MEALS_CONFIG: {
   icon: typeof Sunrise;
   hint: string;
 }[] = [
-  { type: 'breakfast', label: '早餐', icon: Sunrise, hint: '轻食、早点、营养' },
-  { type: 'lunch', label: '午餐', icon: Sun, hint: '主食、炒菜、便当' },
-  { type: 'dinner', label: '晚餐', icon: Moon, hint: '硬菜、靓汤、时蔬' },
-];
+    { type: 'breakfast', label: '早餐', icon: Sunrise, hint: '轻食、早点、营养' },
+    { type: 'lunch', label: '午餐', icon: Sun, hint: '主食、炒菜、便当' },
+    { type: 'dinner', label: '晚餐', icon: Moon, hint: '硬菜、靓汤、时蔬' },
+  ];
 
 export default function WeeklyPlanScreen() {
   const router = useRouter();
@@ -605,11 +605,11 @@ const styles = StyleSheet.create({
   },
   daysScroll: {
     paddingHorizontal: 16,
-    gap: 8,
+    gap: 12,
   },
   dayChip: {
-    width: 58,
-    height: 68,
+    width: 48,
+    height: 48,
     borderRadius: 14,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -824,7 +824,7 @@ const styles = StyleSheet.create({
   },
   bottomBarWrapper: {
     position: 'absolute',
-    bottom: 12,
+    bottom: 80,
     left: 16,
     right: 16,
   },
