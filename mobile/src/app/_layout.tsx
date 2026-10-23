@@ -1,11 +1,17 @@
+import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Palette } from '@/constants/theme';
 import { AddToMealPlanModal, GlobalMealPlanToast } from '@/components/AddToMealPlanModal';
 import { TodayPlateModal, GlobalTodayPlateToast } from '@/components/TodayPlateModal';
+import { startAutoSync } from '@/lib/cloudSync';
 
 export default function RootLayout() {
+  useEffect(() => {
+    startAutoSync();
+  }, []);
+
   return (
     <SafeAreaProvider>
       <StatusBar style="dark" />

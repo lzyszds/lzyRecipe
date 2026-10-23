@@ -18,10 +18,14 @@ import {
   Sparkles,
   Info,
   ShieldCheck,
+  Cloud,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
 import { useAllRecipes } from '@/lib/recipes';
+import { useSettingsStore, isSyncConfigured } from '@/store/settingsStore';
+import { useSyncStore } from '@/lib/cloudSync';
+import { SyncSettingsModal } from '@/components/SyncSettingsModal';
 import { Palette } from '@/constants/theme';
 
 export default function ProfileScreen() {
@@ -30,6 +34,10 @@ export default function ProfileScreen() {
   const { notes } = useNotesStore();
   const allRecipes = useAllRecipes();
   const validNotes = activeNotes(notes);
+
+  const { sync } = useSettingsStore();
+  const { status: syncStatus, lastSyncedAt } = useSyncStore();
+  const [syncModalVisible, setSyncModalVisible] = React.useState(false);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -80,6 +88,51 @@ export default function ProfileScreen() {
           >
             <Text style={styles.statNum}>{allRecipes.length}</Text>
             <Text style={styles.statLabel}>菜谱库</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 多端云同步卡片 */}
+        <View style={styles.menuSection}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => setSyncModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#EFF6FF' }]}>
+              <Cloud size={18} color="#2563EB" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.menuTitle}>多端云同步</Text>
+              <Text style={styles.menuSubtitle}>
+                {!isSyncConfigured(sync)
+                  ? '与电脑端、Web版保持菜谱与收藏一致'
+                  : syncStatus === 'syncing'
+                  ? '正在同步数据…'
+                  : lastSyncedAt
+                  ? `上次同步 ${new Date(lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                  : '已配置，待同步'}
+              </Text>
+            </View>
+            <View style={styles.statusPill}>
+              <View
+                style={[
+                  styles.statusDot,
+                  {
+                    backgroundColor: !isSyncConfigured(sync)
+                      ? Palette.cocoa[400]
+                      : syncStatus === 'syncing'
+                      ? '#3B82F6'
+                      : syncStatus === 'error'
+                      ? '#EF4444'
+                      : '#10B981',
+                  },
+                ]}
+              />
+              <Text style={styles.statusPillText}>
+                {!isSyncConfigured(sync) ? '未配置' : syncStatus === 'syncing' ? '同步中' : '已就绪'}
+              </Text>
+            </View>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
         </View>
 
@@ -157,6 +210,12 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* 云同步配置弹窗 */}
+      <SyncSettingsModal
+        visible={syncModalVisible}
+        onClose={() => setSyncModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -259,12 +318,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: Palette.cocoa[900],
-    flex: 1,
+  },
+  menuSubtitle: {
+    fontSize: 11,
+    color: Palette.cocoa[400],
+    marginTop: 2,
   },
   menuValue: {
     fontSize: 11,
     color: Palette.cocoa[400],
     marginRight: 4,
+  },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: Palette.oat[100],
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    marginRight: 2,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusPillText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: Palette.cocoa[700],
   },
   menuDivider: {
     height: 1,

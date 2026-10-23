@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { safeAsyncStorage } from '@/lib/safeStorage';
 import { Recipe } from '../types';
 import { useFavoritesStore } from './favoritesStore';
 
@@ -44,7 +44,7 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
     }),
     {
       name: 'imported-recipes-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => safeAsyncStorage),
     }
   )
 );
