@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,76 +6,146 @@ import {
   ScrollView,
   TouchableOpacity,
   Pressable,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Search, Heart, Sparkles, ChefHat, Calendar, ChevronRight, ShoppingCart } from 'lucide-react-native';
-import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
-import { RecipeCard } from '@/components/RecipeCard';
-import { useBentoStore } from '@/store/bentoStore';
-import { getTodayString, formatMonthDay, getWeekdayName } from '@/lib/bentoDate';
-import { buildGroceryList } from '@/lib/grocery';
+import { Image } from 'expo-image';
+import {
+  Search,
+  Utensils,
+  Clock,
+  Plus,
+  SlidersHorizontal,
+  Sparkles,
+  ChevronRight,
+  Wifi,
+  BatteryMedium,
+  Check,
+} from 'lucide-react-native';
+import { useAllRecipes } from '@/lib/recipes';
+import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
+import { DynamicIsland } from '@/components/DynamicIsland';
+import { RecipeImage } from '@/components/RecipeImage';
+import { getTodayString, getWeekdayName } from '@/lib/bentoDate';
+import { Recipe } from '@/types';
 import { Palette } from '@/constants/theme';
+
+const INGREDIENT_CHIPS = ['排骨', '五花肉', '冬瓜', '大虾', '番茄', '鸡蛋', '牛肉', '青椒'];
+
+// Default high-res fallback food image for the Hero card matching reference UI
+const HERO_IMAGE_FALLBACK =
+  'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80';
 
 export default function HomeScreen() {
   const router = useRouter();
   const allRecipes = useAllRecipes();
-  const categories = getCategoriesWithCounts(allRecipes);
-  const recipeMap = React.useMemo(() => new Map(allRecipes.map((r) => [r.id, r])), [allRecipes]);
+  const openMealPlanSheet = useMealPlanSheetStore((s) => s.openSheet);
+
+  const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState<string>('11:30');
 
   const todayStr = getTodayString();
-  const { getDayBento, bentoByDate } = useBentoStore();
-  const todayBento = getDayBento(todayStr);
+  const weekdayName = getWeekdayName(todayStr);
 
-  const groceryToday = React.useMemo(
-    () => buildGroceryList([todayStr], bentoByDate, allRecipes).todayItems,
-    [todayStr, bentoByDate, allRecipes]
-  );
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      setCurrentTime(`${h}:${m}`);
+    };
+    updateTime();
+    const timer = setInterval(updateTime, 30000);
+    return () => clearInterval(timer);
+  }, []);
 
-  // 精选菜谱
-  const FEATURED_NAMES = [
-    '芥末黄油罗氏虾',
-    '小炒黄牛肉',
-    '油焖大虾',
-    '凉拌肥牛',
-    '水煮鱼',
-    '咖喱虾鸡堡',
-    '红烧肉',
-    '西红柿炒鸡蛋',
-  ];
-  const featured = FEATURED_NAMES.map((name) =>
-    allRecipes.find((r) => r.name.trim() === name)
-  ).filter((r): r is NonNullable<typeof r> => Boolean(r));
-  const displayRecipes = featured.length > 0 ? featured : allRecipes.slice(0, 8);
+  // Compute dynamic meal period & inspiration subtitle
+  const inspirationSubtitle = useMemo(() => {
+    const hour = new Date().getHours();
+    const period = hour < 10 ? '早餐' : hour < 14 ? '午餐' : hour < 20 ? '晚餐' : '夜宵';
+    return `${weekdayName}${period}灵感 · 拒绝外卖`;
+  }, [weekdayName]);
 
-  // 今日三餐便当列表
-  const todayMeals = [
-    { label: '早', items: todayBento.breakfast },
-    { label: '午', items: todayBento.lunch },
-    { label: '晚', items: todayBento.dinner },
-  ];
+  // Find Hero Recommendation Dish (生炒排骨 or featured)
+  const heroRecipe = useMemo(() => {
+    const found = allRecipes.find(
+      (r) => r.name.includes('生炒排骨') || r.name.includes('排骨')
+    );
+    return found || allRecipes[0];
+  }, [allRecipes]);
+
+  // Pre-configured classic dishes for the ingredient card default view
+  const defaultDishes = useMemo(() => {
+    const ribs =
+      allRecipes.find((r) => r.name.includes('生炒排骨') || r.name.includes('排骨')) ||
+      allRecipes[0];
+    const pork =
+      allRecipes.find((r) => r.name.includes('回锅肉') || r.name.includes('红烧肉')) ||
+      allRecipes[1];
+    return [ribs, pork].filter(Boolean) as Recipe[];
+  }, [allRecipes]);
+
+  // Real-time matched dishes based on ingredient selection
+  const matchedRecipes = useMemo(() => {
+    if (!selectedIngredient) {
+      return defaultDishes;
+    }
+    const filtered = allRecipes.filter((r) =>
+      r.ingredients.some(
+        (ing) =>
+          ing.name.includes(selectedIngredient) ||
+          r.name.includes(selectedIngredient) ||
+          r.description?.includes(selectedIngredient)
+      )
+    );
+    return filtered.length > 0 ? filtered.slice(0, 4) : defaultDishes;
+  }, [selectedIngredient, allRecipes, defaultDishes]);
+
+  // 20分钟快手菜 (cookTime <= 25)
+  const quickDishes = useMemo(() => {
+    return allRecipes.filter((r) => (r.cookTime || 30) <= 25).slice(0, 6);
+  }, [allRecipes]);
+
+  const handleToggleIngredient = (ing: string) => {
+    setSelectedIngredient((prev) => (prev === ing ? null : ing));
+  };
+
+  const handleOpenRecipe = (recipe: Recipe) => {
+    router.push({
+      pathname: '/recipe/[id]',
+      params: { id: recipe.id },
+    });
+  };
+
+  const handleAddToPlan = (e: any, recipe: Recipe) => {
+    e?.stopPropagation?.();
+    openMealPlanSheet(recipe);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* 顶部 Header */}
-      <View style={styles.header}>
-        <View style={styles.titleRow}>
-          <View style={styles.logoBadge}>
-            <ChefHat size={18} color="#FFFFFF" />
+      {/* 顶部 Android 风格状态栏与灵动岛 */}
+      <View style={styles.statusBarRow}>
+        {/* 左侧时间 */}
+        <Text style={styles.statusTime}>{currentTime}</Text>
+
+        {/* 顶部灵动岛胶囊组件 */}
+        <DynamicIsland />
+
+        {/* 右侧手机状态指示 */}
+        <View style={styles.statusRight}>
+          <View style={styles.signalBars}>
+            <View style={[styles.signalBar, { height: 4 }]} />
+            <View style={[styles.signalBar, { height: 6 }]} />
+            <View style={[styles.signalBar, { height: 9 }]} />
+            <View style={[styles.signalBar, { height: 12 }]} />
           </View>
-          <View>
-            <Text style={styles.appTitle}>志得食谱</Text>
-            <Text style={styles.appSubtitle}>今天想吃什么？认真吃好每一餐</Text>
+          <Wifi size={14} color="#1C1917" />
+          <View style={styles.batteryBadge}>
+            <Text style={styles.batteryText}>92</Text>
           </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.favBadge}
-          onPress={() => router.push('/favorites')}
-          activeOpacity={0.8}
-        >
-          <Heart size={16} color={Palette.apricot[500]} fill={Palette.apricot[100]} />
-        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -83,76 +153,227 @@ export default function HomeScreen() {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* 搜索框触发按钮 */}
-        <TouchableOpacity
-          style={styles.searchBar}
-          onPress={() => router.push('/search')}
-          activeOpacity={0.8}
-        >
-          <Search size={16} color={Palette.cocoa[400]} />
-          <Text style={styles.searchPlaceholder}>搜索菜名、食材、菜系...</Text>
-        </TouchableOpacity>
+        {/* 顶部问候与搜索栏 */}
+        <View style={styles.greetingRow}>
+          <View style={styles.greetingLeft}>
+            <Text style={styles.subtitleText}>{inspirationSubtitle}</Text>
+            <Text style={styles.titleText}>今天想吃点什么？</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.searchCircleBtn}
+            onPress={() => router.push('/search')}
+            activeOpacity={0.8}
+            accessibilityLabel="搜索菜谱"
+          >
+            <Search size={20} color="#1C1917" />
+          </TouchableOpacity>
+        </View>
 
-        {/* 今日便当盒小卡片 */}
-        <TouchableOpacity
-          style={styles.planCard}
-          onPress={() => router.push('/weekly-plan')}
-          activeOpacity={0.88}
-        >
-          <View style={styles.planCardHeader}>
-            <View style={styles.planCardTitleRow}>
-              <Calendar size={14} color={Palette.primary} />
-              <Text style={styles.planCardTitle}>
-                今日便当盒 ({formatMonthDay(todayStr)} {getWeekdayName(todayStr)})
-              </Text>
+        {/* 今日主厨推荐 Banner 卡片 */}
+        {heroRecipe && (
+          <TouchableOpacity
+            style={styles.heroCard}
+            onPress={() => handleOpenRecipe(heroRecipe)}
+            activeOpacity={0.92}
+          >
+            <Image
+              source={{ uri: heroRecipe.coverImage || HERO_IMAGE_FALLBACK }}
+              style={styles.heroImage}
+              contentFit="cover"
+              transition={200}
+            />
+            {/* 渐变遮罩层 */}
+            <View style={styles.heroOverlay} />
+
+            {/* 顶部标签 */}
+            <View style={styles.heroTopRow}>
+              <View style={styles.chefBadge}>
+                <Utensils size={12} color="#FFFFFF" />
+                <Text style={styles.chefBadgeText}>今日主厨推荐</Text>
+              </View>
+              <View style={styles.heroMetaPill}>
+                <Clock size={12} color="#FFFFFF" />
+                <Text style={styles.heroMetaText}>
+                  {heroRecipe.cookTime || 25}分钟 · 生炒免油炸
+                </Text>
+              </View>
             </View>
-            <View style={styles.planCardAction}>
-              <Text style={styles.planCardActionText}>一周便当</Text>
-              <ChevronRight size={13} color={Palette.cocoa[400]} />
+
+            {/* 底部信息与加餐盘 */}
+            <View style={styles.heroBottomRow}>
+              <View style={styles.heroInfoCol}>
+                <Text style={styles.heroDishName} numberOfLines={1}>
+                  {heroRecipe.name.includes('生炒排骨')
+                    ? '焦香蒜香生炒排骨'
+                    : heroRecipe.name}
+                </Text>
+                <Text style={styles.heroIngredients} numberOfLines={1}>
+                  {heroRecipe.ingredients.length > 0
+                    ? heroRecipe.ingredients.map((i) => i.name).slice(0, 4).join(' · ')
+                    : '排骨 · 独头蒜 · 柱侯酱 · 小米辣'}
+                </Text>
+              </View>
+
+              <TouchableOpacity
+                style={styles.heroAddBtn}
+                onPress={(e) => handleAddToPlan(e, heroRecipe)}
+                activeOpacity={0.85}
+              >
+                <Plus size={14} color="#1C1917" strokeWidth={2.5} />
+                <Text style={styles.heroAddBtnText}>加餐盘</Text>
+              </TouchableOpacity>
             </View>
+          </TouchableOpacity>
+        )}
+
+        {/* 冰箱清库存 · 点食材配菜 卡片 */}
+        <View style={styles.inventoryCard}>
+          {/* 卡片头部 */}
+          <View style={styles.inventoryHeader}>
+            <View style={styles.inventoryTitleRow}>
+              <View style={styles.inventoryIconBadge}>
+                <SlidersHorizontal size={14} color="#EA580C" />
+              </View>
+              <Text style={styles.inventoryTitle}>冰箱清库存 · 点食材配菜</Text>
+            </View>
+            <Text style={styles.inventorySubCount}>
+              {selectedIngredient ? `已匹配 ${matchedRecipes.length} 道` : '默认推荐 2 道'}
+            </Text>
           </View>
 
-          <View style={styles.mealSlotsRow}>
-            {todayMeals.map((m, idx) => {
-              const dishNames = m.items
-                .map((item) => recipeMap.get(item.recipeId)?.name)
-                .filter(Boolean);
+          {/* 食材选择 Chips */}
+          <View style={styles.chipsWrap}>
+            {INGREDIENT_CHIPS.map((ing) => {
+              const active = selectedIngredient === ing;
               return (
-                <View key={idx} style={styles.mealSlot}>
-                  <Text style={styles.mealSlotTag}>{m.label}</Text>
-                  <Text style={styles.mealSlotName} numberOfLines={1}>
-                    {dishNames.length > 0 ? dishNames.join('、') : '未安排'}
+                <TouchableOpacity
+                  key={ing}
+                  style={[styles.chipPill, active && styles.chipPillActive]}
+                  onPress={() => handleToggleIngredient(ing)}
+                  activeOpacity={0.75}
+                >
+                  <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                    {ing}
                   </Text>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </View>
 
-          {groceryToday.length > 0 && (
-            <View style={styles.groceryNoticeBar}>
-              <ShoppingCart size={13} color={Palette.primary} />
-              <Text style={styles.groceryNoticeText} numberOfLines={1}>
-                今日急需备菜：{groceryToday.map((i) => i.name).slice(0, 3).join('、')}等 {groceryToday.length} 项食材
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-        {/* 精选菜谱网格 */}
-        <View style={styles.sectionHeader}>
-          <View style={styles.sectionTitleRow}>
-            <Sparkles size={14} color={Palette.apricot[500]} />
-            <Text style={styles.sectionTitle}>精选美味</Text>
+          {/* 匹配菜谱列表 */}
+          <View style={styles.matchedList}>
+            {matchedRecipes.map((dish, idx) => {
+              const coreIngredients = dish.ingredients
+                .map((i) => i.name)
+                .slice(0, 3)
+                .join(' · ');
+
+              const displayName =
+                dish.name.includes('生炒排骨')
+                  ? '焦香蒜香生炒排骨'
+                  : dish.name.includes('回锅肉')
+                  ? '川味青蒜苗回锅肉'
+                  : dish.name;
+
+              const methodTag =
+                dish.cookTime && dish.cookTime <= 20
+                  ? `${dish.cookTime}分钟 · 小炒`
+                  : `${dish.cookTime || 25}分钟 · 生炒`;
+
+              return (
+                <TouchableOpacity
+                  key={`${dish.id}-${idx}`}
+                  style={styles.matchedRow}
+                  onPress={() => handleOpenRecipe(dish)}
+                  activeOpacity={0.8}
+                >
+                  <RecipeImage
+                    coverImage={dish.coverImage}
+                    name={dish.name}
+                    category={dish.category}
+                    style={styles.dishThumb}
+                    containerStyle={styles.dishThumbWrap}
+                  />
+
+                  <View style={styles.dishInfo}>
+                    <Text style={styles.dishName} numberOfLines={1}>
+                      {displayName}
+                    </Text>
+                    <Text style={styles.dishCore} numberOfLines={1}>
+                      核心: {coreIngredients || '鲜香下饭 · 烹饪方便'}
+                    </Text>
+                    <View style={styles.dishTagWrap}>
+                      <View style={styles.methodTagPill}>
+                        <Text style={styles.methodTagText}>{methodTag}</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <TouchableOpacity
+                    style={styles.rowAddBtn}
+                    onPress={(e) => handleAddToPlan(e, dish)}
+                    activeOpacity={0.75}
+                  >
+                    <Plus size={18} color="#1C1917" strokeWidth={2.2} />
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              );
+            })}
           </View>
-          <TouchableOpacity onPress={() => router.push('/recipes')}>
-            <Text style={styles.sectionLink}>共 {allRecipes.length} 道 →</Text>
+        </View>
+
+        {/* 20分钟快手菜 区域 */}
+        <View style={styles.sectionHeaderRow}>
+          <View style={styles.sectionTitleRow}>
+            <Sparkles size={16} color="#EA580C" />
+            <Text style={styles.sectionTitle}>20分钟快手菜</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.sectionMoreBtn}
+            onPress={() => router.push('/recipes')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.sectionMoreText}>查看更多</Text>
+            <ChevronRight size={14} color="#78716C" />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.grid}>
-          {displayRecipes.map((recipe) => (
-            <View key={recipe.id} style={styles.gridItem}>
-              <RecipeCard recipe={recipe} />
-            </View>
+        <View style={styles.quickGrid}>
+          {quickDishes.map((dish) => (
+            <TouchableOpacity
+              key={dish.id}
+              style={styles.quickCard}
+              onPress={() => handleOpenRecipe(dish)}
+              activeOpacity={0.88}
+            >
+              <RecipeImage
+                coverImage={dish.coverImage}
+                name={dish.name}
+                category={dish.category}
+                style={styles.quickCardImage}
+                containerStyle={styles.quickCardImageWrap}
+              />
+              <View style={styles.quickCardContent}>
+                <Text style={styles.quickCardTitle} numberOfLines={1}>
+                  {dish.name}
+                </Text>
+                <View style={styles.quickCardMetaRow}>
+                  <View style={styles.quickCardTimeBadge}>
+                    <Clock size={10} color="#EA580C" />
+                    <Text style={styles.quickCardTimeText}>
+                      {dish.cookTime || 20}分钟
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.quickCardAddBtn}
+                    onPress={(e) => handleAddToPlan(e, dish)}
+                    activeOpacity={0.8}
+                  >
+                    <Plus size={14} color="#EA580C" strokeWidth={2.2} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
@@ -163,156 +384,352 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Palette.oat[50],
+    backgroundColor: Palette.canvas,
+  },
+  statusBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'android' ? 8 : 4,
+    paddingBottom: 8,
+    backgroundColor: Palette.canvas,
+    zIndex: 10,
+  },
+  statusTime: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1C1917',
+    minWidth: 42,
+  },
+  statusRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    minWidth: 50,
+    justifyContent: 'flex-end',
+  },
+  signalBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    height: 12,
+    gap: 1.5,
+  },
+  signalBar: {
+    width: 2.5,
+    backgroundColor: '#1C1917',
+    borderRadius: 1,
+  },
+  batteryBadge: {
+    backgroundColor: '#1C1917',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 4,
+  },
+  batteryText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '800',
   },
   container: {
     flex: 1,
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 110,
+    paddingTop: 8,
+    paddingBottom: 120,
   },
-  header: {
+  greetingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
-    backgroundColor: Palette.canvas,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Palette.dockBorder,
-    zIndex: 10,
+    marginTop: 6,
+    marginBottom: 16,
   },
-  titleRow: {
+  greetingLeft: {
+    flex: 1,
+  },
+  subtitleText: {
+    fontSize: 13,
+    color: '#78716C',
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#1C1917',
+    letterSpacing: -0.3,
+  },
+  searchCircleBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E7DFD4',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+      },
+    }),
+  },
+  heroCard: {
+    height: 240,
+    borderRadius: 24,
+    overflow: 'hidden',
+    position: 'relative',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: '#26211E',
+    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 4,
+      },
+      web: {
+        boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+      },
+    }),
+  },
+  heroImage: {
+    ...StyleSheet.absoluteFill,
+  },
+  heroOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(28, 25, 23, 0.42)',
+  },
+  heroTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    justifyContent: 'space-between',
+    zIndex: 2,
   },
-  logoBadge: {
-    width: 36,
-    height: 36,
+  chefBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#EA580C',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    gap: 5,
+  },
+  chefBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  heroMetaPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+    gap: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+  },
+  heroMetaText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  heroBottomRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  heroInfoCol: {
+    flex: 1,
+    paddingRight: 12,
+  },
+  heroDishName: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '800',
+    marginBottom: 4,
+    letterSpacing: 0.2,
+  },
+  heroIngredients: {
+    color: '#E7E5E4',
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  heroAddBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 18,
+    gap: 4,
+  },
+  heroAddBtnText: {
+    color: '#1C1917',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  inventoryCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#EBE5DC',
+    marginBottom: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+      },
+    }),
+  },
+  inventoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  inventoryTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  inventoryIconBadge: {
+    width: 28,
+    height: 28,
     borderRadius: 10,
-    backgroundColor: Palette.apricot[500],
+    backgroundColor: '#FEF3C7',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  appTitle: {
-    fontSize: 16,
+  inventoryTitle: {
+    fontSize: 15,
     fontWeight: '800',
-    color: Palette.cocoa[900],
+    color: '#1C1917',
   },
-  appSubtitle: {
+  inventorySubCount: {
     fontSize: 11,
-    color: Palette.cocoa[400],
-    marginTop: 1,
+    color: '#A8A29E',
   },
-  favBadge: {
+  chipsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 14,
+  },
+  chipPill: {
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 14,
+    backgroundColor: '#F3EFEA',
+  },
+  chipPillActive: {
+    backgroundColor: '#1C1917',
+  },
+  chipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#44403C',
+  },
+  chipTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  matchedList: {
+    gap: 10,
+  },
+  matchedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FAF8F5',
+    borderRadius: 16,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#EFEAE2',
+  },
+  dishThumbWrap: {
+    width: 62,
+    height: 62,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  dishThumb: {
+    width: 62,
+    height: 62,
+    borderRadius: 12,
+  },
+  dishInfo: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 8,
+  },
+  dishName: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#1C1917',
+    marginBottom: 3,
+  },
+  dishCore: {
+    fontSize: 11,
+    color: '#78716C',
+    marginBottom: 4,
+  },
+  dishTagWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  methodTagPill: {
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  methodTagText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#DC2626',
+  },
+  rowAddBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: Palette.oat[100],
+    backgroundColor: '#F3EFEA',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Palette.oat[200],
-    paddingHorizontal: 14,
-    height: 42,
-    gap: 10,
-    marginBottom: 14,
-  },
-  searchPlaceholder: {
-    fontSize: 12,
-    color: Palette.cocoa[400],
-  },
-  planCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: Palette.oat[100],
-    marginBottom: 16,
-  },
-  planCardHeader: {
+  sectionHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-  planCardTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  planCardTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: Palette.cocoa[900],
-  },
-  planCardAction: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  planCardActionText: {
-    fontSize: 11,
-    color: Palette.cocoa[400],
-  },
-  mealSlotsRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  mealSlot: {
-    flex: 1,
-    backgroundColor: Palette.oat[50],
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  mealSlotTag: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Palette.apricot[600],
-    backgroundColor: Palette.apricot[100],
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 4,
-  },
-  mealSlotName: {
-    fontSize: 11,
-    color: Palette.cocoa[700],
-    flex: 1,
-  },
-  groceryNoticeBar: {
-    marginTop: 8,
-    backgroundColor: 'rgba(217, 107, 56, 0.08)',
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-  },
-  groceryNoticeText: {
-    fontSize: 10,
-    color: Palette.primary,
-    fontWeight: '600',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-    marginTop: 4,
+    marginBottom: 12,
+    paddingHorizontal: 2,
   },
   sectionTitleRow: {
     flexDirection: 'row',
@@ -320,49 +737,87 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   sectionTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: Palette.cocoa[900],
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1C1917',
   },
-  sectionLink: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: Palette.cocoa[400],
-  },
-  categoryScroll: {
-    gap: 8,
-    paddingBottom: 16,
-  },
-  categoryChip: {
+  sectionMoreBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Palette.oat[100],
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    gap: 6,
+    gap: 2,
   },
-  categoryIcon: {
-    fontSize: 13,
-  },
-  categoryName: {
+  sectionMoreText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: Palette.cocoa[900],
+    color: '#78716C',
+    fontWeight: '500',
   },
-  categoryCount: {
-    fontSize: 10,
-    color: Palette.cocoa[400],
-  },
-  grid: {
+  quickGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
   },
-  gridItem: {
+  quickCard: {
     width: '48%',
-    flexGrow: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#EBE5DC',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 6,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+      },
+    }),
+  },
+  quickCardImageWrap: {
+    width: '100%',
+    height: 110,
+  },
+  quickCardImage: {
+    width: '100%',
+    height: 110,
+  },
+  quickCardContent: {
+    padding: 10,
+  },
+  quickCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1C1917',
+    marginBottom: 6,
+  },
+  quickCardMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  quickCardTimeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  quickCardTimeText: {
+    fontSize: 11,
+    color: '#EA580C',
+    fontWeight: '600',
+  },
+  quickCardAddBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#FFF7ED',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FED7AA',
   },
 });

@@ -274,26 +274,6 @@ export default function WeeklyPlanScreen() {
                 >
                   {formatMonthDay(dateStr)}
                 </Text>
-
-                {totalDishes > 0 ? (
-                  <View
-                    style={[
-                      styles.dishCountBadge,
-                      isSelected && styles.dishCountBadgeSelected,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.dishCountText,
-                        isSelected && styles.dishCountTextSelected,
-                      ]}
-                    >
-                      {totalDishes}菜
-                    </Text>
-                  </View>
-                ) : (
-                  <View style={styles.emptySlotDot} />
-                )}
               </TouchableOpacity>
             );
           })}
@@ -605,11 +585,12 @@ const styles = StyleSheet.create({
   },
   daysScroll: {
     paddingHorizontal: 16,
-    gap: 12,
+    gap: 6,
+    marginTop: 12
   },
   dayChip: {
-    width: 48,
-    height: 48,
+    width: 52,
+    height: 52,
     borderRadius: 14,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -665,7 +646,6 @@ const styles = StyleSheet.create({
     height: 4,
     borderRadius: 2,
     backgroundColor: Palette.dockBorder,
-    marginTop: 4,
   },
   container: {
     flex: 1,
