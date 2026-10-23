@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Pressable,
   TextInput,
   ActivityIndicator,
   ScrollView,
@@ -22,13 +21,27 @@ import {
   Server,
   KeyRound,
   Bot,
+  Cloud,
+  CloudOff,
+  CloudDownload,
+  ChevronLeft,
+  RefreshCw,
+  Search,
+  Check,
+  Cpu,
 } from 'lucide-react-native';
 import {
   useSettingsStore,
   isAiConfigured,
+  isSyncConfigured,
   AiSettings,
 } from '@/store/settingsStore';
-import { testAiConnection, AiError } from '@/lib/ai';
+import {
+  testAiConnection,
+  fetchRemoteModels,
+  RemoteModelInfo,
+} from '@/lib/ai';
+import { pushToCloud } from '@/lib/cloudSync';
 import { toast } from '@/store/feedbackStore';
 import { Palette } from '@/constants/theme';
 
@@ -39,77 +52,123 @@ interface AiSettingsModalProps {
 
 const PRESETS = [
   {
-    name: 'DeepSeek (推荐)',
-    baseUrl: 'https://api.deepseek.com/v1',
-    model: 'deepseek-chat',
-  },
-  {
-    name: '通义千问',
-    baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-    model: 'qwen-plus',
-  },
-  {
-    name: '智谱 GLM',
-    baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-    model: 'glm-4-flash',
-  },
-  {
-    name: '硅基流动',
-    baseUrl: 'https://api.siliconflow.cn/v1',
-    model: 'deepseek-ai/DeepSeek-V3',
-  },
-  {
-    name: 'OpenAI',
+    name: 'OpenAI (官方)',
     baseUrl: 'https://api.openai.com/v1',
     model: 'gpt-4o-mini',
+    desc: '全球顶尖大模型，推荐 gpt-4o-mini 高性价比极速响应',
+  },
+  {
+    name: 'NVIDIA NIM',
+    baseUrl: 'https://integrate.api.nvidia.com/v1',
+    model: 'meta/llama-3.1-70b-instruct',
+    desc: '英伟达云端高性能微服务，支持 Llama 3.1、Nemotron 等，含免费额度',
+  },
+  {
+    name: '自定义接口',
+    baseUrl: '',
+    model: '',
+    desc: '支持任何标准兼容 OpenAI 规范的第三方中转或私有化部署接口',
   },
 ];
+
+type FilterType = 'all' | 'free' | 'large' | 'light' | 'vision';
 
 export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
   visible,
   onClose,
 }) => {
-  const { ai, setAi } = useSettingsStore();
+  const { ai, setAi, sync } = useSettingsStore();
+  const syncConfigured = isSyncConfigured(sync);
 
-  const [baseUrl, setBaseUrl] = useState(ai.baseUrl || 'https://api.deepseek.com/v1');
+  const [baseUrl, setBaseUrl] = useState(ai.baseUrl || 'https://api.openai.com/v1');
   const [apiKey, setApiKey] = useState(ai.apiKey || '');
-  const [model, setModel] = useState(ai.model || 'deepseek-chat');
+  const [model, setModel] = useState(ai.model || 'gpt-4o-mini');
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
+  const [syncingCloud, setSyncingCloud] = useState(false);
   const [testResult, setTestResult] = useState<{
     ok: boolean;
     latencyMs?: number;
     msg: string;
   } | null>(null);
 
+  // 模型拉取与选择视图状态
+  const [viewMode, setViewMode] = useState<'form' | 'picker'>('form');
+  const [remoteModels, setRemoteModels] = useState<RemoteModelInfo[]>([]);
+  const [fetchingModels, setFetchingModels] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState<FilterType>('all');
+
   useEffect(() => {
     if (visible) {
-      setBaseUrl(ai.baseUrl || 'https://api.deepseek.com/v1');
+      setBaseUrl(ai.baseUrl || 'https://api.openai.com/v1');
       setApiKey(ai.apiKey || '');
-      setModel(ai.model || 'deepseek-chat');
+      setModel(ai.model || 'gpt-4o-mini');
       setTestResult(null);
+      setViewMode('form');
+      setSearchQuery('');
+      setSelectedFilter('all');
     }
   }, [visible, ai]);
 
   const handleApplyPreset = (preset: (typeof PRESETS)[0]) => {
-    setBaseUrl(preset.baseUrl);
-    setModel(preset.model);
+    if (preset.baseUrl) {
+      setBaseUrl(preset.baseUrl);
+      setModel(preset.model);
+    }
+    setRemoteModels([]);
     setTestResult(null);
     toast({ type: 'info', message: `已应用 ${preset.name} 预设` });
   };
 
-  const handleSave = () => {
-    const finalBaseUrl = baseUrl.trim() || 'https://api.deepseek.com/v1';
+  const handleSave = async () => {
+    const finalBaseUrl = baseUrl.trim() || 'https://api.openai.com/v1';
     const finalApiKey = apiKey.trim();
-    const finalModel = model.trim() || 'deepseek-chat';
+    const finalModel = model.trim() || 'gpt-4o-mini';
 
     setAi({
       baseUrl: finalBaseUrl,
       apiKey: finalApiKey,
       model: finalModel,
     });
-    toast({ type: 'success', message: 'AI 配置已保存' });
+
+    if (syncConfigured) {
+      try {
+        await pushToCloud();
+        toast({ type: 'success', message: 'AI 配置已保存并成功同步至云端' });
+      } catch (err: any) {
+        toast({ type: 'warning', message: '已保存至本地（云端同步失败，请检查网络）' });
+      }
+    } else {
+      toast({ type: 'success', message: 'AI 配置已保存' });
+    }
     onClose();
+  };
+
+  const handleSyncKeyToCloud = async () => {
+    if (!syncConfigured) {
+      toast({ type: 'warning', message: '请先在「设置 - 云同步」中配置私人密钥' });
+      return;
+    }
+    const finalBaseUrl = baseUrl.trim() || 'https://api.openai.com/v1';
+    const finalApiKey = apiKey.trim();
+    const finalModel = model.trim() || 'gpt-4o-mini';
+
+    setAi({
+      baseUrl: finalBaseUrl,
+      apiKey: finalApiKey,
+      model: finalModel,
+    });
+
+    setSyncingCloud(true);
+    try {
+      await pushToCloud();
+      toast({ type: 'success', message: 'API Key 与配置已成功上传至云端' });
+    } catch (err: any) {
+      toast({ type: 'error', message: err.message || '上传云端失败，请检查网络' });
+    } finally {
+      setSyncingCloud(false);
+    }
   };
 
   const handleTest = async () => {
@@ -136,8 +195,10 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
         latencyMs: res.latencyMs,
         msg: `连接成功 (耗时 ${res.latencyMs}ms)\nAI 回复:「${res.reply}」`,
       });
-      // 自动保存已测试通过的配置
       setAi(tempConfig);
+      if (syncConfigured) {
+        pushToCloud().catch(() => {});
+      }
     } catch (err: any) {
       setTestResult({
         ok: false,
@@ -148,6 +209,78 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
     }
   };
 
+  const loadModels = async (forceRefresh = false) => {
+    const targetUrl = baseUrl.trim();
+    if (!targetUrl) {
+      toast({ type: 'warning', message: '请先输入接口地址 (Base URL)' });
+      return;
+    }
+
+    if (remoteModels.length > 0 && !forceRefresh) {
+      setViewMode('picker');
+      return;
+    }
+
+    setFetchingModels(true);
+    try {
+      const list = await fetchRemoteModels(targetUrl, apiKey.trim());
+      setRemoteModels(list);
+      setViewMode('picker');
+      toast({ type: 'success', message: `成功拉取到 ${list.length} 个可用模型` });
+    } catch (err: any) {
+      toast({ type: 'error', message: err.message || '拉取模型失败，请检查地址或网络' });
+    } finally {
+      setFetchingModels(false);
+    }
+  };
+
+  const handleSelectModel = (selectedId: string) => {
+    setModel(selectedId);
+    setViewMode('form');
+    toast({ type: 'success', message: `已选用模型: ${selectedId}` });
+  };
+
+  // 过滤模型列表
+  const filteredModels = useMemo(() => {
+    let result = remoteModels;
+    if (selectedFilter === 'free') {
+      result = result.filter((m) => Boolean(m.freeBadge));
+    } else if (selectedFilter === 'large') {
+      result = result.filter(
+        (m) =>
+          m.sizeBadge.includes('70B') ||
+          m.sizeBadge.includes('340B') ||
+          m.sizeBadge.includes('8X22B') ||
+          m.sizeBadge.includes('旗舰')
+      );
+    } else if (selectedFilter === 'light') {
+      result = result.filter(
+        (m) =>
+          m.sizeBadge.includes('8B') ||
+          m.sizeBadge.includes('12B') ||
+          m.sizeBadge.includes('14B') ||
+          m.sizeBadge.includes('轻量')
+      );
+    } else if (selectedFilter === 'vision') {
+      result = result.filter(
+        (m) => m.typeBadge.includes('视觉') || m.typeBadge.includes('多模态')
+      );
+    }
+
+    const q = searchQuery.trim().toLowerCase();
+    if (q) {
+      result = result.filter(
+        (m) =>
+          m.id.toLowerCase().includes(q) ||
+          m.name.toLowerCase().includes(q) ||
+          (m.ownedBy && m.ownedBy.toLowerCase().includes(q)) ||
+          m.vendorBadge.toLowerCase().includes(q) ||
+          m.sizeBadge.toLowerCase().includes(q)
+      );
+    }
+    return result;
+  }, [remoteModels, selectedFilter, searchQuery]);
+
   return (
     <BottomSheetModal
       visible={visible}
@@ -155,8 +288,10 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
       sheetStyle={styles.sheet}
     >
       <SafeAreaView edges={['bottom']} style={styles.safeArea}>
-        {/* 顶部标题栏 */}
-        <View style={styles.header}>
+        {viewMode === 'form' ? (
+          <>
+            {/* 顶部标题栏 */}
+            <View style={styles.header}>
               <View style={styles.titleRow}>
                 <View style={styles.iconBadge}>
                   <Sparkles size={18} color="#FFFFFF" />
@@ -164,7 +299,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 <View>
                   <Text style={styles.sheetTitle}>AI 智能厨师配置</Text>
                   <Text style={styles.sheetSubtitle}>
-                    支持标准 OpenAI 接口规范 (DeepSeek/通义/OpenAI等)
+                    标准 OpenAI 兼容规范 · 支持 NVIDIA NIM 与云端同步
                   </Text>
                 </View>
               </View>
@@ -183,16 +318,17 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
             >
-              {/* 快速预设 */}
+              {/* 常用服务商快捷预设 */}
               <View style={styles.presetSection}>
-                <Text style={styles.fieldLabel}>常用服务商快捷预设：</Text>
+                <Text style={styles.fieldLabel}>常用渠道商：</Text>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.presetsRow}
                 >
                   {PRESETS.map((p) => {
-                    const isSelected = baseUrl === p.baseUrl && model === p.model;
+                    const isSelected =
+                      p.baseUrl ? baseUrl === p.baseUrl : !baseUrl;
                     return (
                       <TouchableOpacity
                         key={p.name}
@@ -225,7 +361,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 </View>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="https://api.deepseek.com/v1"
+                  placeholder="https://api.openai.com/v1"
                   placeholderTextColor={Palette.cocoa[400]}
                   value={baseUrl}
                   onChangeText={setBaseUrl}
@@ -233,11 +369,11 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                   autoCorrect={false}
                 />
                 <Text style={styles.inputHint}>
-                  支持填完整根地址或包含 /chat/completions 的路径
+                  如 NVIDIA NIM 地址填 https://integrate.api.nvidia.com/v1
                 </Text>
               </View>
 
-              {/* 字段 2：API Key */}
+              {/* 字段 2：API Key 与云端存储状态 */}
               <View style={styles.inputGroup}>
                 <View style={styles.labelRow}>
                   <KeyRound size={14} color={Palette.cocoa[700]} />
@@ -246,7 +382,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 <View style={styles.keyInputWrapper}>
                   <TextInput
                     style={[styles.textInput, { flex: 1, paddingRight: 40 }]}
-                    placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+                    placeholder="nvapi-xxxxxxxx / sk-xxxxxxxx"
                     placeholderTextColor={Palette.cocoa[400]}
                     value={apiKey}
                     onChangeText={setApiKey}
@@ -266,26 +402,87 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                     )}
                   </TouchableOpacity>
                 </View>
-                <Text style={styles.inputHint}>
-                  仅保存在您本地设备中，绝不会泄露
-                </Text>
+
+                {/* 云端存储提示与手动上传 */}
+                <View
+                  style={[
+                    styles.cloudCard,
+                    syncConfigured ? styles.cloudCardReady : styles.cloudCardWarn,
+                  ]}
+                >
+                  <View style={styles.cloudCardLeft}>
+                    {syncConfigured ? (
+                      <Cloud size={15} color="#059669" />
+                    ) : (
+                      <CloudOff size={15} color={Palette.cocoa[400]} />
+                    )}
+                    <Text
+                      style={[
+                        styles.cloudCardText,
+                        { color: syncConfigured ? '#065F46' : Palette.cocoa[700] },
+                      ]}
+                    >
+                      {syncConfigured
+                        ? '云端同步已绑定：保存时密钥将自动加密同步至您的云服务器'
+                        : '未开启云端同步：密钥仅存本地，配置「云同步」可多端共享'}
+                    </Text>
+                  </View>
+                  {syncConfigured && (
+                    <TouchableOpacity
+                      style={styles.cloudSyncBtn}
+                      onPress={handleSyncKeyToCloud}
+                      disabled={syncingCloud}
+                      activeOpacity={0.7}
+                    >
+                      {syncingCloud ? (
+                        <ActivityIndicator size="small" color="#059669" />
+                      ) : (
+                        <Text style={styles.cloudSyncBtnText}>立即备份</Text>
+                      )}
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
 
-              {/* 字段 3：模型名称 */}
+              {/* 字段 3：模型名称与自动拉取按钮 */}
               <View style={styles.inputGroup}>
-                <View style={styles.labelRow}>
-                  <Bot size={14} color={Palette.cocoa[700]} />
-                  <Text style={styles.fieldLabel}>模型名称 (Model)</Text>
+                <View style={styles.labelRowBetween}>
+                  <View style={styles.labelRow}>
+                    <Bot size={14} color={Palette.cocoa[700]} />
+                    <Text style={styles.fieldLabel}>模型名称 (Model)</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={styles.fetchModelBtn}
+                    onPress={() => loadModels(false)}
+                    disabled={fetchingModels}
+                    activeOpacity={0.75}
+                  >
+                    {fetchingModels ? (
+                      <ActivityIndicator size="small" color={Palette.primary} />
+                    ) : (
+                      <>
+                        <CloudDownload size={13} color={Palette.primary} />
+                        <Text style={styles.fetchModelBtnText}>
+                          {remoteModels.length > 0
+                            ? `选择模型 (${remoteModels.length})`
+                            : '自动拉取模型'}
+                        </Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
                 </View>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="deepseek-chat / gpt-4o-mini"
+                  placeholder="gpt-4o-mini 或 meta/llama-3.1-70b-instruct"
                   placeholderTextColor={Palette.cocoa[400]}
                   value={model}
                   onChangeText={setModel}
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
+                <Text style={styles.inputHint}>
+                  点击右上角「自动拉取模型」可实时拉取当前渠道所有模型（含参数大小、免费额度）
+                </Text>
               </View>
 
               {/* 测试状态反馈 */}
@@ -342,22 +539,191 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 </TouchableOpacity>
               </View>
             </ScrollView>
-          </SafeAreaView>
+          </>
+        ) : (
+          /* 模型选择视图 */
+          <View style={styles.pickerContainer}>
+            {/* 顶栏 */}
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => setViewMode('form')}
+                style={styles.backBtn}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <ChevronLeft size={20} color={Palette.cocoa[700]} />
+                <Text style={styles.backBtnText}>返回配置</Text>
+              </TouchableOpacity>
+              <View style={styles.pickerTitleBox}>
+                <Text style={styles.sheetTitle}>选择可用模型</Text>
+                <Text style={styles.sheetSubtitle}>
+                  共 {remoteModels.length} 个模型
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => loadModels(true)}
+                style={styles.refreshBtn}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                disabled={fetchingModels}
+              >
+                {fetchingModels ? (
+                  <ActivityIndicator size="small" color={Palette.primary} />
+                ) : (
+                  <RefreshCw size={16} color={Palette.primary} />
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {/* 搜索框 */}
+            <View style={styles.searchWrapper}>
+              <View style={styles.searchBox}>
+                <Search size={15} color={Palette.cocoa[400]} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="搜索模型名称、归属厂商或参数大小..."
+                  placeholderTextColor={Palette.cocoa[400]}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                {searchQuery ? (
+                  <TouchableOpacity
+                    onPress={() => setSearchQuery('')}
+                    hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+                  >
+                    <X size={14} color={Palette.cocoa[400]} />
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            </View>
+
+            {/* 分类筛选 Chip */}
+            <View style={styles.filterSection}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.filterChipsRow}
+              >
+                {[
+                  { key: 'all', label: `全部 (${remoteModels.length})` },
+                  { key: 'free', label: '含免费额度' },
+                  { key: 'large', label: '70B+ 旗舰' },
+                  { key: 'light', label: '轻量极速' },
+                  { key: 'vision', label: '视觉多模态' },
+                ].map((f) => (
+                  <TouchableOpacity
+                    key={f.key}
+                    style={[
+                      styles.filterChip,
+                      selectedFilter === f.key && styles.filterChipActive,
+                    ]}
+                    onPress={() => setSelectedFilter(f.key as FilterType)}
+                    activeOpacity={0.7}
+                  >
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        selectedFilter === f.key && styles.filterChipTextActive,
+                      ]}
+                    >
+                      {f.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+
+            {/* 模型列表 */}
+            <ScrollView
+              style={styles.modelListScroll}
+              contentContainerStyle={styles.modelListContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              {filteredModels.length === 0 ? (
+                <View style={styles.emptyBox}>
+                  <Cpu size={32} color={Palette.cocoa[400]} />
+                  <Text style={styles.emptyText}>未找到符合条件的模型</Text>
+                </View>
+              ) : (
+                filteredModels.map((item) => {
+                  const isCurrent = item.id === model;
+                  return (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[
+                        styles.modelCard,
+                        isCurrent && styles.modelCardSelected,
+                      ]}
+                      onPress={() => handleSelectModel(item.id)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.modelCardHeader}>
+                        <View style={styles.modelNameBox}>
+                          <Text
+                            style={[
+                              styles.modelIdText,
+                              isCurrent && styles.modelIdTextSelected,
+                            ]}
+                            numberOfLines={1}
+                          >
+                            {item.id}
+                          </Text>
+                        </View>
+                        {isCurrent && (
+                          <View style={styles.selectedBadge}>
+                            <Check size={12} color="#059669" />
+                            <Text style={styles.selectedBadgeText}>当前选用</Text>
+                          </View>
+                        )}
+                      </View>
+
+                      {/* 标签栏：厂商、参数大小、免费状态、模型类型 */}
+                      <View style={styles.badgesRow}>
+                        <View style={styles.vendorBadge}>
+                          <Text style={styles.vendorBadgeText}>
+                            {item.vendorBadge}
+                          </Text>
+                        </View>
+
+                        <View style={styles.sizeBadge}>
+                          <Text style={styles.sizeBadgeText}>
+                            {item.sizeBadge}
+                          </Text>
+                        </View>
+
+                        {item.freeBadge ? (
+                          <View style={styles.freeBadge}>
+                            <Text style={styles.freeBadgeText}>
+                              {item.freeBadge}
+                            </Text>
+                          </View>
+                        ) : null}
+
+                        <View style={styles.typeBadge}>
+                          <Text style={styles.typeBadgeText}>
+                            {item.typeBadge}
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })
+              )}
+            </ScrollView>
+          </View>
+        )}
+      </SafeAreaView>
     </BottomSheetModal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    justifyContent: 'flex-end',
-  },
   sheet: {
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    maxHeight: '90%',
+    maxHeight: '92%',
     width: '100%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
@@ -409,8 +775,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  backBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Palette.cocoa[700],
+  },
+  pickerTitleBox: {
+    alignItems: 'center',
+  },
+  refreshBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(217, 107, 56, 0.08)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   scrollArea: {
-    maxHeight: 520,
+    maxHeight: 540,
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -452,10 +839,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
   },
+  labelRowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   fieldLabel: {
     fontSize: 13,
     fontWeight: '700',
     color: Palette.cocoa[900],
+  },
+  fetchModelBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: 'rgba(217, 107, 56, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(217, 107, 56, 0.2)',
+  },
+  fetchModelBtnText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Palette.primary,
   },
   textInput: {
     backgroundColor: Palette.oat[50],
@@ -481,6 +889,46 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Palette.cocoa[400],
     paddingLeft: 2,
+  },
+  cloudCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 10,
+    borderWidth: 1,
+    gap: 8,
+  },
+  cloudCardReady: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#A7F3D0',
+  },
+  cloudCardWarn: {
+    backgroundColor: Palette.oat[100],
+    borderColor: Palette.dockBorder,
+  },
+  cloudCardLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  cloudCardText: {
+    fontSize: 11,
+    flex: 1,
+    lineHeight: 16,
+  },
+  cloudSyncBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: '#D1FAE5',
+  },
+  cloudSyncBtnText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#065F46',
   },
   resultCard: {
     borderRadius: 12,
@@ -552,5 +1000,170 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',
+  },
+
+  // Picker 样式
+  pickerContainer: {
+    height: 560,
+  },
+  searchWrapper: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Palette.oat[50],
+    borderWidth: 1,
+    borderColor: Palette.dockBorder,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    height: 38,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 13,
+    color: Palette.cocoa[900],
+    paddingVertical: 0,
+  },
+  filterSection: {
+    paddingBottom: 8,
+  },
+  filterChipsRow: {
+    paddingHorizontal: 16,
+    gap: 6,
+  },
+  filterChip: {
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 16,
+    backgroundColor: Palette.oat[100],
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  filterChipActive: {
+    backgroundColor: 'rgba(217, 107, 56, 0.1)',
+    borderColor: Palette.primary,
+  },
+  filterChipText: {
+    fontSize: 12,
+    color: Palette.cocoa[700],
+  },
+  filterChipTextActive: {
+    fontWeight: '700',
+    color: Palette.primary,
+  },
+  modelListScroll: {
+    flex: 1,
+  },
+  modelListContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 24,
+    gap: 8,
+  },
+  emptyBox: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 60,
+    gap: 12,
+  },
+  emptyText: {
+    fontSize: 13,
+    color: Palette.cocoa[400],
+  },
+  modelCard: {
+    backgroundColor: Palette.oat[50],
+    borderWidth: 1,
+    borderColor: Palette.dockBorder,
+    borderRadius: 14,
+    padding: 12,
+    gap: 8,
+  },
+  modelCardSelected: {
+    borderColor: Palette.primary,
+    backgroundColor: 'rgba(217, 107, 56, 0.04)',
+  },
+  modelCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  modelNameBox: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  modelIdText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
+  },
+  modelIdTextSelected: {
+    color: Palette.primary,
+  },
+  selectedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  selectedBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#059669',
+  },
+  badgesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  vendorBadge: {
+    backgroundColor: Palette.oat[200],
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  vendorBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: Palette.cocoa[700],
+  },
+  sizeBadge: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  sizeBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#2563EB',
+  },
+  freeBadge: {
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  freeBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#059669',
+  },
+  typeBadge: {
+    backgroundColor: '#F5F3FF',
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  typeBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#7C3AED',
   },
 });

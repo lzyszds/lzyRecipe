@@ -33,9 +33,9 @@ export const DEFAULT_SYNC: CloudSyncConfig = {
 };
 
 export const DEFAULT_AI: AiSettings = {
-  baseUrl: 'https://api.deepseek.com/v1',
+  baseUrl: 'https://api.openai.com/v1',
   apiKey: '',
-  model: 'deepseek-chat',
+  model: 'gpt-4o-mini',
 };
 
 export const useSettingsStore = create<SettingsState>()(
