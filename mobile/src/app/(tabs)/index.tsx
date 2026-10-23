@@ -418,20 +418,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E7DFD4',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
-      },
-    }),
   },
   heroCard: {
     height: 240,
@@ -442,20 +428,6 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#26211E',
     marginBottom: 16,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.15,
-        shadowRadius: 10,
-      },
-      android: {
-        elevation: 4,
-      },
-      web: {
-        boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
-      },
-    }),
   },
   heroImage: {
     ...StyleSheet.absoluteFill,
@@ -543,20 +515,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#EBE5DC',
     marginBottom: 20,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-      },
-    }),
   },
   inventoryHeader: {
     flexDirection: 'row',
@@ -711,20 +669,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: '#EBE5DC',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 2,
-      },
-      web: {
-        boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
-      },
-    }),
   },
   quickCardImageWrap: {
     width: '100%',
