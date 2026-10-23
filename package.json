@@ -21,6 +21,9 @@
     "android:build:patch": "node scripts/build-android.mjs --bump=patch",
     "android:build:minor": "node scripts/build-android.mjs --bump=minor",
     "android:build:major": "node scripts/build-android.mjs --bump=major",
+    "mobile": "npm --prefix mobile run start",
+    "mobile:android": "npm --prefix mobile run android",
+    "mobile:ios": "npm --prefix mobile run ios",
     "release:tag": "node scripts/release-tag.mjs"
   },
   "dependencies": {

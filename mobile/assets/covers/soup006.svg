@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EAE4D6"/>
+      <stop offset="100%" style="stop-color:#D6C9AE"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="640" cy="120" r="160" fill="rgba(255,255,255,0.28)"/>
+  <text x="400" y="240" text-anchor="middle" font-size="80">🍲</text>
+  <text x="400" y="360" text-anchor="middle" fill="#5d6b63" font-size="42" font-weight="bold" font-family="Noto Sans SC, sans-serif">罗宋汤</text>
+  <text x="400" y="400" text-anchor="middle" fill="rgba(93,107,99,0.6)" font-size="22" font-family="Noto Sans SC, sans-serif">汤</text>
+  <text x="400" y="520" text-anchor="middle" fill="rgba(93,107,99,0.35)" font-size="16" font-family="Noto Sans SC, sans-serif">萌厨食光</text>
+</svg>

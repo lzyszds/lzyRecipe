@@ -1,0 +1,502 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ArrowLeft,
+  Heart,
+  Clock,
+  Flame,
+  CheckCircle2,
+  Circle,
+  CalendarPlus,
+  Lightbulb,
+} from 'lucide-react-native';
+import { useAllRecipes } from '@/lib/recipes';
+import { useFavoritesStore } from '@/store/favoritesStore';
+import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
+import { RecipeImage } from '@/components/RecipeImage';
+import { DifficultyLevel } from '@/types';
+import { Palette } from '@/constants/theme';
+
+const difficultyConfig: Record<DifficultyLevel, { label: string }> = {
+  easy: { label: '简单' },
+  medium: { label: '中等' },
+  hard: { label: '困难' },
+};
+
+export default function RecipeDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const allRecipes = useAllRecipes();
+  const recipe = allRecipes.find((r) => r.id === id);
+
+  const { isFavorite, toggleFavorite } = useFavoritesStore();
+  const { addToFirstEmptySlot } = useWeeklyPlanStore();
+
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+
+  if (!recipe) {
+    return (
+      <SafeAreaView style={styles.notFoundContainer}>
+        <Text style={styles.notFoundText}>未找到该菜谱</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backBtnText}>返回上一页</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  const favorite = isFavorite(recipe.id);
+  const difficulty = difficultyConfig[recipe.difficulty] || { label: '普通' };
+
+  const toggleIngredient = (index: number) => {
+    const next = new Set(checkedIngredients);
+    if (next.has(index)) {
+      next.delete(index);
+    } else {
+      next.add(index);
+    }
+    setCheckedIngredients(next);
+  };
+
+  const handleAddToWeeklyPlan = () => {
+    const slot = addToFirstEmptySlot(recipe.id);
+    if (slot) {
+      Alert.alert('已加入餐盘', `已将「${recipe.name}」添加至本周就餐计划！`);
+    } else {
+      Alert.alert('提示', '本周餐盘已满，可前往周计划调整');
+    }
+  };
+
+  return (
+    <View style={styles.screen}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 顶部大封面 */}
+        <View style={styles.coverWrapper}>
+          <RecipeImage
+            coverImage={recipe.coverImage}
+            name={recipe.name}
+            category={recipe.category}
+          />
+          {/* 返回按钮 & 收藏按钮 */}
+          <SafeAreaView style={styles.topBar} edges={['top']}>
+            <TouchableOpacity
+              style={styles.iconCircle}
+              onPress={() => router.back()}
+              activeOpacity={0.8}
+            >
+              <ArrowLeft size={18} color={Palette.cocoa[900]} />
+            </TouchableOpacity>
+
+            <View style={styles.topRightActions}>
+              <TouchableOpacity
+                style={styles.iconCircle}
+                onPress={() => toggleFavorite(recipe.id)}
+                activeOpacity={0.8}
+              >
+                <Heart
+                  size={18}
+                  color={favorite ? Palette.apricot[500] : Palette.cocoa[700]}
+                  fill={favorite ? Palette.apricot[500] : 'transparent'}
+                />
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </View>
+
+        {/* 菜谱主信息卡 */}
+        <View style={styles.mainInfoCard}>
+          <View style={styles.titleRow}>
+            <Text style={styles.recipeTitle}>{recipe.name}</Text>
+          </View>
+
+          <View style={styles.tagRow}>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{recipe.category}</Text>
+            </View>
+            <View style={styles.tagItem}>
+              <Clock size={12} color={Palette.cocoa[400]} />
+              <Text style={styles.tagText}>{recipe.cookTime} 分钟</Text>
+            </View>
+            <View style={styles.tagItem}>
+              <Flame size={12} color={Palette.apricot[500]} />
+              <Text style={styles.tagText}>{difficulty.label}</Text>
+            </View>
+          </View>
+
+          {Boolean(recipe.description) && (
+            <Text style={styles.descriptionText}>{recipe.description}</Text>
+          )}
+        </View>
+
+        {/* 食材清单 */}
+        <View style={styles.sectionCard}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>备料清单</Text>
+            <Text style={styles.sectionHint}>
+              已备好 {checkedIngredients.size}/{recipe.ingredients.length} 项
+            </Text>
+          </View>
+
+          <View style={styles.ingredientsList}>
+            {recipe.ingredients.map((ing, idx) => {
+              const isChecked = checkedIngredients.has(idx);
+              return (
+                <TouchableOpacity
+                  key={idx}
+                  style={[styles.ingredientRow, isChecked && styles.ingredientRowChecked]}
+                  onPress={() => toggleIngredient(idx)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.ingLeft}>
+                    {isChecked ? (
+                      <CheckCircle2 size={16} color={Palette.apricot[500]} />
+                    ) : (
+                      <Circle size={16} color={Palette.cocoa[200]} />
+                    )}
+                    <Text
+                      style={[
+                        styles.ingName,
+                        isChecked && styles.ingNameChecked,
+                      ]}
+                    >
+                      {ing.name}
+                    </Text>
+                  </View>
+                  <Text
+                    style={[
+                      styles.ingAmount,
+                      isChecked && styles.ingAmountChecked,
+                    ]}
+                  >
+                    {ing.amount}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        {/* 烹饪步骤 */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>制作步骤</Text>
+          <View style={styles.stepsList}>
+            {recipe.steps.map((step, idx) => (
+              <View key={idx} style={styles.stepItem}>
+                <View style={styles.stepOrderBadge}>
+                  <Text style={styles.stepOrderText}>{step.order || idx + 1}</Text>
+                </View>
+                <View style={styles.stepContent}>
+                  <Text style={styles.stepDesc}>{step.description}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* 贴士 */}
+        {Boolean(recipe.tips) && (
+          <View style={styles.tipsCard}>
+            <View style={styles.tipsHeader}>
+              <Lightbulb size={16} color={Palette.apricot[600]} />
+              <Text style={styles.tipsTitle}>大厨小贴士</Text>
+            </View>
+            <Text style={styles.tipsContent}>{recipe.tips}</Text>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* 底部固定操作栏 */}
+      <SafeAreaView style={styles.bottomBar} edges={['bottom']}>
+        <TouchableOpacity
+          style={styles.addToPlanBtn}
+          onPress={handleAddToWeeklyPlan}
+          activeOpacity={0.85}
+        >
+          <CalendarPlus size={18} color="#FFFFFF" />
+          <Text style={styles.addToPlanBtnText}>加入本周餐盘计划</Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: Palette.oat[50],
+  },
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    paddingBottom: 20,
+  },
+  coverWrapper: {
+    width: '100%',
+    height: 240,
+    backgroundColor: Palette.oat[100],
+    position: 'relative',
+  },
+  topBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+  },
+  topRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  mainInfoCard: {
+    backgroundColor: '#FFFFFF',
+    marginTop: -16,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: Palette.oat[100],
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  recipeTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: Palette.cocoa[900],
+  },
+  tagRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 8,
+  },
+  badge: {
+    backgroundColor: Palette.apricot[100],
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Palette.apricot[600],
+  },
+  tagItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  tagText: {
+    fontSize: 11,
+    color: Palette.cocoa[400],
+  },
+  descriptionText: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: Palette.cocoa[700],
+    marginTop: 10,
+  },
+  sectionCard: {
+    backgroundColor: '#FFFFFF',
+    marginTop: 12,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: Palette.oat[100],
+    shadowColor: Palette.cocoa[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: Palette.cocoa[900],
+  },
+  sectionHint: {
+    fontSize: 11,
+    color: Palette.cocoa[400],
+  },
+  ingredientsList: {
+    gap: 8,
+  },
+  ingredientRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Palette.oat[50],
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  ingredientRowChecked: {
+    opacity: 0.5,
+  },
+  ingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  ingName: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: Palette.cocoa[900],
+  },
+  ingNameChecked: {
+    textDecorationLine: 'line-through',
+    color: Palette.cocoa[400],
+  },
+  ingAmount: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: Palette.cocoa[700],
+  },
+  ingAmountChecked: {
+    textDecorationLine: 'line-through',
+    color: Palette.cocoa[400],
+  },
+  stepsList: {
+    gap: 14,
+    marginTop: 12,
+  },
+  stepItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+  },
+  stepOrderBadge: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Palette.apricot[500],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  stepOrderText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepDesc: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: Palette.cocoa[700],
+  },
+  tipsCard: {
+    backgroundColor: Palette.apricot[50],
+    marginTop: 12,
+    marginHorizontal: 16,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: Palette.apricot[100],
+  },
+  tipsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 6,
+  },
+  tipsTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Palette.apricot[600],
+  },
+  tipsContent: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: Palette.cocoa[700],
+  },
+  bottomBar: {
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: Palette.oat[100],
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  addToPlanBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Palette.apricot[500],
+    borderRadius: 14,
+    height: 44,
+    gap: 8,
+    shadowColor: Palette.apricot[500],
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+  },
+  addToPlanBtnText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  notFoundContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+  },
+  notFoundText: {
+    fontSize: 14,
+    color: Palette.cocoa[400],
+  },
+  backBtn: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: Palette.apricot[500],
+  },
+  backBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+});
