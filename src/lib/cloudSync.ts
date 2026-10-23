@@ -17,6 +17,7 @@ import {
   type CloudSyncConfig,
 } from '../store/settingsStore';
 import type { Recipe } from '../types';
+import { getAllRecipes } from './recipes';
 
 /** 同步内容快照：服务端按密钥区分用户，只保存这一份 JSON */
 export interface SyncPayload {
@@ -61,8 +62,6 @@ function endpointOf(config: CloudSyncConfig, path: string): string {
 function authHeaders(config: CloudSyncConfig): Record<string, string> {
   return { Authorization: `Bearer ${config.token.trim()}` };
 }
-
-import { getAllRecipes } from './recipes';
 
 export function collectPayload(): SyncPayload {
   const plan = useWeeklyPlanStore.getState();

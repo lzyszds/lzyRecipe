@@ -9,6 +9,7 @@ import {
   CloudSyncConfig,
 } from '../store/settingsStore';
 import { Recipe } from '../types';
+import { getAllRecipes } from './recipes';
 
 /** 同步内容快照：服务端按密钥区分用户，多端完全一致 */
 export interface SyncPayload {
@@ -81,8 +82,6 @@ async function requestJson<T>(
     clearTimeout(timer);
   }
 }
-
-import { getAllRecipes } from './recipes';
 
 export function collectPayload(): SyncPayload {
   const plan = useWeeklyPlanStore.getState();
