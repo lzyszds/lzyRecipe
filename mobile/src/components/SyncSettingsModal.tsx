@@ -50,7 +50,9 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
   const { sync, setSync } = useSettingsStore();
   const { status, lastSyncedAt, message } = useSyncStore();
 
-  const [endpoint, setEndpoint] = useState(sync.endpoint);
+  const [endpoint, setEndpoint] = useState(
+    sync.endpoint?.trim() ? sync.endpoint : 'https://sync.lzyszds.cn'
+  );
   const [token, setToken] = useState(sync.token);
   const [autoSync, setAutoSync] = useState(sync.autoSync);
   const [testing, setTesting] = useState(false);
@@ -58,38 +60,41 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
 
   useEffect(() => {
     if (visible) {
-      setEndpoint(sync.endpoint);
+      setEndpoint(sync.endpoint?.trim() ? sync.endpoint : 'https://sync.lzyszds.cn');
       setToken(sync.token);
       setAutoSync(sync.autoSync);
       setTestResult(null);
     }
-  }, [visible, sync]);
+  }, [visible]);
 
-  const handleSave = () => {
+  const handleSave = (customEndpoint?: string, customToken?: string, customAutoSync?: boolean) => {
+    const ep = (customEndpoint !== undefined ? customEndpoint : endpoint).trim() || 'https://sync.lzyszds.cn';
+    const tk = (customToken !== undefined ? customToken : token).trim();
+    const as = customAutoSync !== undefined ? customAutoSync : autoSync;
     setSync({
-      endpoint: endpoint.trim(),
-      token: token.trim(),
-      autoSync,
+      endpoint: ep,
+      token: tk,
+      autoSync: as,
     });
   };
 
   const handleTest = async () => {
+    const currentEndpoint = endpoint.trim() || 'https://sync.lzyszds.cn';
     const tempConfig: CloudSyncConfig = {
-      endpoint: endpoint.trim(),
+      endpoint: currentEndpoint,
       token: token.trim(),
       autoSync,
     };
     if (!isSyncConfigured(tempConfig)) {
-      setTestResult({ ok: false, msg: '请先填写完整的服务地址与密钥' });
+      setTestResult({ ok: false, msg: '请先填写完整的密钥 (Token)' });
       return;
     }
 
     setTesting(true);
-    setTestResult(null);
     try {
       const ok = await testConnection(tempConfig);
       if (ok) {
-        handleSave();
+        handleSave(currentEndpoint, token.trim(), autoSync);
         setTestResult({ ok: true, msg: '连接成功！服务器运行正常' });
       } else {
         setTestResult({ ok: false, msg: '服务器响应异常，请核对地址' });
@@ -105,9 +110,10 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
   };
 
   const handleSyncNow = async () => {
-    handleSave();
+    const currentEndpoint = endpoint.trim() || 'https://sync.lzyszds.cn';
+    handleSave(currentEndpoint, token.trim(), autoSync);
     const tempConfig: CloudSyncConfig = {
-      endpoint: endpoint.trim(),
+      endpoint: currentEndpoint,
       token: token.trim(),
       autoSync,
     };
@@ -115,6 +121,7 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
   };
 
   const handlePull = () => {
+    const currentEndpoint = endpoint.trim() || 'https://sync.lzyszds.cn';
     Alert.alert(
       '从云端恢复',
       '将从云端拉取最新菜谱、收藏与备菜计划并覆盖本地同名内容，是否继续？',
@@ -123,10 +130,10 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
         {
           text: '确定拉取',
           onPress: async () => {
-            handleSave();
+            handleSave(currentEndpoint, token.trim(), autoSync);
             try {
               await pullFromCloud({
-                endpoint: endpoint.trim(),
+                endpoint: currentEndpoint,
                 token: token.trim(),
                 autoSync,
               });
@@ -141,6 +148,7 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
   };
 
   const handlePush = () => {
+    const currentEndpoint = endpoint.trim() || 'https://sync.lzyszds.cn';
     Alert.alert(
       '覆盖到云端',
       '将使用当前手机上的菜谱与计划完全覆盖云端存储，是否继续？',
@@ -150,10 +158,10 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
           text: '确定覆盖',
           style: 'destructive',
           onPress: async () => {
-            handleSave();
+            handleSave(currentEndpoint, token.trim(), autoSync);
             try {
               await pushToCloud({
-                endpoint: endpoint.trim(),
+                endpoint: currentEndpoint,
                 token: token.trim(),
                 autoSync,
               });
@@ -167,7 +175,7 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
     );
   };
 
-  const isConfigured = Boolean(endpoint.trim() && token.trim());
+  const isConfigured = Boolean((endpoint.trim() || 'https://sync.lzyszds.cn') && token.trim());
   const isSyncing = status === 'syncing';
 
   return (
@@ -252,7 +260,7 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
                 <Text style={styles.inputLabel}>同步服务地址 (Endpoint)</Text>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="如 https://sync.example.com"
+                  placeholder="https://sync.lzyszds.cn"
                   placeholderTextColor={Palette.inkLight}
                   value={endpoint}
                   onChangeText={(val) => {

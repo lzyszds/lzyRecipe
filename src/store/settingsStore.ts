@@ -42,7 +42,7 @@ interface SettingsState {
 }
 
 export const DEFAULT_SYNC: CloudSyncConfig = {
-  endpoint: '',
+  endpoint: 'https://sync.lzyszds.cn',
   token: '',
   autoSync: true,
 };
@@ -76,10 +76,14 @@ export const useSettingsStore = create<SettingsState>()(
       // 旧版本没有 sync / ai 字段，合并默认值避免首次打开时 undefined
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<SettingsState>;
+        const mergedSync = { ...DEFAULT_SYNC, ...saved.sync };
+        if (!mergedSync.endpoint?.trim()) {
+          mergedSync.endpoint = DEFAULT_SYNC.endpoint;
+        }
         return {
           ...current,
           ...saved,
-          sync: { ...DEFAULT_SYNC, ...saved.sync },
+          sync: mergedSync,
           ai: { ...DEFAULT_AI, ...saved.ai },
         };
       },

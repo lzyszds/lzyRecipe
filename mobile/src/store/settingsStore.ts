@@ -17,7 +17,7 @@ interface SettingsState {
 }
 
 export const DEFAULT_SYNC: CloudSyncConfig = {
-  endpoint: '',
+  endpoint: 'https://sync.lzyszds.cn',
   token: '',
   autoSync: true,
 };
@@ -34,6 +34,19 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: 'lzy-recipe-settings-storage',
       storage: createJSONStorage(() => safeAsyncStorage),
+      merge: (persistedState: any, currentState: SettingsState) => {
+        const persistedSync = persistedState?.sync || {};
+        return {
+          ...currentState,
+          sync: {
+            ...DEFAULT_SYNC,
+            ...persistedSync,
+            endpoint: persistedSync.endpoint?.trim()
+              ? persistedSync.endpoint
+              : DEFAULT_SYNC.endpoint,
+          },
+        };
+      },
     }
   )
 );
