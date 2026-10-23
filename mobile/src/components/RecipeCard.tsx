@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Heart, Clock, Plus } from 'lucide-react-native';
+import { Heart, Clock, Plus, Check } from 'lucide-react-native';
 import { Recipe, DifficultyLevel } from '../types';
 import { RecipeImage } from './RecipeImage';
 import { useFavoritesStore } from '../store/favoritesStore';
-import { useWeeklyPlanStore } from '../store/weeklyPlanStore';
+import { useTodayPlateStore } from '../store/todayPlateStore';
 import { useMealPlanSheetStore } from '../store/mealPlanSheetStore';
 import { Palette } from '../constants/theme';
 
@@ -16,15 +16,16 @@ interface RecipeCardProps {
 
 const difficultyLabel: Record<DifficultyLevel, string> = {
   easy: '简单',
-  medium: '中等',
-  hard: '困难',
+  medium: '家常',
+  hard: '进阶',
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { addToFirstEmptySlot } = useWeeklyPlanStore();
+  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
   const favorite = isFavorite(recipe.id);
+  const inPlate = isInPlate(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -36,10 +37,20 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
+    showToast(favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`);
   };
 
   const handleAddToPlan = (e: any) => {
     e?.stopPropagation?.();
+    const added = togglePlate(recipe.id);
+    showToast(
+      added
+        ? `🍽️「${recipe.name}」已加入今日餐盘`
+        : `已从餐盘移出「${recipe.name}」`
+    );
+  };
+
+  const handleLongPress = () => {
     useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
@@ -48,6 +59,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
       <TouchableOpacity
         style={styles.compactCard}
         onPress={handlePress}
+        onLongPress={handleLongPress}
         activeOpacity={0.85}
       >
         <View style={styles.compactImageWrapper}>
@@ -63,7 +75,11 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
             {recipe.name}
           </Text>
           <Text style={styles.compactDesc} numberOfLines={1}>
-            {recipe.description || recipe.ingredients.slice(0, 3).map((i) => i.name).join('、')}
+            {recipe.description ||
+              recipe.ingredients
+                .slice(0, 3)
+                .map((i) => i.name)
+                .join('、')}
           </Text>
           <Text style={styles.compactMeta}>
             {recipe.category} · {recipe.cookTime}分钟 · {difficultyLabel[recipe.difficulty]}
@@ -77,8 +93,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
         >
           <Heart
             size={18}
-            color={favorite ? Palette.apricot[500] : Palette.cocoa[400]}
-            fill={favorite ? Palette.apricot[500] : 'transparent'}
+            color={favorite ? Palette.roseWarm : Palette.inkMuted}
+            fill={favorite ? Palette.roseWarm : 'transparent'}
           />
         </TouchableOpacity>
       </TouchableOpacity>
@@ -90,6 +106,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
     <TouchableOpacity
       style={styles.card}
       onPress={handlePress}
+      onLongPress={handleLongPress}
       activeOpacity={0.88}
     >
       <View style={styles.imageContainer}>
@@ -98,15 +115,16 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
           name={recipe.name}
           category={recipe.category}
         />
+
         <TouchableOpacity
           style={styles.floatingHeart}
           onPress={handleToggleFavorite}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <Heart
-            size={15}
-            color={favorite ? Palette.apricot[500] : '#FFFFFF'}
-            fill={favorite ? Palette.apricot[500] : 'rgba(0,0,0,0.3)'}
+            size={14}
+            color={favorite ? Palette.roseWarm : Palette.inkMuted}
+            fill={favorite ? Palette.roseWarm : 'transparent'}
           />
         </TouchableOpacity>
 
@@ -121,18 +139,27 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
         <Text style={styles.title} numberOfLines={1}>
           {recipe.name}
         </Text>
-        
+
         <View style={styles.metaRow}>
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryBadgeText}>{recipe.category}</Text>
           </View>
           <TouchableOpacity
-            style={styles.addPlanBtn}
+            style={[styles.addPlanBtn, inPlate && styles.addPlanBtnActive]}
             onPress={handleAddToPlan}
             activeOpacity={0.8}
           >
-            <Plus size={11} color={Palette.apricot[600]} />
-            <Text style={styles.addPlanBtnText}>餐盘</Text>
+            {inPlate ? (
+              <>
+                <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
+                <Text style={styles.addPlanBtnTextActive}>已加</Text>
+              </>
+            ) : (
+              <>
+                <Plus size={11} color={Palette.primary} strokeWidth={2.5} />
+                <Text style={styles.addPlanBtnText}>餐盘</Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -146,23 +173,23 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 7,
     borderWidth: 1,
-    borderColor: '#F2ECE5',
+    borderColor: '#F0E9DF',
     flex: 1,
   },
   imageContainer: {
-    height: 130,
+    height: 125,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: Palette.oat[100],
+    backgroundColor: Palette.tagWarm,
     position: 'relative',
   },
   floatingHeart: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    top: 6,
+    right: 6,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -173,36 +200,36 @@ const styles = StyleSheet.create({
     left: 6,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    backgroundColor: 'rgba(34, 30, 28, 0.72)',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
     gap: 3,
   },
   timeBadgeText: {
-    fontSize: 9.5,
-    fontWeight: '600',
     color: '#FFFFFF',
+    fontSize: 9.5,
+    fontWeight: '700',
   },
   body: {
     paddingTop: 8,
-    paddingHorizontal: 4,
-    paddingBottom: 4,
+    paddingBottom: 2,
+    paddingHorizontal: 2,
+    gap: 5,
   },
   title: {
-    fontSize: 13.5,
+    fontSize: 13,
     fontWeight: '800',
-    color: Palette.cocoa[900],
-    letterSpacing: 0.2,
+    color: Palette.ink,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 6,
+    marginTop: 2,
   },
   categoryBadge: {
-    backgroundColor: Palette.oat[100],
+    backgroundColor: Palette.tagWarm,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
@@ -210,62 +237,67 @@ const styles = StyleSheet.create({
   categoryBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Palette.cocoa[700],
+    color: Palette.inkMuted,
   },
   addPlanBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 6,
-    backgroundColor: Palette.apricot[50],
-    borderWidth: 1,
-    borderColor: Palette.apricot[200],
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 8,
+    paddingVertical: 3.5,
+    borderRadius: 12,
     gap: 2,
   },
-  addPlanBtnText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Palette.apricot[600],
+  addPlanBtnActive: {
+    backgroundColor: Palette.primary,
   },
+  addPlanBtnText: {
+    fontSize: 10.5,
+    fontWeight: '800',
+    color: Palette.primary,
+  },
+  addPlanBtnTextActive: {
+    fontSize: 10.5,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+
+  // 紧凑卡片 (用于搜索和列表)
   compactCard: {
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 10,
+    borderRadius: 16,
+    padding: 8,
+    alignItems: 'center',
+    gap: 10,
     borderWidth: 1,
-    borderColor: Palette.oat[100],
-    marginBottom: 10,
+    borderColor: '#F0E9DF',
   },
   compactImageWrapper: {
-    width: 64,
-    height: 64,
-    borderRadius: 10,
+    width: 60,
+    height: 60,
+    borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: Palette.oat[100],
+    backgroundColor: Palette.tagWarm,
   },
   compactContent: {
     flex: 1,
-    marginLeft: 12,
-    marginRight: 8,
+    gap: 2,
   },
   compactTitle: {
     fontSize: 13,
-    fontWeight: '700',
-    color: Palette.cocoa[900],
+    fontWeight: '800',
+    color: Palette.ink,
   },
   compactDesc: {
     fontSize: 11,
-    color: Palette.cocoa[400],
-    marginTop: 3,
+    color: Palette.inkMuted,
   },
   compactMeta: {
     fontSize: 10,
-    color: Palette.cocoa[400],
-    marginTop: 4,
+    color: Palette.inkLight,
   },
   heartButton: {
-    padding: 6,
+    padding: 8,
   },
 });

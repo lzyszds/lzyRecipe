@@ -4,39 +4,73 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
   TouchableOpacity,
   TextInput,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Search, X, Heart, Clock, Plus, UtensilsCrossed } from 'lucide-react-native';
+import {
+  Search,
+  X,
+  Heart,
+  Clock,
+  ArrowUpDown,
+  LayoutGrid,
+  Rows3,
+  Check,
+  Plus,
+  Zap,
+} from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeImage } from '@/components/RecipeImage';
+import { CategoryIcon } from '@/components/CategoryIcon';
 import { useFavoritesStore } from '@/store/favoritesStore';
-import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
+import { useTodayPlateStore } from '@/store/todayPlateStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { Recipe, DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
 
-const difficultyLabel: Record<DifficultyLevel, string> = {
-  easy: '简单',
-  medium: '中等',
-  hard: '困难',
+const ALL_CATEGORY = '全部';
+
+type SortMode = 'default' | 'timeAsc' | 'easyFirst';
+type CardLayout = 'compact' | 'magazine';
+
+const SORT_LABELS: Record<SortMode, string> = {
+  default: '综合',
+  timeAsc: '最快',
+  easyFirst: '简单优先',
 };
 
-const ALL_CATEGORY = '全部';
-const LEFT_ITEM_HEIGHT = 46;
+// 难度标签配色转换
+function renderDifficultyBadge(difficulty: DifficultyLevel) {
+  if (difficulty === 'easy') {
+    return (
+      <View style={[styles.diffBadge, { backgroundColor: Palette.sageSoft }]}>
+        <Text style={[styles.diffBadgeText, { color: Palette.sage }]}>简单</Text>
+      </View>
+    );
+  }
+  if (difficulty === 'medium') {
+    return (
+      <View style={[styles.diffBadge, { backgroundColor: Palette.amberSoft }]}>
+        <Text style={[styles.diffBadgeText, { color: Palette.amberWarm }]}>家常</Text>
+      </View>
+    );
+  }
+  return (
+    <View style={[styles.diffBadge, { backgroundColor: Palette.roseSoft }]}>
+      <Text style={[styles.diffBadgeText, { color: Palette.roseWarm }]}>进阶</Text>
+    </View>
+  );
+}
 
-// 圆润温润的美食大卡片（彻底移除阴影，饱满大圆角）
-const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+// 模式 A：黄金比例“左图右文”精品横卡（默认推荐，专为右侧托盘量身定制）
+const CompactHorizontalCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { addToFirstEmptySlot } = useWeeklyPlanStore();
+  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
   const favorite = isFavorite(recipe.id);
+  const inPlate = isInPlate(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -48,83 +82,207 @@ const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
+    showToast(favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`);
   };
 
-  const handleAddToPlan = (e: any) => {
+  const handleTogglePlate = (e: any) => {
     e?.stopPropagation?.();
+    const added = togglePlate(recipe.id);
+    showToast(
+      added
+        ? `🍽️「${recipe.name}」已飞入底部餐盘`
+        : `已从餐盘移出「${recipe.name}」`
+    );
+  };
+
+  const handleLongPress = () => {
+    // 长按打开自选排餐抽屉
     useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
-  const ingredientPreview = recipe.ingredients
-    .slice(0, 3)
-    .map((i) => i.name)
-    .join(' · ');
+  const shortIngs = recipe.ingredients.slice(0, 3).map((i) => i.name);
 
   return (
     <TouchableOpacity
-      style={styles.gourmetCard}
+      style={styles.compactCard}
       onPress={handlePress}
+      onLongPress={handleLongPress}
       activeOpacity={0.88}
     >
-      {/* 柔润大圆角封面 */}
-      <View style={styles.cardImageContainer}>
+      {/* 左侧 94x94 高清圆角实拍图 */}
+      <View style={styles.compactImageContainer}>
         <RecipeImage
           coverImage={recipe.coverImage}
           name={recipe.name}
           category={recipe.category}
         />
-        {/* 收藏红心 */}
+
+        {/* 右上角微缩收藏红心 */}
         <TouchableOpacity
-          style={styles.cardHeartBtn}
+          style={styles.floatingHeartBtn}
           onPress={handleToggleFavorite}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <Heart
-            size={14}
-            color={favorite ? Palette.apricot[500] : '#FFFFFF'}
-            fill={favorite ? Palette.apricot[500] : 'rgba(0,0,0,0.25)'}
+            size={13}
+            color={favorite ? Palette.roseWarm : Palette.inkMuted}
+            fill={favorite ? Palette.roseWarm : 'transparent'}
           />
         </TouchableOpacity>
 
-        {/* 烹饪时长小胶囊 */}
-        <View style={styles.cardTimeBadge}>
-          <Clock size={10} color="#FFFFFF" />
-          <Text style={styles.cardTimeText}>{recipe.cookTime}分钟</Text>
+        {/* 左下角毛玻璃耗时胶囊 */}
+        <View style={styles.glassTimeBadge}>
+          <Text style={styles.glassTimeText}>⏱ {recipe.cookTime}分</Text>
         </View>
       </View>
 
-      {/* 菜谱信息区 */}
-      <View style={styles.cardBody}>
-        <View style={styles.cardTitleRow}>
-          <Text style={styles.cardTitle} numberOfLines={1}>
-            {recipe.name}
-          </Text>
-          <View style={styles.difficultyPill}>
-            <Text style={styles.difficultyText}>
-              {difficultyLabel[recipe.difficulty]}
+      {/* 右侧紧凑三段式信息区 */}
+      <View style={styles.compactInfo}>
+        <View>
+          {/* 第一行：菜名 + 难度徽章 */}
+          <View style={styles.compactTitleRow}>
+            <Text style={styles.compactTitle} numberOfLines={1}>
+              {recipe.name}
             </Text>
+            {renderDifficultyBadge(recipe.difficulty)}
+          </View>
+
+          {/* 第二行：食材微胶囊 */}
+          <View style={styles.tagsRow}>
+            {shortIngs.map((ing, i) => (
+              <View key={i} style={styles.ingTag}>
+                <Text style={styles.ingTagText} numberOfLines={1}>
+                  {ing}
+                </Text>
+              </View>
+            ))}
           </View>
         </View>
 
-        {Boolean(ingredientPreview) && (
-          <Text style={styles.cardIngredients} numberOfLines={1}>
-            配料：{ingredientPreview}
+        {/* 第三行：分类风味 + 加入餐盘按钮 */}
+        <View style={styles.compactFooter}>
+          <Text style={styles.compactMeta} numberOfLines={1}>
+            <Text style={styles.compactCategory}>#{recipe.category}</Text> · {recipe.cookTime}分钟
           </Text>
-        )}
 
-        <View style={styles.cardFooter}>
-          <View style={styles.categoryPill}>
-            <Text style={styles.categoryPillText}>{recipe.category}</Text>
-          </View>
           <TouchableOpacity
-            style={styles.cardAddBtn}
-            onPress={handleAddToPlan}
-            activeOpacity={0.75}
+            style={[styles.plateActionBtn, inPlate && styles.plateActionBtnActive]}
+            onPress={handleTogglePlate}
+            activeOpacity={0.8}
           >
-            <Plus size={11} color={Palette.apricot[600]} />
-            <Text style={styles.cardAddBtnText}>加餐盘</Text>
+            {inPlate ? (
+              <>
+                <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
+                <Text style={styles.plateActionBtnTextActive}>已加</Text>
+              </>
+            ) : (
+              <>
+                <Plus size={11} color={Palette.primary} strokeWidth={2.5} />
+                <Text style={styles.plateActionBtnText}>餐盘</Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
+      </View>
+    </TouchableOpacity>
+  );
+};
+
+// 模式 B：杂志感大图海报卡
+const MagazineCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+  const router = useRouter();
+  const { isFavorite, toggleFavorite } = useFavoritesStore();
+  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
+  const favorite = isFavorite(recipe.id);
+  const inPlate = isInPlate(recipe.id);
+
+  const handlePress = () => {
+    router.push({
+      pathname: '/recipe/[id]',
+      params: { id: recipe.id },
+    });
+  };
+
+  const handleToggleFavorite = (e: any) => {
+    e?.stopPropagation?.();
+    toggleFavorite(recipe.id);
+    showToast(favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`);
+  };
+
+  const handleTogglePlate = (e: any) => {
+    e?.stopPropagation?.();
+    const added = togglePlate(recipe.id);
+    showToast(
+      added
+        ? `🍽️「${recipe.name}」已飞入底部餐盘`
+        : `已从餐盘移出「${recipe.name}」`
+    );
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.magazineCard}
+      onPress={handlePress}
+      activeOpacity={0.88}
+    >
+      <View style={styles.magazineImageContainer}>
+        <RecipeImage
+          coverImage={recipe.coverImage}
+          name={recipe.name}
+          category={recipe.category}
+        />
+
+        {/* 顶部收藏 */}
+        <TouchableOpacity
+          style={styles.floatingHeartBtnLarge}
+          onPress={handleToggleFavorite}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Heart
+            size={15}
+            color={favorite ? Palette.roseWarm : Palette.inkMuted}
+            fill={favorite ? Palette.roseWarm : 'transparent'}
+          />
+        </TouchableOpacity>
+
+        {/* 底部融合菜名与耗时 */}
+        <View style={styles.magazineOverlay}>
+          <View style={styles.magazineOverlayLeft}>
+            <View style={styles.glassTimeBadge}>
+              <Text style={styles.glassTimeText}>
+                ⏱ {recipe.cookTime}分钟 · #{recipe.category}
+              </Text>
+            </View>
+            <Text style={styles.magazineTitle} numberOfLines={1}>
+              {recipe.name}
+            </Text>
+          </View>
+          {renderDifficultyBadge(recipe.difficulty)}
+        </View>
+      </View>
+
+      <View style={styles.magazineFooter}>
+        <Text style={styles.magazineIngs} numberOfLines={1}>
+          配料：{recipe.ingredients.slice(0, 4).map((i) => i.name).join(' · ')}
+        </Text>
+
+        <TouchableOpacity
+          style={[styles.plateActionBtnLarge, inPlate && styles.plateActionBtnLargeActive]}
+          onPress={handleTogglePlate}
+          activeOpacity={0.8}
+        >
+          {inPlate ? (
+            <>
+              <Check size={12} color="#FFFFFF" strokeWidth={2.5} />
+              <Text style={styles.plateActionBtnTextActive}>已加餐盘</Text>
+            </>
+          ) : (
+            <>
+              <Plus size={12} color={Palette.primary} strokeWidth={2.5} />
+              <Text style={styles.plateActionBtnText}>+ 加餐盘</Text>
+            </>
+          )}
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -135,265 +293,296 @@ export default function RecipesScreen() {
   const allRecipes = useAllRecipes();
   const rawCategories = getCategoriesWithCounts(allRecipes);
 
-  // 构建各分类及对应的菜谱（仅保留有菜谱的分类）
-  const sections = useMemo(() => {
-    return rawCategories
-      .map((cat) => {
-        const catRecipes = allRecipes.filter((r) => r.category === cat.name);
-        return {
-          title: cat.name,
-          data: catRecipes,
-        };
-      })
-      .filter((s) => s.data.length > 0);
-  }, [allRecipes, rawCategories]);
+  // 状态管理
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    params.category || ALL_CATEGORY
+  );
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [onlyFast, setOnlyFast] = useState<boolean>(false); // 30分内快手
+  const [onlyFav, setOnlyFav] = useState<boolean>(false); // 仅看收藏
+  const [sortMode, setSortMode] = useState<SortMode>('default');
+  const [cardLayout, setCardLayout] = useState<CardLayout>('compact');
 
-  // 左侧导航列表：第一项是【全部】，其余为各分类名称（无任何数字和图标）
-  const categoryNavItems = useMemo(() => {
-    return [ALL_CATEGORY, ...sections.map((s) => s.title)];
-  }, [sections]);
-
-  // 初始选中项
-  const initialNavIndex = useMemo(() => {
-    if (params.category && params.category !== ALL_CATEGORY) {
-      const idx = categoryNavItems.findIndex((c) => c === params.category);
-      return idx >= 0 ? idx : 0;
-    }
-    return 0;
-  }, [params.category, categoryNavItems]);
-
-  const [activeNavIndex, setActiveNavIndex] = useState<number>(initialNavIndex);
-  const [keyword, setKeyword] = useState<string>('');
-
-  const leftListRef = useRef<FlatList>(null);
+  const { isFavorite } = useFavoritesStore();
+  const { showToast } = useTodayPlateStore();
   const rightScrollRef = useRef<any>(null);
 
-  // 记录每个分类模块在右侧 ScrollView 中的绝对 Y 坐标
-  const sectionPositions = useRef<number[]>([]);
-  const isClickScrolling = useRef<boolean>(false);
-  const clickTimer = useRef<any>(null);
+  // 左侧导航列表（包含“全部”与已有菜谱的分类）
+  const categoryNavItems = useMemo(() => {
+    const list = [ALL_CATEGORY];
+    rawCategories.forEach((cat) => {
+      if (cat.count > 0 && !list.includes(cat.name)) {
+        list.push(cat.name);
+      }
+    });
+    return list;
+  }, [rawCategories]);
 
-  // 搜索结果
-  const searchResults = useMemo(() => {
-    const kw = keyword.trim().toLowerCase();
-    if (!kw) return [];
-    return allRecipes.filter(
-      (r) =>
-        r.name.toLowerCase().includes(kw) ||
-        r.category.toLowerCase().includes(kw) ||
-        r.ingredients.some((ing) => ing.name.toLowerCase().includes(kw))
-    );
-  }, [allRecipes, keyword]);
+  // 筛选与排序
+  const filteredRecipes = useMemo(() => {
+    let result = allRecipes.filter((item) => {
+      // 1. 分类匹配
+      if (selectedCategory !== ALL_CATEGORY) {
+        if (selectedCategory === '家常菜') {
+          if (item.difficulty === 'hard') return false;
+        } else if (item.category !== selectedCategory) {
+          return false;
+        }
+      }
 
-  // 测量每个分类的 Y 坐标
-  const handleSectionLayout = (index: number, y: number) => {
-    sectionPositions.current[index] = y;
+      // 2. 搜索词匹配
+      if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        const matchTitle = item.name.toLowerCase().includes(q);
+        const matchCat = item.category.toLowerCase().includes(q);
+        const matchIng = item.ingredients.some((i) =>
+          i.name.toLowerCase().includes(q)
+        );
+        if (!matchTitle && !matchCat && !matchIng) return false;
+      }
+
+      // 3. 30分钟内快手
+      if (onlyFast && item.cookTime > 30) return false;
+
+      // 4. 仅看收藏
+      if (onlyFav && !isFavorite(item.id)) return false;
+
+      return true;
+    });
+
+    // 排序
+    const diffMap: Record<DifficultyLevel, number> = {
+      easy: 1,
+      medium: 2,
+      hard: 3,
+    };
+    if (sortMode === 'timeAsc') {
+      result.sort((a, b) => a.cookTime - b.cookTime);
+    } else if (sortMode === 'easyFirst') {
+      result.sort((a, b) => diffMap[a.difficulty] - diffMap[b.difficulty]);
+    }
+
+    return result;
+  }, [allRecipes, selectedCategory, searchQuery, onlyFast, onlyFav, sortMode, isFavorite]);
+
+  // 分类切换
+  const handleSelectCategory = (cat: string) => {
+    setSelectedCategory(cat);
+    rightScrollRef.current?.scrollTo({ y: 0, animated: true });
   };
 
-  // 点击左侧分类导航：百分之百精准平滑滚动跳转
-  const handleSelectCategory = (navIndex: number) => {
-    if (navIndex === activeNavIndex) return;
-    setActiveNavIndex(navIndex);
-
-    // 锁定滚动监听，防止用户点击滚动时产生抖动
-    isClickScrolling.current = true;
-    if (clickTimer.current) clearTimeout(clickTimer.current);
-    clickTimer.current = setTimeout(() => {
-      isClickScrolling.current = false;
-    }, 650);
-
-    if (navIndex === 0) {
-      // 点击【全部】：滚到最顶部
-      rightScrollRef.current?.scrollTo({ y: 0, animated: true });
-    } else {
-      const targetIndex = navIndex - 1;
-      const targetY = sectionPositions.current[targetIndex] ?? 0;
-      rightScrollRef.current?.scrollTo({ y: Math.max(0, targetY - 4), animated: true });
-    }
-
-    // 确保左侧当前项在可视区内
-    try {
-      leftListRef.current?.scrollToIndex({
-        index: navIndex,
-        animated: true,
-        viewPosition: 0.35,
-      });
-    } catch (_) {}
+  // 切换排序
+  const handleCycleSort = () => {
+    const modes: SortMode[] = ['default', 'timeAsc', 'easyFirst'];
+    const nextIdx = (modes.indexOf(sortMode) + 1) % modes.length;
+    const nextMode = modes[nextIdx];
+    setSortMode(nextMode);
+    showToast(`排序：${SORT_LABELS[nextMode]}`);
   };
 
-  // 监听右侧滚动：全行程精准匹配高亮，彻底杜绝“海鲜之后不跟随高亮”的 bug
-  const handleRightScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (isClickScrolling.current) return;
+  // 切换卡片视图
+  const handleToggleLayout = () => {
+    const next = cardLayout === 'compact' ? 'magazine' : 'compact';
+    setCardLayout(next);
+    showToast(next === 'compact' ? '已切换：精品横卡' : '已切换：杂志大图流');
+  };
 
-    const scrollY = event.nativeEvent.contentOffset.y;
-
-    // 距离顶部很近时，高亮【全部】
-    if (scrollY < 30) {
-      if (activeNavIndex !== 0) {
-        setActiveNavIndex(0);
-        try {
-          leftListRef.current?.scrollToIndex({ index: 0, animated: true, viewPosition: 0.35 });
-        } catch (_) {}
-      }
-      return;
-    }
-
-    // 从后往前查找当前滚动位于哪个分类
-    const positions = sectionPositions.current;
-    let foundIndex = 0;
-    for (let i = positions.length - 1; i >= 0; i--) {
-      if (typeof positions[i] === 'number' && scrollY >= positions[i] - 30) {
-        foundIndex = i + 1; // 对应 navIndex
-        break;
-      }
-    }
-
-    if (foundIndex !== activeNavIndex) {
-      setActiveNavIndex(foundIndex);
-      try {
-        leftListRef.current?.scrollToIndex({
-          index: foundIndex,
-          animated: true,
-          viewPosition: 0.35,
-        });
-      } catch (_) {}
-    }
+  // 重置全部筛选
+  const handleResetFilters = () => {
+    setSelectedCategory(ALL_CATEGORY);
+    setSearchQuery('');
+    setOnlyFast(false);
+    setOnlyFav(false);
   };
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* 1. 顶部搜索框：大圆角胶囊吸顶 */}
-      <View style={styles.header}>
-        <View style={styles.searchBar}>
-          <Search size={16} color={Palette.cocoa[400]} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="搜索菜名、食材、菜系..."
-            placeholderTextColor={Palette.cocoa[400]}
-            value={keyword}
-            onChangeText={setKeyword}
-            returnKeyType="search"
-            clearButtonMode="while-editing"
-          />
-          {keyword.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setKeyword('')}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      {/* 1. 顶部搜索与灵感胶囊区（无生硬分割线，与燕麦画布融合） */}
+      <View style={styles.topHeader}>
+        <View style={styles.searchRow}>
+          <View style={styles.searchBar}>
+            <Search size={15} color={Palette.primary} strokeWidth={2.2} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="搜菜名、冰箱食材（如：排骨、冬瓜、虾）..."
+              placeholderTextColor="rgba(133, 124, 116, 0.7)"
+              value={searchQuery}
+              onChangeText={(text) => {
+                setSearchQuery(text);
+                if (text && selectedCategory !== ALL_CATEGORY) {
+                  setSelectedCategory(ALL_CATEGORY);
+                }
+              }}
+              returnKeyType="search"
+            />
+            {Boolean(searchQuery) && (
+              <TouchableOpacity
+                onPress={() => setSearchQuery('')}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <X size={15} color={Palette.inkLight} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* 快捷快手过滤：⚡ 30分内 */}
+          <TouchableOpacity
+            style={[styles.quickTagBtn, onlyFast && styles.quickTagBtnActive]}
+            onPress={() => {
+              const next = !onlyFast;
+              setOnlyFast(next);
+              showToast(next ? '⚡ 已筛选：30分钟内快手菜' : '已显示全部时长');
+            }}
+            activeOpacity={0.8}
+          >
+            <Zap
+              size={12}
+              color={onlyFast ? '#FFFFFF' : Palette.amberWarm}
+              fill={onlyFast ? '#FFFFFF' : Palette.amberWarm}
+            />
+            <Text
+              style={[styles.quickTagText, onlyFast && styles.quickTagTextActive]}
             >
-              <X size={16} color={Palette.cocoa[400]} />
-            </TouchableOpacity>
-          )}
+              30分内
+            </Text>
+          </TouchableOpacity>
+
+          {/* 快捷收藏过滤：❤️ */}
+          <TouchableOpacity
+            style={[styles.quickFavBtn, onlyFav && styles.quickFavBtnActive]}
+            onPress={() => {
+              const next = !onlyFav;
+              setOnlyFav(next);
+              showToast(next ? '❤️ 仅显示已收藏菜谱' : '已关闭收藏筛选');
+            }}
+            activeOpacity={0.8}
+          >
+            <Heart
+              size={14}
+              color={onlyFav ? '#FFFFFF' : Palette.roseWarm}
+              fill={onlyFav ? '#FFFFFF' : 'transparent'}
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
-      {/* 2. 主体区 */}
-      {keyword.trim().length > 0 ? (
-        // 搜索匹配结果
-        <View style={styles.searchResultsContainer}>
-          <Text style={styles.searchResultHeader}>匹配的菜谱</Text>
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.searchListContent}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <View style={{ marginBottom: 12 }}>
-                <GourmetRightCard recipe={item} />
-              </View>
-            )}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <UtensilsCrossed size={40} color={Palette.cocoa[200]} />
-                <Text style={styles.emptyText}>没有搜到与“{keyword}”相关的菜谱</Text>
-              </View>
-            }
-          />
-        </View>
-      ) : (
-        // 左右联动分类浏览
-        <View style={styles.splitLayout}>
-          {/* 左侧：包含【全部】、单行、无图标、无数量、圆润胶囊侧边栏 */}
-          <View style={styles.leftNavWrapper}>
-            <FlatList
-              ref={leftListRef}
-              data={categoryNavItems}
-              keyExtractor={(item) => item}
-              showsVerticalScrollIndicator={false}
-              getItemLayout={(data, index) => ({
-                length: LEFT_ITEM_HEIGHT,
-                offset: LEFT_ITEM_HEIGHT * index,
-                index,
-              })}
-              onScrollToIndexFailed={(info) => {
-                setTimeout(() => {
-                  try {
-                    leftListRef.current?.scrollToIndex({
-                      index: info.index,
-                      animated: false,
-                    });
-                  } catch (_) {}
-                }, 100);
-              }}
-              contentContainerStyle={styles.leftNavContent}
-              renderItem={({ item, index }) => {
-                const isActive = activeNavIndex === index;
-                return (
-                  <TouchableOpacity
-                    style={[
-                      styles.leftNavPill,
-                      isActive && styles.leftNavPillActive,
-                    ]}
-                    onPress={() => handleSelectCategory(index)}
-                    activeOpacity={0.8}
-                  >
-                    <Text
-                      style={[
-                        styles.navLabel,
-                        isActive && styles.navLabelActive,
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }}
-            />
-          </View>
-
-          {/* 右侧：精确坐标定位与平滑滚动卡片流 */}
+      {/* 2. 核心中段：左侧分类栏 + 右侧大圆角托盘内容区 */}
+      <View style={styles.mainLayout}>
+        {/* 左侧菜单栏 (宽度 82px，无竖向硬分割线) */}
+        <View style={styles.leftSidebarContainer}>
           <ScrollView
-            ref={rightScrollRef}
-            style={styles.rightContentWrapper}
-            contentContainerStyle={styles.rightListContent}
+            style={styles.leftSidebar}
+            contentContainerStyle={styles.leftSidebarContent}
             showsVerticalScrollIndicator={false}
-            onScroll={handleRightScroll}
-            scrollEventThrottle={16}
           >
-            {sections.map((section, sIndex) => (
-              <View
-                key={section.title}
-                style={styles.sectionBlock}
-                onLayout={(e) =>
-                  handleSectionLayout(sIndex, e.nativeEvent.layout.y)
-                }
-              >
-                {/* 分类标题：纯文字，无任何数字 */}
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionHeaderTitle}>{section.title}</Text>
-                </View>
+            {categoryNavItems.map((catName) => {
+              const isActive = selectedCategory === catName;
+              return (
+                <TouchableOpacity
+                  key={catName}
+                  style={[
+                    styles.categoryItem,
+                    isActive && styles.categoryItemActive,
+                  ]}
+                  onPress={() => handleSelectCategory(catName)}
+                  activeOpacity={0.8}
+                >
+                  {/* 选中态左侧焦糖色流光指示条 */}
+                  {isActive && <View style={styles.activeIndicator} />}
 
-                {/* 分类下的菜谱卡片 */}
-                {section.data.map((recipe) => (
-                  <View key={recipe.id} style={styles.cardItemWrapper}>
-                    <GourmetRightCard recipe={recipe} />
-                  </View>
-                ))}
-              </View>
-            ))}
+                  {/* 分类矢量微图标（Solar / MingCute 规范） */}
+                  <CategoryIcon category={catName} isActive={isActive} size={18} />
+
+                  {/* 分类名称 */}
+                  <Text
+                    style={[
+                      styles.categoryName,
+                      isActive && styles.categoryNameActive,
+                    ]}
+                  >
+                    {catName}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
-      )}
+
+        {/* 右侧主内容托盘 (左上角大圆角 rounded-tl-[28px]，自然嵌入画布) */}
+        <View style={styles.rightSheet}>
+          {/* 右侧顶部粘性分类标题与工具 */}
+          <View style={styles.sheetHeader}>
+            <View style={styles.sheetTitleGroup}>
+              <Text style={styles.sheetTitle}>
+                {selectedCategory === ALL_CATEGORY ? '全部精选菜谱' : selectedCategory}
+              </Text>
+              <View style={styles.countBadge}>
+                <Text style={styles.countBadgeText}>{filteredRecipes.length}道</Text>
+              </View>
+            </View>
+
+            <View style={styles.sheetTools}>
+              {/* 排序切换 */}
+              <TouchableOpacity
+                style={styles.toolBtn}
+                onPress={handleCycleSort}
+                activeOpacity={0.75}
+              >
+                <ArrowUpDown size={11} color={Palette.inkMuted} />
+                <Text style={styles.toolBtnText}>{SORT_LABELS[sortMode]}</Text>
+              </TouchableOpacity>
+
+              {/* 视图样式切换：横卡 vs 大图卡 */}
+              <TouchableOpacity
+                style={styles.layoutToggleBtn}
+                onPress={handleToggleLayout}
+                activeOpacity={0.75}
+              >
+                {cardLayout === 'compact' ? (
+                  <Rows3 size={14} color={Palette.primary} />
+                ) : (
+                  <LayoutGrid size={14} color={Palette.inkMuted} />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* 菜谱滚动列表 */}
+          <ScrollView
+            ref={rightScrollRef}
+            style={styles.rightScroll}
+            contentContainerStyle={styles.rightScrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {filteredRecipes.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyEmoji}>🥣</Text>
+                <Text style={styles.emptyTitle}>该分类下暂无匹配菜谱</Text>
+                <Text style={styles.emptySubtitle}>
+                  试试切换左侧分类或清空上方筛选条件
+                </Text>
+                <TouchableOpacity
+                  style={styles.emptyResetBtn}
+                  onPress={handleResetFilters}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.emptyResetBtnText}>查看全部菜谱</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.cardsContainer}>
+                {filteredRecipes.map((recipe) =>
+                  cardLayout === 'compact' ? (
+                    <CompactHorizontalCard key={recipe.id} recipe={recipe} />
+                  ) : (
+                    <MagazineCard key={recipe.id} recipe={recipe} />
+                  )
+                )}
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -401,231 +590,435 @@ export default function RecipesScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: Palette.oat[50],
+    backgroundColor: Palette.canvas,
   },
-  header: {
+  // 1. 顶部 Header
+  topHeader: {
     paddingHorizontal: 14,
-    paddingTop: 6,
-    paddingBottom: 8,
-    backgroundColor: Palette.oat[50],
-    borderBottomWidth: 1,
-    borderBottomColor: '#EFE7DC',
-    zIndex: 10,
+    paddingTop: 4,
+    paddingBottom: 10,
+    backgroundColor: Palette.canvas,
   },
-  searchBar: {
+  searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 22,
-    borderWidth: 1,
-    borderColor: '#ECE4DA',
-    paddingHorizontal: 14,
-    height: 42,
     gap: 8,
+  },
+  searchBar: {
+    flex: 1,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderWidth: 1,
+    borderColor: '#ECE4D8',
   },
   searchInput: {
     flex: 1,
-    fontSize: 13,
-    color: Palette.cocoa[900],
+    fontSize: 12,
+    color: Palette.ink,
     paddingVertical: 0,
   },
-  splitLayout: {
+  quickTagBtn: {
+    height: 40,
+    paddingHorizontal: 10,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#ECE4D8',
+  },
+  quickTagBtnActive: {
+    backgroundColor: Palette.primary,
+    borderColor: Palette.primary,
+  },
+  quickTagText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Palette.inkMuted,
+  },
+  quickTagTextActive: {
+    color: '#FFFFFF',
+  },
+  quickFavBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#ECE4D8',
+  },
+  quickFavBtnActive: {
+    backgroundColor: Palette.roseWarm,
+    borderColor: Palette.roseWarm,
+  },
+
+  // 2. 核心中段双栏布局
+  mainLayout: {
     flex: 1,
     flexDirection: 'row',
+    overflow: 'hidden',
   },
-  // 左侧导航：柔润圆角，单行纯文字，无图标，无数字
-  leftNavWrapper: {
-    width: 76,
-    backgroundColor: '#F5F0E8',
-    borderRightWidth: 1,
-    borderRightColor: '#EAE1D5',
+  leftSidebarContainer: {
+    width: 82,
+    backgroundColor: Palette.canvas,
   },
-  leftNavContent: {
-    paddingVertical: 8,
-    paddingHorizontal: 6,
+  leftSidebar: {
+    flex: 1,
+  },
+  leftSidebarContent: {
+    paddingLeft: 8,
+    paddingRight: 6,
+    paddingBottom: 110,
     gap: 4,
   },
-  leftNavPill: {
-    height: LEFT_ITEM_HEIGHT,
+  categoryItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 6,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 4,
+    position: 'relative',
+    gap: 3,
   },
-  leftNavPillActive: {
+  categoryItemActive: {
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: Palette.apricot[200],
   },
-  navLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: Palette.cocoa[700],
+  activeIndicator: {
+    position: 'absolute',
+    left: 0,
+    top: '50%',
+    marginTop: -10,
+    width: 3.5,
+    height: 20,
+    backgroundColor: Palette.primary,
+    borderTopRightRadius: 3,
+    borderBottomRightRadius: 3,
   },
-  navLabelActive: {
-    fontSize: 12.5,
+  categoryName: {
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: Palette.inkMuted,
+    lineHeight: 14,
+  },
+  categoryNameActive: {
+    color: Palette.primary,
     fontWeight: '800',
-    color: Palette.apricot[600],
   },
-  // 右侧内容
-  rightContentWrapper: {
+
+  // 右侧托盘 Sheet
+  rightSheet: {
     flex: 1,
-    backgroundColor: Palette.oat[50],
+    backgroundColor: Palette.sheet,
+    borderTopLeftRadius: 28,
+    overflow: 'hidden',
   },
-  rightListContent: {
-    paddingHorizontal: 12,
-    paddingBottom: 40,
-  },
-  sectionBlock: {
-    marginBottom: 8,
-  },
-  sectionHeader: {
+  sheetHeader: {
+    paddingHorizontal: 14,
     paddingTop: 12,
     paddingBottom: 8,
-    paddingHorizontal: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Palette.sheet,
   },
-  sectionHeaderTitle: {
-    fontSize: 14,
+  sheetTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sheetTitle: {
+    fontSize: 14.5,
     fontWeight: '800',
-    color: Palette.cocoa[900],
-    letterSpacing: 0.3,
+    color: Palette.ink,
   },
-  cardItemWrapper: {
-    marginBottom: 12,
+  countBadge: {
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
   },
-  // 超圆润无阴影大图卡片
-  gourmetCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 22,
-    padding: 7,
+  countBadgeText: {
+    fontSize: 10.5,
+    fontWeight: '800',
+    color: Palette.primary,
+  },
+  sheetTools: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  toolBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: Palette.tagWarm,
+    paddingHorizontal: 8,
+    paddingVertical: 4.5,
+    borderRadius: 8,
+  },
+  toolBtnText: {
+    fontSize: 10.5,
+    fontWeight: '600',
+    color: Palette.inkMuted,
+  },
+  layoutToggleBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: Palette.tagWarm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // 菜谱列表
+  rightScroll: {
+    flex: 1,
+  },
+  rightScrollContent: {
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 110, // 避免被底部灵动岛遮挡
+  },
+  cardsContainer: {
+    gap: 10,
+  },
+
+  // 模式 A：精品横卡
+  compactCard: {
+    backgroundColor: Palette.cardBg,
+    borderRadius: 20,
+    padding: 9,
+    flexDirection: 'row',
+    gap: 10,
     borderWidth: 1,
-    borderColor: '#EFE7DC',
+    borderColor: '#EFE7DD',
   },
-  cardImageContainer: {
-    width: '100%',
-    height: 124,
-    borderRadius: 16,
+  compactImageContainer: {
+    width: 94,
+    height: 94,
+    borderRadius: 15,
     overflow: 'hidden',
-    backgroundColor: Palette.oat[100],
+    backgroundColor: Palette.tagWarm,
     position: 'relative',
   },
-  cardHeartBtn: {
+  floatingHeartBtn: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  glassTimeBadge: {
+    position: 'absolute',
+    bottom: 6,
+    left: 6,
+    backgroundColor: 'rgba(34, 30, 28, 0.72)',
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  glassTimeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  compactInfo: {
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingVertical: 1,
+  },
+  compactTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 6,
+  },
+  compactTitle: {
+    flex: 1,
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: Palette.ink,
+  },
+  diffBadge: {
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 5,
+  },
+  diffBadgeText: {
+    fontSize: 9.5,
+    fontWeight: '700',
+  },
+  tagsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+    marginTop: 5,
+  },
+  ingTag: {
+    backgroundColor: Palette.tagWarm,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  ingTagText: {
+    fontSize: 9.5,
+    fontWeight: '600',
+    color: Palette.inkMuted,
+  },
+  compactFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 4,
+  },
+  compactMeta: {
+    fontSize: 10,
+    color: Palette.inkLight,
+    flex: 1,
+  },
+  compactCategory: {
+    color: Palette.primary,
+    fontWeight: '700',
+  },
+  plateActionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 14,
+    gap: 3,
+  },
+  plateActionBtnActive: {
+    backgroundColor: Palette.primary,
+  },
+  plateActionBtnText: {
+    fontSize: 10.5,
+    fontWeight: '800',
+    color: Palette.primary,
+  },
+  plateActionBtnTextActive: {
+    fontSize: 10.5,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+
+  // 模式 B：杂志大图卡
+  magazineCard: {
+    backgroundColor: Palette.cardBg,
+    borderRadius: 22,
+    padding: 8,
+    borderWidth: 1,
+    borderColor: '#EFE7DD',
+    gap: 8,
+  },
+  magazineImageContainer: {
+    height: 136,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: Palette.tagWarm,
+    position: 'relative',
+  },
+  floatingHeartBtnLarge: {
     position: 'absolute',
     top: 8,
     right: 8,
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
   },
-  cardTimeBadge: {
+  magazineOverlay: {
     position: 'absolute',
-    bottom: 6,
-    left: 8,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    backgroundColor: 'rgba(26, 21, 18, 0.55)',
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    paddingHorizontal: 8,
-    paddingVertical: 2.5,
-    borderRadius: 999,
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  magazineOverlayLeft: {
+    flex: 1,
     gap: 3,
   },
-  cardTimeText: {
-    fontSize: 9.5,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  cardBody: {
-    paddingTop: 8,
-    paddingHorizontal: 6,
-    paddingBottom: 4,
-    gap: 4,
-  },
-  cardTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  cardTitle: {
+  magazineTitle: {
     fontSize: 14,
     fontWeight: '800',
-    color: Palette.cocoa[900],
-    flex: 1,
-    marginRight: 8,
+    color: '#FFFFFF',
   },
-  difficultyPill: {
-    backgroundColor: Palette.oat[100],
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 999,
-  },
-  difficultyText: {
-    fontSize: 9.5,
-    fontWeight: '600',
-    color: Palette.cocoa[700],
-  },
-  cardIngredients: {
-    fontSize: 11,
-    color: Palette.cocoa[400],
-  },
-  cardFooter: {
+  magazineFooter: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
   },
-  categoryPill: {
-    backgroundColor: Palette.apricot[50],
-    paddingHorizontal: 8,
-    paddingVertical: 2.5,
-    borderRadius: 999,
+  magazineIngs: {
+    fontSize: 11,
+    color: Palette.inkMuted,
+    flex: 1,
   },
-  categoryPillText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Palette.apricot[600],
-  },
-  cardAddBtn: {
+  plateActionBtnLarge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: Palette.apricot[50],
-    borderWidth: 1,
-    borderColor: Palette.apricot[200],
-    gap: 2,
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 11,
+    paddingVertical: 5,
+    borderRadius: 14,
+    gap: 3,
   },
-  cardAddBtnText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: Palette.apricot[600],
+  plateActionBtnLargeActive: {
+    backgroundColor: Palette.primary,
   },
-  // 搜索结果
-  searchResultsContainer: {
-    flex: 1,
-    paddingHorizontal: 12,
-    paddingTop: 10,
-  },
-  searchResultHeader: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: Palette.cocoa[400],
-    marginBottom: 10,
-  },
-  searchListContent: {
-    paddingBottom: 24,
-  },
+
+  // 空状态
   emptyContainer: {
+    paddingVertical: 48,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 80,
-    gap: 10,
+    paddingHorizontal: 16,
   },
-  emptyText: {
+  emptyEmoji: {
+    fontSize: 42,
+    marginBottom: 8,
+  },
+  emptyTitle: {
     fontSize: 13,
-    color: Palette.cocoa[400],
+    fontWeight: '800',
+    color: Palette.ink,
+    marginBottom: 4,
+  },
+  emptySubtitle: {
+    fontSize: 11,
+    color: Palette.inkMuted,
+    marginBottom: 14,
+    textAlign: 'center',
+  },
+  emptyResetBtn: {
+    backgroundColor: Palette.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+  },
+  emptyResetBtnText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
 });

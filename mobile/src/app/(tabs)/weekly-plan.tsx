@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 24,
+    paddingBottom: 110,
     gap: 12,
   },
   dayHeader: {

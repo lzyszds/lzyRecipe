@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Palette } from '@/constants/theme';
 import { AddToMealPlanModal, GlobalMealPlanToast } from '@/components/AddToMealPlanModal';
+import { TodayPlateModal, GlobalTodayPlateToast } from '@/components/TodayPlateModal';
 
 export default function RootLayout() {
   return (
@@ -11,7 +12,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          contentStyle: { backgroundColor: Palette.oat[50] },
+          contentStyle: { backgroundColor: Palette.canvas },
           animation: 'none',
         }}
       >
@@ -21,7 +22,12 @@ export default function RootLayout() {
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="notes" options={{ headerShown: false }} />
       </Stack>
-      {/* 全局加入餐盘选择抽屉 & 极简 Toast */}
+
+      {/* 今日餐盘与备菜清单抽屉 */}
+      <TodayPlateModal />
+      <GlobalTodayPlateToast />
+
+      {/* 周计划自选排餐抽屉 */}
       <AddToMealPlanModal />
       <GlobalMealPlanToast />
     </SafeAreaProvider>

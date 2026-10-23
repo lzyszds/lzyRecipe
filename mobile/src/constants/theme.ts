@@ -1,23 +1,51 @@
 import { Platform } from 'react-native';
 
 export const Palette = {
+  // 一体化燕麦暖画布与托盘
+  canvas: '#F5F2EB', // 统一底层燕麦暖画布
+  sheet: '#FDFBF7', // 右侧主内容托盘底色
+  cardBg: '#FFFFFF', // 卡片纯白
+
+  // 焦糖柿子橙（主强调色）
+  primary: '#D96B38',
+  primarySoft: '#FCEEE6',
+
+  // 难度与状态配色
+  sage: '#4E7D63', // 简单难度/健康
+  sageSoft: '#EAF3EE',
+  amberWarm: '#C87D28', // 家常难度
+  amberSoft: '#FDF4E7',
+  roseWarm: '#C4514B', // 进阶难度/收藏
+  roseSoft: '#FDECEB',
+
+  // 炭棕文字系统
+  ink: '#26211E', // 深炭棕主文字
+  inkMuted: '#857C74', // 柔和次级文字
+  inkLight: '#B5ACA4', // 弱化辅助文字
+  tagWarm: '#F3EFE8', // 食材微胶囊底色
+
+  // 底部灵动岛
+  dockBg: 'rgba(34, 30, 28, 0.94)',
+  dockBorder: 'rgba(255, 255, 255, 0.12)',
+
+  // 兼容旧属性映射
   oat: {
-    50: '#FCF9F5', // 全局底色
-    100: '#F4EFE8', // 卡片/容器底色
-    200: '#E6DEC3', // 边框线
+    50: '#F5F2EB', // 统一为 canvas
+    100: '#F3EFE8',
+    200: '#E7DFD4',
   },
   apricot: {
-    50: '#FFF8F3',
-    100: '#FCEBDF',
+    50: '#FDF7F2',
+    100: '#FCEEE6',
     200: '#F7D4BC',
     400: '#EDA174',
-    500: '#E58A54', // 品牌主色
-    600: '#D1743E',
+    500: '#D96B38', // 主色
+    600: '#C25725',
   },
   cocoa: {
-    900: '#332B26', // 主标题
-    700: '#544840', // 正文
-    400: '#9A8C82', // 辅助提示
+    900: '#26211E',
+    700: '#4E433D',
+    400: '#857C74',
     200: '#D5CBC3',
   },
   card: '#FFFFFF',
@@ -25,15 +53,15 @@ export const Palette = {
 
 export const Colors = {
   light: {
-    text: Palette.cocoa[900],
-    textSecondary: Palette.cocoa[400],
-    textMuted: Palette.cocoa[700],
-    background: Palette.oat[50],
-    backgroundElement: Palette.oat[100],
-    backgroundSelected: Palette.apricot[100],
-    primary: Palette.apricot[500],
-    card: Palette.card,
-    border: Palette.oat[200],
+    text: Palette.ink,
+    textSecondary: Palette.inkMuted,
+    textMuted: Palette.inkMuted,
+    background: Palette.canvas,
+    backgroundElement: Palette.tagWarm,
+    backgroundSelected: Palette.primarySoft,
+    primary: Palette.primary,
+    card: Palette.cardBg,
+    border: '#EAE2D7',
   },
   dark: {
     text: '#F5EFEB',
@@ -42,7 +70,7 @@ export const Colors = {
     background: '#1F1A17',
     backgroundElement: '#2C2522',
     backgroundSelected: '#4A3428',
-    primary: Palette.apricot[500],
+    primary: Palette.primary,
     card: '#29221E',
     border: '#3D342E',
   },
@@ -81,5 +109,5 @@ export const Spacing = {
   six: 64,
 } as const;
 
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
+export const BottomTabInset = Platform.select({ ios: 88, android: 88 }) ?? 88;
 export const MaxContentWidth = 800;

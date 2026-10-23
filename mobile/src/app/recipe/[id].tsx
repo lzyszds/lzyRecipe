@@ -23,9 +23,11 @@ import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
+import { useTodayPlateStore } from '@/store/todayPlateStore';
 import { RecipeImage } from '@/components/RecipeImage';
 import { DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
+import { Plus, Check } from 'lucide-react-native';
 
 const difficultyConfig: Record<DifficultyLevel, { label: string }> = {
   easy: { label: '简单' },
@@ -66,6 +68,18 @@ export default function RecipeDetailScreen() {
       next.add(index);
     }
     setCheckedIngredients(next);
+  };
+
+  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
+  const inPlate = isInPlate(recipe.id);
+
+  const handleToggleTodayPlate = () => {
+    const added = togglePlate(recipe.id);
+    showToast(
+      added
+        ? `🍽️「${recipe.name}」已加入今日餐盘`
+        : `已从餐盘移出「${recipe.name}」`
+    );
   };
 
   const handleAddToWeeklyPlan = () => {
@@ -217,12 +231,30 @@ export default function RecipeDetailScreen() {
       {/* 底部固定操作栏 */}
       <SafeAreaView style={styles.bottomBar} edges={['bottom']}>
         <TouchableOpacity
-          style={styles.addToPlanBtn}
+          style={[styles.todayPlateBtn, inPlate && styles.todayPlateBtnActive]}
+          onPress={handleToggleTodayPlate}
+          activeOpacity={0.8}
+        >
+          {inPlate ? (
+            <>
+              <Check size={16} color="#FFFFFF" strokeWidth={2.5} />
+              <Text style={styles.todayPlateBtnTextActive}>已在餐盘</Text>
+            </>
+          ) : (
+            <>
+              <Plus size={16} color={Palette.primary} strokeWidth={2.5} />
+              <Text style={styles.todayPlateBtnText}>加今日餐盘</Text>
+            </>
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.schedulePlanBtn}
           onPress={handleAddToWeeklyPlan}
           activeOpacity={0.85}
         >
-          <CalendarPlus size={18} color="#FFFFFF" />
-          <Text style={styles.addToPlanBtnText}>加入本周餐盘计划</Text>
+          <CalendarPlus size={16} color="#FFFFFF" />
+          <Text style={styles.schedulePlanBtnText}>排入周计划</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>
@@ -444,22 +476,51 @@ const styles = StyleSheet.create({
   bottomBar: {
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: Palette.oat[100],
+    borderTopColor: '#ECE4D8',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingTop: 10,
+    paddingBottom: 6,
+    flexDirection: 'row',
+    gap: 10,
   },
-  addToPlanBtn: {
+  todayPlateBtn: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Palette.apricot[500],
-    borderRadius: 14,
+    backgroundColor: Palette.primarySoft,
+    borderRadius: 16,
     height: 44,
-    gap: 8,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: Palette.primary,
   },
-  addToPlanBtnText: {
-    fontSize: 13,
-    fontWeight: '700',
+  todayPlateBtnActive: {
+    backgroundColor: Palette.primary,
+  },
+  todayPlateBtnText: {
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: Palette.primary,
+  },
+  todayPlateBtnTextActive: {
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  schedulePlanBtn: {
+    flex: 1.2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Palette.primary,
+    borderRadius: 16,
+    height: 44,
+    gap: 6,
+  },
+  schedulePlanBtnText: {
+    fontSize: 12.5,
+    fontWeight: '800',
     color: '#FFFFFF',
   },
   notFoundContainer: {
