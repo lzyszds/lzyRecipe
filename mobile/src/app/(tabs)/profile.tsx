@@ -272,8 +272,8 @@ export default function ProfileScreen() {
             style={styles.menuItem}
             onPress={() => {
               alert({
-                title: '志得食谱',
-                message: '版本：v2.0.0 (Expo 原生版)\n打造治愈、纯粹、丝滑的掌上菜谱。',
+                title: '食刻 CookMoment',
+                message: '版本：v2.0.0 (Expo 原生版)\n打造治愈、纯粹、丝滑的掌上私人美食生活。',
                 icon: 'info',
                 confirmText: '太棒了',
               });
@@ -283,7 +283,7 @@ export default function ProfileScreen() {
             <View style={[styles.menuIconBg, { backgroundColor: Palette.oat[100] }]}>
               <Info size={18} color={Palette.cocoa[700]} />
             </View>
-            <Text style={styles.menuTitle}>关于食谱</Text>
+            <Text style={styles.menuTitle}>关于食刻</Text>
             <Text style={styles.menuValue}>v2.0.0</Text>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>

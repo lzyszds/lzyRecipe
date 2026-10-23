@@ -203,7 +203,7 @@ export default function HomeScreen() {
             </View>
             <View style={styles.brandTextWrap}>
               <View style={styles.brandTitleRow}>
-                <Text style={styles.brandTitle}>萌厨食记</Text>
+                <Text style={styles.brandTitle}>食刻</Text>
                 <View style={styles.periodPill}>
                   <Text style={styles.periodPillText}>{inspirationSubtitle}</Text>
                 </View>

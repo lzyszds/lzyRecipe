@@ -1,6 +1,6 @@
-# 萌厨食光（lzyRecipe）
+# 食刻 CookMoment（lzyRecipe）
 
-一款简洁优雅的菜谱收藏与管理应用（Expo + React Native + expo-router，TypeScript）。
+一款简洁优雅的现代美食生活与周膳管理应用（Expo + React Native + expo-router，TypeScript）。
 
 ## 仓库结构
 

@@ -92,7 +92,7 @@ function buildSvg(name, category) {
   <text x="400" y="240" text-anchor="middle" font-size="80">${emoji}</text>
   <text x="400" y="360" text-anchor="middle" fill="#5d6b63" font-size="42" font-weight="bold" font-family="Noto Sans SC, sans-serif">${escapeXml(displayName)}</text>
   <text x="400" y="400" text-anchor="middle" fill="rgba(93,107,99,0.6)" font-size="22" font-family="Noto Sans SC, sans-serif">${escapeXml(category)}</text>
-  <text x="400" y="520" text-anchor="middle" fill="rgba(93,107,99,0.35)" font-size="16" font-family="Noto Sans SC, sans-serif">萌厨食光</text>
+  <text x="400" y="520" text-anchor="middle" fill="rgba(93,107,99,0.35)" font-size="16" font-family="Noto Sans SC, sans-serif">食刻 CookMoment</text>
 </svg>`;
 }
 

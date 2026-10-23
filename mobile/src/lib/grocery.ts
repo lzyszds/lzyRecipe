@@ -107,6 +107,6 @@ export function formatGroceryToText(
     lines.push('\n（暂未安排菜品，清单为空）');
   }
 
-  lines.push('\n来自 志得食谱·便当盒');
+  lines.push('\n来自 食刻·便当盒');
   return lines.join('\n');
 }
