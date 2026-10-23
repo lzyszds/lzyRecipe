@@ -6,6 +6,7 @@ import { Recipe, DifficultyLevel } from '../types';
 import { RecipeImage } from './RecipeImage';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useWeeklyPlanStore } from '../store/weeklyPlanStore';
+import { useMealPlanSheetStore } from '../store/mealPlanSheetStore';
 import { Palette } from '../constants/theme';
 
 interface RecipeCardProps {
@@ -39,12 +40,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
 
   const handleAddToPlan = (e: any) => {
     e?.stopPropagation?.();
-    const result = addToFirstEmptySlot(recipe.id);
-    if (result) {
-      Alert.alert('已加入餐盘', `「${recipe.name}」已添加至本周计划！`);
-    } else {
-      Alert.alert('提示', '本周餐盘已满，可前往周计划调整');
-    }
+    useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
   if (compact) {

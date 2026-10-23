@@ -22,6 +22,7 @@ import {
 import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
+import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { RecipeImage } from '@/components/RecipeImage';
 import { DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
@@ -68,12 +69,7 @@ export default function RecipeDetailScreen() {
   };
 
   const handleAddToWeeklyPlan = () => {
-    const slot = addToFirstEmptySlot(recipe.id);
-    if (slot) {
-      Alert.alert('已加入餐盘', `已将「${recipe.name}」添加至本周就餐计划！`);
-    } else {
-      Alert.alert('提示', '本周餐盘已满，可前往周计划调整');
-    }
+    useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
   return (

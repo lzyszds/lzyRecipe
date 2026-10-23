@@ -18,6 +18,7 @@ import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeImage } from '@/components/RecipeImage';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
+import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { Recipe, DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
 
@@ -51,12 +52,7 @@ const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
 
   const handleAddToPlan = (e: any) => {
     e?.stopPropagation?.();
-    const result = addToFirstEmptySlot(recipe.id);
-    if (result) {
-      Alert.alert('已加入餐盘', `「${recipe.name}」已安排到本周就餐计划！`);
-    } else {
-      Alert.alert('提示', '本周餐盘已满，可前往周计划调整');
-    }
+    useMealPlanSheetStore.getState().openSheet(recipe);
   };
 
   const ingredientPreview = recipe.ingredients
