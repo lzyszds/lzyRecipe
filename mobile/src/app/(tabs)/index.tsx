@@ -120,39 +120,6 @@ export default function HomeScreen() {
             })}
           </View>
         </TouchableOpacity>
-
-        {/* 分类快捷横滑 */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>分类浏览</Text>
-          <TouchableOpacity onPress={() => router.push('/recipes')}>
-            <Text style={styles.sectionLink}>全部 {categories.length} 类 →</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryScroll}
-        >
-          {categories.slice(0, 10).map((cat) => (
-            <TouchableOpacity
-              key={cat.id}
-              style={styles.categoryChip}
-              onPress={() => {
-                router.push({
-                  pathname: '/recipes',
-                  params: { category: cat.name },
-                });
-              }}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.categoryIcon}>{cat.icon}</Text>
-              <Text style={styles.categoryName}>{cat.name}</Text>
-              <Text style={styles.categoryCount}>{cat.count}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
         {/* 精选菜谱网格 */}
         <View style={styles.sectionHeader}>
           <View style={styles.sectionTitleRow}>
