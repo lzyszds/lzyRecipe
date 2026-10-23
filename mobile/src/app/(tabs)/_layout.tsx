@@ -7,6 +7,7 @@ export default function TabLayout() {
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        lazy: false, // 预加载所有底栏页面，杜绝首次切换卡顿与冷启动延迟
       }}
     >
       <Tabs.Screen

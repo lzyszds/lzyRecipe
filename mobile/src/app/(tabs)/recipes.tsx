@@ -65,7 +65,7 @@ function renderDifficultyBadge(difficulty: DifficultyLevel) {
 }
 
 // 模式 A：黄金比例“左图右文”精品横卡（默认推荐）
-const CompactHorizontalCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
@@ -185,10 +185,10 @@ const CompactHorizontalCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 // 模式 B：杂志感大图海报卡
-const MagazineCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
@@ -287,12 +287,12 @@ const MagazineCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 export default function RecipesScreen() {
   const params = useLocalSearchParams<{ category?: string }>();
   const allRecipes = useAllRecipes();
-  const rawCategories = getCategoriesWithCounts(allRecipes);
+  const rawCategories = useMemo(() => getCategoriesWithCounts(allRecipes), [allRecipes]);
 
   // 状态管理
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -559,8 +559,8 @@ export default function RecipesScreen() {
               )
             }
             ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-            initialNumToRender={8}
-            maxToRenderPerBatch={8}
+            initialNumToRender={6}
+            maxToRenderPerBatch={6}
             windowSize={5}
             removeClippedSubviews={true}
             contentContainerStyle={styles.rightListContent}
