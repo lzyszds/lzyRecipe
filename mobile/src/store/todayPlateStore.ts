@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { safeAsyncStorage } from '@/lib/safeStorage';
 
 interface TodayPlateState {
   plateRecipeIds: string[];
@@ -78,7 +78,7 @@ export const useTodayPlateStore = create<TodayPlateState>()(
     }),
     {
       name: 'lzy-recipe-today-plate-v1',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => safeAsyncStorage),
       partialize: (state) => ({
         plateRecipeIds: state.plateRecipeIds,
         checkedIngredients: state.checkedIngredients,

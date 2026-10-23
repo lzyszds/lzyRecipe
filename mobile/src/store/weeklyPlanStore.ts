@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { safeAsyncStorage } from '@/lib/safeStorage';
 import type { Recipe } from '../types';
 import {
   DEFAULT_WEEKLY_PLAN_INCLUDES,
@@ -199,7 +199,7 @@ export const useWeeklyPlanStore = create<WeeklyPlanState>()(
     }),
     {
       name: 'weekly-plan-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => safeAsyncStorage),
       version: 4,
       migrate: (persisted) => {
         const state = persisted as Partial<WeeklyPlanState> & {

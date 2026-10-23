@@ -483,8 +483,10 @@ export default function RecipesScreen() {
                   onPress={() => handleSelectCategory(catName)}
                   activeOpacity={0.8}
                 >
-                  {/* 选中态左侧焦糖色指示条 */}
-                  {isActive && <View style={styles.activeIndicator} />}
+                  {/* 选中态左侧焦糖色指示条（在卡片正中间，绝无偏差） */}
+                  <View style={styles.indicatorSlot}>
+                    {isActive && <View style={styles.activeIndicator} />}
+                  </View>
 
                   {/* 矢量图标 (单行排布) */}
                   <View style={styles.categoryIconWrapper}>
@@ -668,7 +670,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   leftSidebarContainer: {
-    width: 88, // 适宜单行排布的精巧宽度
+    width: 90,
     backgroundColor: Palette.canvas,
   },
   leftSidebar: {
@@ -685,20 +687,22 @@ const styles = StyleSheet.create({
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 9,
-    paddingHorizontal: 7,
+    height: 40,
+    paddingRight: 6,
     borderRadius: 13,
-    position: 'relative',
-    gap: 5,
+    overflow: 'hidden',
+    gap: 4,
   },
   categoryItemActive: {
     backgroundColor: '#FFFFFF',
   },
+  indicatorSlot: {
+    width: 5,
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
   activeIndicator: {
-    position: 'absolute',
-    left: 0,
-    top: '50%',
-    marginTop: -9,
     width: 3.5,
     height: 18,
     backgroundColor: Palette.primary,
