@@ -8,6 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { X, Check } from 'lucide-react-native';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useWeeklyPlanStore, MealSlot, getSuggestedSlotForRecipeId } from '@/store/weeklyPlanStore';
@@ -66,8 +67,10 @@ export const AddToMealPlanModal: React.FC = () => {
       visible={Boolean(targetRecipe)}
       transparent
       animationType="slide"
+      statusBarTranslucent={true}
       onRequestClose={closeSheet}
     >
+      <StatusBar style="light" animated />
       <Pressable style={styles.overlay} onPress={closeSheet}>
         <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
           <SafeAreaView edges={['bottom']}>

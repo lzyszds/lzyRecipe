@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import * as Clipboard from 'expo-clipboard';
 import { X, Trash2, Check, Share2, CalendarPlus, Utensils } from 'lucide-react-native';
 import { useTodayPlateStore } from '@/store/todayPlateStore';
@@ -86,11 +87,25 @@ export const TodayPlateModal: React.FC = () => {
       visible={isModalOpen}
       transparent
       animationType="slide"
+      statusBarTranslucent={true}
       onRequestClose={closeModal}
     >
+      <StatusBar style="light" animated />
       <Pressable style={styles.overlay} onPress={closeModal}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
-          <SafeAreaView edges={['bottom']} style={styles.safeArea}>
+        <Pressable
+          style={[
+            styles.sheet,
+            { backgroundColor: selectedRecipes.length > 0 ? '#FFFFFF' : Palette.canvas },
+          ]}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <SafeAreaView
+            edges={['bottom']}
+            style={[
+              styles.safeArea,
+              { backgroundColor: selectedRecipes.length > 0 ? '#FFFFFF' : Palette.canvas },
+            ]}
+          >
             {/* 顶部标题栏 */}
             <View style={styles.header}>
               <View>
@@ -259,18 +274,18 @@ export const GlobalTodayPlateToast: React.FC = () => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(28, 22, 18, 0.5)',
+    backgroundColor: 'rgba(28, 22, 18, 0.55)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: Palette.canvas,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    maxHeight: '84%',
+    maxHeight: '86%',
+    width: '100%',
     overflow: 'hidden',
   },
   safeArea: {
-    paddingBottom: 6,
+    width: '100%',
   },
   header: {
     flexDirection: 'row',
