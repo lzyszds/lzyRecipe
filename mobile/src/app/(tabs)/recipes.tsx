@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -40,6 +42,11 @@ const SORT_LABELS: Record<SortMode, string> = {
   timeAsc: '最快',
   easyFirst: '简单优先',
 };
+
+// 列表虚拟化数据项联合类型
+type FlatListItem =
+  | { type: 'header'; category: string; count: number }
+  | { type: 'recipe'; recipe: Recipe };
 
 // 难度标签配色转换
 function renderDifficultyBadge(difficulty: DifficultyLevel) {
@@ -244,7 +251,7 @@ const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
           />
         </TouchableOpacity>
 
-        {/* 底部融合菜名与耗时 */}
+        {/* 底部融合菜名与耗时（独立分行，绝不重叠） */}
         <View style={styles.magazineOverlay}>
           <View style={styles.magazineOverlayLeft}>
             <View style={styles.magazineTimeBadge}>
@@ -306,7 +313,14 @@ export default function RecipesScreen() {
 
   const { isFavorite } = useFavoritesStore();
   const { showToast } = useTodayPlateStore();
-  const flatListRef = useRef<FlatList<Recipe>>(null);
+
+  const flatListRef = useRef<FlatList<FlatListItem>>(null);
+  const leftSidebarRef = useRef<any>(null);
+
+  // 避免点击跳转触发滚动监听互相冲突
+  const isClickScrolling = useRef<boolean>(false);
+  const clickTimer = useRef<any>(null);
+  const activeCatRef = useRef<string>(selectedCategory);
 
   // 左侧导航列表（包含“全部”与已有菜谱的分类）
   const categoryNavItems = useMemo(() => {
@@ -319,51 +333,162 @@ export default function RecipesScreen() {
     return list;
   }, [rawCategories]);
 
-  // 筛选与排序
-  const filteredRecipes = useMemo(() => {
-    let result = allRecipes.filter((item) => {
-      if (selectedCategory !== ALL_CATEGORY) {
-        if (selectedCategory === '家常菜') {
-          if (item.difficulty === 'hard') return false;
-        } else if (item.category !== selectedCategory) {
-          return false;
-        }
-      }
-
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim().toLowerCase();
-        const matchTitle = item.name.toLowerCase().includes(q);
-        const matchCat = item.category.toLowerCase().includes(q);
-        const matchIng = item.ingredients.some((i) =>
-          i.name.toLowerCase().includes(q)
-        );
-        if (!matchTitle && !matchCat && !matchIng) return false;
-      }
-
-      if (onlyFast && item.cookTime > 30) return false;
-      if (onlyFav && !isFavorite(item.id)) return false;
-
-      return true;
-    });
+  // 构建平铺数据（包含分类 Header 与 Recipe Item），用于虚拟化滚动和精准跳转
+  const { flatListData, categoryIndexMap, totalCount } = useMemo(() => {
+    const isSearching = Boolean(searchQuery.trim());
+    const q = searchQuery.trim().toLowerCase();
 
     const diffMap: Record<DifficultyLevel, number> = {
       easy: 1,
       medium: 2,
       hard: 3,
     };
-    if (sortMode === 'timeAsc') {
-      result.sort((a, b) => a.cookTime - b.cookTime);
-    } else if (sortMode === 'easyFirst') {
-      result.sort((a, b) => diffMap[a.difficulty] - diffMap[b.difficulty]);
+
+    // 过滤函数
+    const matchFilter = (r: Recipe) => {
+      if (onlyFast && r.cookTime > 30) return false;
+      if (onlyFav && !isFavorite(r.id)) return false;
+      if (isSearching) {
+        const matchTitle = r.name.toLowerCase().includes(q);
+        const matchCat = r.category.toLowerCase().includes(q);
+        const matchIng = r.ingredients.some((i) => i.name.toLowerCase().includes(q));
+        if (!matchTitle && !matchCat && !matchIng) return false;
+      }
+      return true;
+    };
+
+    // 排序函数
+    const sortFn = (a: Recipe, b: Recipe) => {
+      if (sortMode === 'timeAsc') return a.cookTime - b.cookTime;
+      if (sortMode === 'easyFirst') return diffMap[a.difficulty] - diffMap[b.difficulty];
+      return 0;
+    };
+
+    const flatItems: FlatListItem[] = [];
+    const indexMap: Record<string, number> = {};
+    let total = 0;
+
+    if (isSearching) {
+      // 搜索模式：直接展示搜索结果平铺
+      const matched = allRecipes.filter(matchFilter);
+      if (sortMode !== 'default') matched.sort(sortFn);
+      matched.forEach((r) => {
+        flatItems.push({ type: 'recipe', recipe: r });
+      });
+      total = matched.length;
+    } else {
+      // 浏览模式：按分类依次平铺组装，保留分类 Header
+      rawCategories.forEach((cat) => {
+        if (cat.count === 0) return;
+        let catRecipes = allRecipes.filter((r) => r.category === cat.name && matchFilter(r));
+        if (catRecipes.length === 0) return;
+
+        if (sortMode !== 'default') catRecipes.sort(sortFn);
+
+        // 记录该分类组起始在 FlatList 中的 index
+        indexMap[cat.name] = flatItems.length;
+
+        // 插入组头
+        flatItems.push({
+          type: 'header',
+          category: cat.name,
+          count: catRecipes.length,
+        });
+
+        // 插入属于该组的菜谱
+        catRecipes.forEach((recipe) => {
+          flatItems.push({ type: 'recipe', recipe });
+        });
+
+        total += catRecipes.length;
+      });
     }
 
-    return result;
-  }, [allRecipes, selectedCategory, searchQuery, onlyFast, onlyFav, sortMode, isFavorite]);
+    return {
+      flatListData: flatItems,
+      categoryIndexMap: indexMap,
+      totalCount: total,
+    };
+  }, [allRecipes, rawCategories, searchQuery, onlyFast, onlyFav, sortMode, isFavorite]);
 
-  // 分类切换
-  const handleSelectCategory = (cat: string) => {
-    setSelectedCategory(cat);
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
+  // 滚动时动态识别当前视口第一项属于哪个分类（滚动分类跟随功能）
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: any[] }) => {
+      if (isClickScrolling.current) return;
+      if (!viewableItems || viewableItems.length === 0) return;
+
+      const firstVisible = viewableItems[0]?.item;
+      if (!firstVisible) return;
+
+      const currentCategory =
+        firstVisible.type === 'header'
+          ? firstVisible.category
+          : firstVisible.recipe.category;
+
+      if (currentCategory && currentCategory !== activeCatRef.current) {
+        activeCatRef.current = currentCategory;
+        setSelectedCategory(currentCategory);
+      }
+    }
+  ).current;
+
+  // 监听回到顶部的滚动距离
+  const handleScroll = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (isClickScrolling.current) return;
+      const scrollY = e.nativeEvent.contentOffset.y;
+      if (scrollY <= 20) {
+        if (activeCatRef.current !== ALL_CATEGORY) {
+          activeCatRef.current = ALL_CATEGORY;
+          setSelectedCategory(ALL_CATEGORY);
+        }
+      }
+    },
+    []
+  );
+
+  // 当跟随分类改变时，左侧侧边栏自动滑动以保持高亮可见
+  useEffect(() => {
+    const idx = categoryNavItems.indexOf(selectedCategory);
+    if (idx >= 0) {
+      leftSidebarRef.current?.scrollTo({
+        y: Math.max(0, idx * 44 - 100),
+        animated: true,
+      });
+    }
+  }, [selectedCategory, categoryNavItems]);
+
+  // 点击左侧分类：100% 精准跳转定位
+  const handleSelectCategory = (catName: string) => {
+    setSelectedCategory(catName);
+    activeCatRef.current = catName;
+
+    // 锁定跟随监听 650ms，防止滚动过程中高亮抖动
+    isClickScrolling.current = true;
+    if (clickTimer.current) clearTimeout(clickTimer.current);
+    clickTimer.current = setTimeout(() => {
+      isClickScrolling.current = false;
+    }, 650);
+
+    if (catName === ALL_CATEGORY) {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    } else {
+      const targetIndex = categoryIndexMap[catName];
+      if (typeof targetIndex === 'number') {
+        try {
+          flatListRef.current?.scrollToIndex({
+            index: targetIndex,
+            animated: true,
+            viewPosition: 0,
+          });
+        } catch {
+          flatListRef.current?.scrollToOffset({
+            offset: targetIndex * 92,
+            animated: true,
+          });
+        }
+      }
+    }
   };
 
   // 切换排序
@@ -405,9 +530,6 @@ export default function RecipesScreen() {
               value={searchQuery}
               onChangeText={(text) => {
                 setSearchQuery(text);
-                if (text && selectedCategory !== ALL_CATEGORY) {
-                  setSelectedCategory(ALL_CATEGORY);
-                }
               }}
               returnKeyType="search"
             />
@@ -464,9 +586,10 @@ export default function RecipesScreen() {
 
       {/* 2. 核心中段双栏布局 */}
       <View style={styles.mainLayout}>
-        {/* 左侧菜单栏 (严格单行水平排列：图标 + 标题，不折行) */}
+        {/* 左侧菜单栏 (单行排布，左侧边框高亮垂直居中) */}
         <View style={styles.leftSidebarContainer}>
           <ScrollView
+            ref={leftSidebarRef}
             style={styles.leftSidebar}
             contentContainerStyle={styles.leftSidebarContent}
             showsVerticalScrollIndicator={false}
@@ -509,16 +632,20 @@ export default function RecipesScreen() {
           </ScrollView>
         </View>
 
-        {/* 右侧主内容托盘 (采用 FlatList 虚拟化滚动加载，杜绝成百上千道菜卡顿) */}
+        {/* 右侧主内容托盘 (支持双向联动滚动跟随与虚拟化加载) */}
         <View style={styles.rightSheet}>
           {/* 右侧顶部粘性分类标题与工具 */}
           <View style={styles.sheetHeader}>
             <View style={styles.sheetTitleGroup}>
               <Text style={styles.sheetTitle} numberOfLines={1}>
-                {selectedCategory === ALL_CATEGORY ? '全部精选菜谱' : selectedCategory}
+                {searchQuery
+                  ? `搜索结果`
+                  : selectedCategory === ALL_CATEGORY
+                  ? '全部精选菜谱'
+                  : selectedCategory}
               </Text>
               <View style={styles.countBadge}>
-                <Text style={styles.countBadgeText}>{filteredRecipes.length}道</Text>
+                <Text style={styles.countBadgeText}>{totalCount}道</Text>
               </View>
             </View>
 
@@ -548,18 +675,32 @@ export default function RecipesScreen() {
             </View>
           </View>
 
-          {/* 虚拟化列表 (FlatList) */}
+          {/* 虚拟化列表 (FlatList 附带滚动跟随功能) */}
           <FlatList
             ref={flatListRef}
-            data={filteredRecipes}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) =>
-              cardLayout === 'compact' ? (
-                <CompactHorizontalCard recipe={item} />
-              ) : (
-                <MagazineCard recipe={item} />
-              )
+            data={flatListData}
+            keyExtractor={(item, index) =>
+              item.type === 'header'
+                ? `header-${item.category}`
+                : `recipe-${item.recipe.id}`
             }
+            renderItem={({ item }) => {
+              if (item.type === 'header') {
+                return (
+                  <View style={styles.sectionHeaderBar}>
+                    <Text style={styles.sectionHeaderTitle}>{item.category}</Text>
+                    <View style={styles.sectionCountPill}>
+                      <Text style={styles.sectionCountText}>{item.count}道</Text>
+                    </View>
+                  </View>
+                );
+              }
+              return cardLayout === 'compact' ? (
+                <CompactHorizontalCard recipe={item.recipe} />
+              ) : (
+                <MagazineCard recipe={item.recipe} />
+              );
+            }}
             ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
             initialNumToRender={6}
             maxToRenderPerBatch={6}
@@ -567,12 +708,34 @@ export default function RecipesScreen() {
             removeClippedSubviews={true}
             contentContainerStyle={styles.rightListContent}
             showsVerticalScrollIndicator={false}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={{
+              itemVisiblePercentThreshold: 20,
+              waitForInteraction: false,
+            }}
+            onScrollToIndexFailed={(info) => {
+              flatListRef.current?.scrollToOffset({
+                offset: info.averageItemLength * info.index,
+                animated: true,
+              });
+              setTimeout(() => {
+                try {
+                  flatListRef.current?.scrollToIndex({
+                    index: info.index,
+                    animated: true,
+                    viewPosition: 0,
+                  });
+                } catch (_) {}
+              }, 100);
+            }}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyEmoji}>🥣</Text>
-                <Text style={styles.emptyTitle}>该分类下暂无匹配菜谱</Text>
+                <Text style={styles.emptyTitle}>暂无匹配菜谱</Text>
                 <Text style={styles.emptySubtitle}>
-                  试试切换左侧分类或清空上方筛选条件
+                  试试清空上方筛选条件或换个搜索词
                 </Text>
                 <TouchableOpacity
                   style={styles.emptyResetBtn}
@@ -796,6 +959,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingTop: 4,
     paddingBottom: 130, // 确保滚动到最后一条时完全不被底部双胶囊遮挡
+  },
+
+  // 分类分组标题条
+  sectionHeaderBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 14,
+    paddingBottom: 6,
+    paddingHorizontal: 2,
+  },
+  sectionHeaderTitle: {
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: Palette.ink,
+    letterSpacing: 0.2,
+  },
+  sectionCountPill: {
+    backgroundColor: Palette.tagWarm,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  sectionCountText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: Palette.inkMuted,
   },
 
   // 模式 A：精品横卡
