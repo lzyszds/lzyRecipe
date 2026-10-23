@@ -275,10 +275,6 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     borderRadius: 18,
     gap: 5,
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   actionBtnPrimaryText: {
     fontSize: 11,
@@ -316,10 +312,6 @@ const styles = StyleSheet.create({
   dayCardSelected: {
     backgroundColor: Palette.apricot[500],
     borderColor: Palette.apricot[500],
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   dayName: {
     fontSize: 12,
@@ -368,10 +360,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: Palette.oat[100],
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
   },
   mealCardHeader: {
     flexDirection: 'row',

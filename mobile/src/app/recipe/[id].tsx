@@ -273,10 +273,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.92)',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
   },
   mainInfoCard: {
     backgroundColor: '#FFFFFF',
@@ -339,10 +335,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: Palette.oat[100],
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 4,
   },
   sectionHeaderRow: {
     flexDirection: 'row',
@@ -468,10 +460,6 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     height: 44,
     gap: 8,
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
   },
   addToPlanBtnText: {
     fontSize: 13,

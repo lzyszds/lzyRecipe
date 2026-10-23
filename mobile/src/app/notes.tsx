@@ -180,10 +180,6 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.apricot[500],
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   headerTitle: {
     fontSize: 16,
@@ -202,10 +198,6 @@ const styles = StyleSheet.create({
     padding: 14,
     borderWidth: 1,
     borderColor: Palette.oat[100],
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
   },
   noteHeader: {
     flexDirection: 'row',
@@ -296,10 +288,6 @@ const styles = StyleSheet.create({
     height: 44,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   modalSubmitBtnText: {
     fontSize: 13,

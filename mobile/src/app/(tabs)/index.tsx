@@ -175,10 +175,6 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.apricot[500],
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
   },
   appTitle: {
     fontSize: 16,
@@ -199,10 +195,6 @@ const styles = StyleSheet.create({
     borderColor: Palette.oat[100],
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
   },
   searchBar: {
     flexDirection: 'row',
@@ -215,10 +207,6 @@ const styles = StyleSheet.create({
     height: 42,
     gap: 10,
     marginBottom: 14,
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 3,
   },
   searchPlaceholder: {
     fontSize: 12,
@@ -231,10 +219,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Palette.oat[100],
     marginBottom: 16,
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
   },
   planCardHeader: {
     flexDirection: 'row',

@@ -97,12 +97,7 @@ const styles = StyleSheet.create({
   tabBarWrapper: {
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
-    borderTopColor: '#F2ECE5',
-    shadowColor: '#2D231E',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
-    elevation: 8,
+    borderTopColor: '#EDE5DB',
   },
   tabBarContainer: {
     flexDirection: 'row',

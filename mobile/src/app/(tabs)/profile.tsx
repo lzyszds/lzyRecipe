@@ -183,10 +183,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     borderColor: Palette.oat[100],
-    shadowColor: Palette.cocoa[900],
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
     gap: 14,
   },
   avatar: {
@@ -196,10 +192,6 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.apricot[500],
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: Palette.apricot[500],
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
   },
   profileInfo: {
     flex: 1,
