@@ -31,6 +31,8 @@ import { useAllRecipes } from '@/lib/recipes';
 import { RecipeImage } from '@/components/RecipeImage';
 import { RecipePoolSheet } from '@/components/RecipePoolSheet';
 import { GrocerySheet } from '@/components/GrocerySheet';
+import { ClearBentoModal } from '@/components/ClearBentoModal';
+import { SmartFillModal } from '@/components/SmartFillModal';
 import {
   getTodayString,
   getMondayOf,
@@ -67,6 +69,7 @@ export default function WeeklyPlanScreen() {
     removeDishFromMeal,
     clearMeal,
     clearDay,
+    clearWeek,
     toggleEaten,
     smartFillEmptySlots,
     recipePool,
@@ -82,6 +85,8 @@ export default function WeeklyPlanScreen() {
   const [poolSheetVisible, setPoolSheetVisible] = useState(false);
   const [targetMeal, setTargetMeal] = useState<MealType | null>(null);
   const [grocerySheetVisible, setGrocerySheetVisible] = useState(false);
+  const [clearModalVisible, setClearModalVisible] = useState(false);
+  const [smartFillModalVisible, setSmartFillModalVisible] = useState(false);
 
   // 本周 7 天
   const weekDates = useMemo(() => getWeekDates(mondayStr), [mondayStr]);
@@ -113,36 +118,43 @@ export default function WeeklyPlanScreen() {
     setSelectedDate(todayStr);
   };
 
-  // 智能填充空餐位
-  const handleSmartFill = async () => {
-    const ok = await confirm({
-      title: '智能填充空便当格',
-      message: '只为尚未排菜的空白餐位自动搭配菜品，您已手动安排的菜品将 100% 完整保留。',
-      confirmText: '立即填充',
-      icon: 'sparkles',
-    });
-    if (ok) {
-      const count = smartFillEmptySlots(mondayStr, allRecipes);
-      if (count > 0) {
-        toast({ type: 'success', message: `已为您智能填满 ${count} 个空便当位！` });
-      } else {
-        toast({ type: 'info', message: '本周所有便当位都已经排满啦！' });
-      }
-    }
+  // 智能填充弹窗呼出
+  const handleSmartFill = () => {
+    setSmartFillModalVisible(true);
   };
 
-  // 清空当天
-  const handleClearCurrentDay = async () => {
+  // 清空便当弹窗呼出
+  const handleOpenClearModal = () => {
+    setClearModalVisible(true);
+  };
+
+  // 确认清空当日
+  const handleConfirmClearDay = async () => {
     const ok = await confirm({
-      title: '清空今日便当',
-      message: `确定要清空 ${formatMonthDay(selectedDate)} ${getWeekdayName(selectedDate)} 的便当吗？`,
+      title: '清空当日便当',
+      message: `确定要清空 ${formatMonthDay(selectedDate)} (${getWeekdayName(selectedDate)}) 的全部早中晚餐吗？`,
       confirmText: '确定清空',
       destructive: true,
       icon: 'trash',
     });
     if (ok) {
       clearDay(selectedDate);
-      toast({ type: 'success', message: '已清空该日便当' });
+      toast({ type: 'success', message: '已清空当日便当' });
+    }
+  };
+
+  // 确认清空整周
+  const handleConfirmClearWeek = async () => {
+    const ok = await confirm({
+      title: '清空本周便当',
+      message: `确定要清空 ${formatWeekRange(mondayStr)} 整周 7 天的全部便当排餐吗？此操作不可逆。`,
+      confirmText: '确定清空整周',
+      destructive: true,
+      icon: 'trash',
+    });
+    if (ok) {
+      clearWeek(mondayStr);
+      toast({ type: 'success', message: '已清空本周所有便当安排' });
     }
   };
 
@@ -192,7 +204,7 @@ export default function WeeklyPlanScreen() {
 
           <TouchableOpacity
             style={styles.iconBtn}
-            onPress={handleClearCurrentDay}
+            onPress={handleOpenClearModal}
             activeOpacity={0.8}
           >
             <Trash2 size={16} color={Palette.cocoa[400]} />
@@ -476,6 +488,25 @@ export default function WeeklyPlanScreen() {
         mondayStr={mondayStr}
         weekDates={weekDates}
         onClose={() => setGrocerySheetVisible(false)}
+      />
+
+      {/* 8. 便当清空选项弹窗（支持当日与整周） */}
+      <ClearBentoModal
+        visible={clearModalVisible}
+        onClose={() => setClearModalVisible(false)}
+        selectedDate={selectedDate}
+        mondayStr={mondayStr}
+        onClearDay={handleConfirmClearDay}
+        onClearWeek={handleConfirmClearWeek}
+      />
+
+      {/* 9. AI 智能配餐填补弹窗（支持自然语言诉求与范围） */}
+      <SmartFillModal
+        visible={smartFillModalVisible}
+        onClose={() => setSmartFillModalVisible(false)}
+        selectedDate={selectedDate}
+        mondayStr={mondayStr}
+        weekDates={weekDates}
       />
     </SafeAreaView>
   );

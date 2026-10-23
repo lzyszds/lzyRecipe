@@ -48,12 +48,18 @@ interface BentoState {
   removeDishFromMeal: (date: string, mealType: MealType, recipeId: string) => void;
   clearMeal: (date: string, mealType: MealType) => void;
   clearDay: (date: string) => void;
+  clearWeek: (mondayStr: string) => void;
 
   // “已吃掉” 打卡动效与状态
   toggleEaten: (date: string, mealType: MealType, recipeId: string) => void;
 
   // 上班族快捷：一键“午餐带饭”（选中一道菜排入周一至周五全部午餐）
   applyLunchBentoToWorkdays: (mondayStr: string, recipeId: string) => void;
+
+  // 批量填充指定日期与餐位的菜品
+  batchFillSlots: (
+    slots: Record<string, { breakfast?: string[]; lunch?: string[]; dinner?: string[] }>
+  ) => number;
 
   // 智能填充空餐位（保留空白与已有菜，绝不覆盖已有手排）
   smartFillEmptySlots: (mondayStr: string, allRecipes: Recipe[]) => number;
@@ -176,6 +182,54 @@ export const useBentoStore = create<BentoState>()(
             },
           };
         }),
+
+      clearWeek: (mondayStr) =>
+        set((state) => {
+          const weekDates = getWeekDates(mondayStr);
+          const nextBento = { ...state.bentoByDate };
+          for (const d of weekDates) {
+            nextBento[d] = createEmptyDayBento(d);
+          }
+          return { bentoByDate: nextBento };
+        }),
+
+      batchFillSlots: (slots) => {
+        let addedCount = 0;
+        set((state) => {
+          const nextBento = { ...state.bentoByDate };
+          for (const [date, meals] of Object.entries(slots)) {
+            const currentDay = nextBento[date] || createEmptyDayBento(date);
+            const nextBreakfast = [...currentDay.breakfast];
+            const nextLunch = [...currentDay.lunch];
+            const nextDinner = [...currentDay.dinner];
+
+            const appendUnique = (targetList: MealSlotItem[], ids?: string[]) => {
+              if (!ids) return;
+              const existingIds = new Set(targetList.map((i) => i.recipeId));
+              for (const id of ids) {
+                if (!existingIds.has(id)) {
+                  targetList.push({ recipeId: id, eatenAt: null });
+                  existingIds.add(id);
+                  addedCount++;
+                }
+              }
+            };
+
+            appendUnique(nextBreakfast, meals.breakfast);
+            appendUnique(nextLunch, meals.lunch);
+            appendUnique(nextDinner, meals.dinner);
+
+            nextBento[date] = {
+              ...currentDay,
+              breakfast: nextBreakfast,
+              lunch: nextLunch,
+              dinner: nextDinner,
+            };
+          }
+          return { bentoByDate: nextBento };
+        });
+        return addedCount;
+      },
 
       toggleEaten: (date, mealType, recipeId) =>
         set((state) => {

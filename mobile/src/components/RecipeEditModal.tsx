@@ -3,11 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {
   X,
@@ -18,12 +19,18 @@ import {
   Flame,
   ChefHat,
   Sparkles,
+  BookOpen,
+  Layers,
+  ListOrdered,
+  Lightbulb,
+  Wand2,
 } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
 import { Palette, Radius } from '../constants/theme';
 import { Recipe, Ingredient, Step, DifficultyLevel } from '../types';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
-import { toast } from '../store/feedbackStore';
+import { generateRecipeWithAi, RecipeGenField } from '../lib/aiRecipe';
+import { toast, confirm } from '../store/feedbackStore';
 
 interface RecipeEditModalProps {
   visible: boolean;
@@ -38,11 +45,15 @@ const CATEGORIES = [
   '川菜',
   '粤菜',
   '湘菜',
+  '鲁菜',
   '汤羹',
   '主食',
+  '海鲜',
+  '肉类',
+  '蔬菜',
   '减脂餐',
-  '甜品饮料',
-  '下酒菜',
+  '甜点',
+  '饮品',
 ];
 
 export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
@@ -66,6 +77,9 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
   );
   const [tips, setTips] = useState(recipe.tips || '');
 
+  // AI 局部/全局生成 loading 状态 (记录正在生成的字段：'all' | 'description' | 'ingredients' | 'steps' | 'tips' | null)
+  const [aiGeneratingField, setAiGeneratingField] = useState<RecipeGenField | null>(null);
+
   useEffect(() => {
     if (visible) {
       setName(recipe.name);
@@ -82,8 +96,75 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
           : [{ order: 1, description: '' }]
       );
       setTips(recipe.tips || '');
+      setAiGeneratingField(null);
     }
   }, [visible, recipe]);
+
+  // AI 字段生成调度器
+  const handleAiGenerate = async (field: RecipeGenField) => {
+    const dishName = name.trim();
+    if (!dishName) {
+      toast({ type: 'info', message: '请先在上方输入菜名，AI 才能精准为您生成食谱哦！' });
+      return;
+    }
+
+    if (field === 'all') {
+      const ok = await confirm({
+        title: 'AI 一键生成整道食谱',
+        message: `将根据菜名「${dishName}」自动补全分类、用时、风味描述、食材用量、制作步骤与做饭秘诀。确定继续吗？`,
+        confirmText: '立即生成',
+        icon: 'sparkles',
+      });
+      if (!ok) return;
+    }
+
+    setAiGeneratingField(field);
+    try {
+      const result = await generateRecipeWithAi({
+        field,
+        recipeName: dishName,
+        category,
+        cookTime,
+        difficulty,
+        currentIngredients: ingredients,
+        currentSteps: steps,
+      });
+
+      if (field === 'all') {
+        if (result.category) setCategory(result.category);
+        if (result.cookTime) setCookTime(String(result.cookTime));
+        if (result.difficulty) setDifficulty(result.difficulty);
+        if (result.description) setDescription(result.description);
+        if (result.ingredients && result.ingredients.length > 0) {
+          setIngredients(result.ingredients);
+        }
+        if (result.steps && result.steps.length > 0) {
+          setSteps(result.steps.map((s, i) => ({ ...s, order: i + 1 })));
+        }
+        if (result.tips) setTips(result.tips);
+        toast({ type: 'success', message: `已成功为您生成「${dishName}」完整食谱！` });
+      } else if (field === 'description' && result.description) {
+        setDescription(result.description);
+        toast({ type: 'success', message: '已生成菜品风味描述' });
+      } else if (field === 'ingredients' && result.ingredients?.length) {
+        setIngredients(result.ingredients);
+        toast({ type: 'success', message: `已生成 ${result.ingredients.length} 样标准用料清单` });
+      } else if (field === 'steps' && result.steps?.length) {
+        setSteps(result.steps.map((s, i) => ({ ...s, order: i + 1 })));
+        toast({ type: 'success', message: `已生成 ${result.steps.length} 步条理清晰的烹饪步骤` });
+      } else if (field === 'tips' && result.tips) {
+        setTips(result.tips);
+        toast({ type: 'success', message: '已生成大厨烹饪秘诀' });
+      }
+    } catch (err: any) {
+      toast({
+        type: 'error',
+        message: err.message || 'AI 生成失败，请检查网络或在设置中检查配置',
+      });
+    } finally {
+      setAiGeneratingField(null);
+    }
+  };
 
   const handleAddIngredient = () => {
     setIngredients((prev) => [...prev, { name: '', amount: '' }]);
@@ -157,189 +238,350 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardContainer}
       >
+        {/* 顶部标题栏 */}
         <View style={styles.header}>
-          <View>
-            <Text style={styles.title}>编辑菜谱</Text>
-            <Text style={styles.subtitle}>修改配方、用量与制作步骤</Text>
+          <View style={styles.headerTitleWrap}>
+            <View style={styles.headerIconBadge}>
+              <ChefHat size={16} color="#FFFFFF" />
+            </View>
+            <View>
+              <Text style={styles.title}>编辑菜谱</Text>
+              <Text style={styles.subtitle}>智能润色配方、用料与做饭步骤</Text>
+            </View>
           </View>
-          <Pressable hitSlop={12} onPress={onClose} style={styles.closeBtn}>
-            <X size={20} color={Palette.cocoa[700]} />
-          </Pressable>
+          <TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+            <X size={16} color={Palette.inkMuted} />
+          </TouchableOpacity>
         </View>
 
         <ScrollView
           style={styles.scrollBody}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          {/* 菜名 */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>菜品名称 *</Text>
+          {/* AI 全局一键生成 Banner */}
+          <View style={styles.aiBanner}>
+            <View style={styles.aiBannerLeft}>
+              <View style={styles.aiBannerIconBadge}>
+                <Sparkles size={16} color="#EA580C" />
+              </View>
+              <View style={styles.aiBannerTextCol}>
+                <Text style={styles.aiBannerTitle}>AI 智能一键生成完整食谱</Text>
+                <Text style={styles.aiBannerDesc}>
+                  输入菜名后点击，自动生成食材比例、火候步骤与大厨秘诀
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.aiBannerBtn,
+                aiGeneratingField === 'all' && styles.aiBannerBtnDisabled,
+              ]}
+              onPress={() => handleAiGenerate('all')}
+              disabled={aiGeneratingField !== null}
+              activeOpacity={0.8}
+            >
+              {aiGeneratingField === 'all' ? (
+                <ActivityIndicator size="small" color="#FFFFFF" />
+              ) : (
+                <View style={styles.aiBtnRow}>
+                  <Wand2 size={13} color="#FFFFFF" />
+                  <Text style={styles.aiBannerBtnText}>一键生成</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* 1. 菜品名称 */}
+          <View style={styles.fieldCard}>
+            <View style={styles.fieldHeaderRow}>
+              <View style={styles.fieldTitleRow}>
+                <BookOpen size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>菜品名称 *</Text>
+              </View>
+            </View>
             <TextInput
               style={styles.textInput}
               value={name}
               onChangeText={setName}
-              placeholder="例如：西红柿炒鸡蛋"
-              placeholderTextColor={Palette.cocoa[400]}
+              placeholder="例如：焦香蒜香生炒排骨"
+              placeholderTextColor={Palette.inkLight}
             />
           </View>
 
-          {/* 分类 */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>所属分类</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipsScroll}>
+          {/* 2. 所属分类 */}
+          <View style={styles.fieldCard}>
+            <View style={styles.fieldHeaderRow}>
+              <View style={styles.fieldTitleRow}>
+                <Layers size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>所属分类</Text>
+              </View>
+              <Text style={styles.fieldSubHint}>左右滑动可选择更多分类</Text>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.chipsScroll}
+            >
               {CATEGORIES.map((cat) => {
                 const isSelected = category === cat;
                 return (
-                  <Pressable
+                  <TouchableOpacity
                     key={cat}
                     style={[styles.chip, isSelected && styles.chipActive]}
                     onPress={() => setCategory(cat)}
+                    activeOpacity={0.75}
                   >
                     <Text style={[styles.chipText, isSelected && styles.chipTextActive]}>
                       {cat}
                     </Text>
-                  </Pressable>
+                  </TouchableOpacity>
                 );
               })}
             </ScrollView>
           </View>
 
-          {/* 烹饪时长与难度 */}
-          <View style={styles.twoCols}>
-            <View style={[styles.fieldGroup, { flex: 1 }]}>
-              <Text style={styles.fieldLabel}>耗时(分钟)</Text>
-              <View style={styles.inputWithIcon}>
-                <Clock size={16} color={Palette.cocoa[400]} style={styles.iconPrefix} />
-                <TextInput
-                  style={styles.textInputWithIcon}
-                  value={cookTime}
-                  onChangeText={setCookTime}
-                  keyboardType="numeric"
-                  placeholder="20"
-                  placeholderTextColor={Palette.cocoa[400]}
-                />
+          {/* 3. 烹饪时长与难度 */}
+          <View style={styles.twoColsRow}>
+            <View style={[styles.fieldCard, { flex: 1 }]}>
+              <View style={styles.fieldTitleRow}>
+                <Clock size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>烹饪用时(分)</Text>
               </View>
+              <TextInput
+                style={styles.textInput}
+                value={cookTime}
+                onChangeText={setCookTime}
+                keyboardType="numeric"
+                placeholder="25"
+                placeholderTextColor={Palette.inkLight}
+              />
             </View>
 
-            <View style={[styles.fieldGroup, { flex: 1.2 }]}>
-              <Text style={styles.fieldLabel}>难度</Text>
-              <View style={styles.difficultyRow}>
+            <View style={[styles.fieldCard, { flex: 1.25 }]}>
+              <View style={styles.fieldTitleRow}>
+                <Flame size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>烹饪难度</Text>
+              </View>
+              <View style={styles.diffRow}>
                 {(['easy', 'medium', 'hard'] as DifficultyLevel[]).map((level) => {
-                  const labelMap = { easy: '简单', medium: '中等', hard: '较难' };
+                  const labelMap = { easy: '简单', medium: '家常', hard: '进阶' };
                   const isSelected = difficulty === level;
                   return (
-                    <Pressable
+                    <TouchableOpacity
                       key={level}
                       style={[styles.diffBtn, isSelected && styles.diffBtnActive]}
                       onPress={() => setDifficulty(level)}
+                      activeOpacity={0.75}
                     >
-                      <Text style={[styles.diffBtnText, isSelected && styles.diffBtnTextActive]}>
+                      <Text
+                        style={[
+                          styles.diffBtnText,
+                          isSelected && styles.diffBtnTextActive,
+                        ]}
+                      >
                         {labelMap[level]}
                       </Text>
-                    </Pressable>
+                    </TouchableOpacity>
                   );
                 })}
               </View>
             </View>
           </View>
 
-          {/* 菜品简介 */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>风味描述 / 简介</Text>
+          {/* 4. 风味描述 / 简介 (带 AI 生成按钮) */}
+          <View style={styles.fieldCard}>
+            <View style={styles.fieldHeaderRow}>
+              <View style={styles.fieldTitleRow}>
+                <Sparkles size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>风味描述 / 菜品特色</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.aiActionPill}
+                onPress={() => handleAiGenerate('description')}
+                disabled={aiGeneratingField !== null}
+                activeOpacity={0.8}
+              >
+                {aiGeneratingField === 'description' ? (
+                  <ActivityIndicator size="small" color={Palette.primary} />
+                ) : (
+                  <>
+                    <Sparkles size={11} color={Palette.primary} />
+                    <Text style={styles.aiActionPillText}>AI 润色简介</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
             <TextInput
               style={[styles.textInput, styles.textArea]}
               value={description}
               onChangeText={setDescription}
-              placeholder="这道菜鲜嫩多汁，酸甜可口..."
-              placeholderTextColor={Palette.cocoa[400]}
+              placeholder="这道菜外焦里嫩，蒜香扑鼻，无需油炸清爽下饭..."
+              placeholderTextColor={Palette.inkLight}
               multiline
               numberOfLines={3}
             />
           </View>
 
-          {/* 食材清单 */}
-          <View style={styles.fieldGroup}>
-            <View style={styles.sectionHeaderRow}>
-              <Text style={styles.fieldLabel}>用料清单 ({ingredients.length})</Text>
-              <Pressable style={styles.addInlineBtn} onPress={handleAddIngredient}>
-                <Plus size={14} color={Palette.cocoa[900]} />
-                <Text style={styles.addInlineText}>加食材</Text>
-              </Pressable>
-            </View>
-
-            {ingredients.map((item, index) => (
-              <View key={`ing-${index}`} style={styles.ingredientRow}>
-                <TextInput
-                  style={[styles.textInput, { flex: 2 }]}
-                  value={item.name}
-                  onChangeText={(val) => handleUpdateIngredient(index, 'name', val)}
-                  placeholder="食材名称"
-                  placeholderTextColor={Palette.cocoa[400]}
-                />
-                <TextInput
-                  style={[styles.textInput, { flex: 1.5 }]}
-                  value={item.amount}
-                  onChangeText={(val) => handleUpdateIngredient(index, 'amount', val)}
-                  placeholder="用量(如 2个)"
-                  placeholderTextColor={Palette.cocoa[400]}
-                />
-                <Pressable
-                  hitSlop={8}
-                  style={styles.deleteRowBtn}
-                  onPress={() => handleRemoveIngredient(index)}
-                >
-                  <Trash2 size={16} color={Palette.cocoa[400]} />
-                </Pressable>
+          {/* 5. 用料清单 (带 AI 生成配料按钮) */}
+          <View style={styles.fieldCard}>
+            <View style={styles.fieldHeaderRow}>
+              <View style={styles.fieldTitleRow}>
+                <Layers size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>用料食材清单 ({ingredients.length})</Text>
               </View>
-            ))}
-          </View>
+              <View style={styles.headerRightActions}>
+                <TouchableOpacity
+                  style={styles.aiActionPill}
+                  onPress={() => handleAiGenerate('ingredients')}
+                  disabled={aiGeneratingField !== null}
+                  activeOpacity={0.8}
+                >
+                  {aiGeneratingField === 'ingredients' ? (
+                    <ActivityIndicator size="small" color={Palette.primary} />
+                  ) : (
+                    <>
+                      <Sparkles size={11} color={Palette.primary} />
+                      <Text style={styles.aiActionPillText}>AI 配用料</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
 
-          {/* 制作步骤 */}
-          <View style={styles.fieldGroup}>
-            <View style={styles.sectionHeaderRow}>
-              <Text style={styles.fieldLabel}>制作步骤 ({steps.length})</Text>
-              <Pressable style={styles.addInlineBtn} onPress={handleAddStep}>
-                <Plus size={14} color={Palette.cocoa[900]} />
-                <Text style={styles.addInlineText}>加步骤</Text>
-              </Pressable>
+                <TouchableOpacity
+                  style={styles.addInlineBtn}
+                  onPress={handleAddIngredient}
+                  activeOpacity={0.8}
+                >
+                  <Plus size={13} color={Palette.ink} />
+                  <Text style={styles.addInlineText}>加食材</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
-            {steps.map((item, index) => (
-              <View key={`step-${index}`} style={styles.stepCard}>
-                <View style={styles.stepTopBar}>
-                  <View style={styles.stepBadge}>
-                    <Text style={styles.stepBadgeText}>第 {item.order} 步</Text>
-                  </View>
-                  <Pressable
+            <View style={styles.ingredientList}>
+              {ingredients.map((item, index) => (
+                <View key={`ing-${index}`} style={styles.ingredientRow}>
+                  <TextInput
+                    style={[styles.textInput, { flex: 2 }]}
+                    value={item.name}
+                    onChangeText={(val) => handleUpdateIngredient(index, 'name', val)}
+                    placeholder="食材 (如 排骨)"
+                    placeholderTextColor={Palette.inkLight}
+                  />
+                  <TextInput
+                    style={[styles.textInput, { flex: 1.4 }]}
+                    value={item.amount}
+                    onChangeText={(val) => handleUpdateIngredient(index, 'amount', val)}
+                    placeholder="用量 (如 500g)"
+                    placeholderTextColor={Palette.inkLight}
+                  />
+                  <TouchableOpacity
                     hitSlop={8}
                     style={styles.deleteRowBtn}
-                    onPress={() => handleRemoveStep(index)}
+                    onPress={() => handleRemoveIngredient(index)}
+                    activeOpacity={0.7}
                   >
-                    <Trash2 size={15} color={Palette.cocoa[400]} />
-                  </Pressable>
+                    <Trash2 size={15} color="#A8A29E" />
+                  </TouchableOpacity>
                 </View>
-                <TextInput
-                  style={[styles.textInput, styles.textArea, { minHeight: 64 }]}
-                  value={item.description}
-                  onChangeText={(val) => handleUpdateStep(index, val)}
-                  placeholder="详细描述烹饪手法、火候与时间..."
-                  placeholderTextColor={Palette.cocoa[400]}
-                  multiline
-                />
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
 
-          {/* 大厨贴士 */}
-          <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>独家心得 / 烹饪贴士</Text>
+          {/* 6. 制作步骤 (带 AI 生成步骤按钮) */}
+          <View style={styles.fieldCard}>
+            <View style={styles.fieldHeaderRow}>
+              <View style={styles.fieldTitleRow}>
+                <ListOrdered size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>烹饪制作步骤 ({steps.length})</Text>
+              </View>
+              <View style={styles.headerRightActions}>
+                <TouchableOpacity
+                  style={styles.aiActionPill}
+                  onPress={() => handleAiGenerate('steps')}
+                  disabled={aiGeneratingField !== null}
+                  activeOpacity={0.8}
+                >
+                  {aiGeneratingField === 'steps' ? (
+                    <ActivityIndicator size="small" color={Palette.primary} />
+                  ) : (
+                    <>
+                      <Sparkles size={11} color={Palette.primary} />
+                      <Text style={styles.aiActionPillText}>AI 生成步骤</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.addInlineBtn}
+                  onPress={handleAddStep}
+                  activeOpacity={0.8}
+                >
+                  <Plus size={13} color={Palette.ink} />
+                  <Text style={styles.addInlineText}>加步骤</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.stepsList}>
+              {steps.map((item, index) => (
+                <View key={`step-${index}`} style={styles.stepCardItem}>
+                  <View style={styles.stepTopBar}>
+                    <View style={styles.stepBadge}>
+                      <Text style={styles.stepBadgeText}>第 {item.order} 步</Text>
+                    </View>
+                    <TouchableOpacity
+                      hitSlop={8}
+                      style={styles.deleteRowBtn}
+                      onPress={() => handleRemoveStep(index)}
+                      activeOpacity={0.7}
+                    >
+                      <Trash2 size={14} color="#A8A29E" />
+                    </TouchableOpacity>
+                  </View>
+                  <TextInput
+                    style={[styles.textInput, styles.textArea, { minHeight: 68 }]}
+                    value={item.description}
+                    onChangeText={(val) => handleUpdateStep(index, val)}
+                    placeholder="描述具体的处理手法、下锅油温、调料顺序与火候时长..."
+                    placeholderTextColor={Palette.inkLight}
+                    multiline
+                  />
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* 7. 大厨贴士 (带 AI 生成小贴士) */}
+          <View style={styles.fieldCard}>
+            <View style={styles.fieldHeaderRow}>
+              <View style={styles.fieldTitleRow}>
+                <Lightbulb size={14} color={Palette.primary} />
+                <Text style={styles.fieldLabel}>大厨独家心得 / 防翻车秘诀</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.aiActionPill}
+                onPress={() => handleAiGenerate('tips')}
+                disabled={aiGeneratingField !== null}
+                activeOpacity={0.8}
+              >
+                {aiGeneratingField === 'tips' ? (
+                  <ActivityIndicator size="small" color={Palette.primary} />
+                ) : (
+                  <>
+                    <Sparkles size={11} color={Palette.primary} />
+                    <Text style={styles.aiActionPillText}>AI 生成秘诀</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
             <TextInput
               style={[styles.textInput, styles.textArea]}
               value={tips}
               onChangeText={setTips}
-              placeholder="例如：鸡蛋里滴几滴料酒会更嫩滑..."
-              placeholderTextColor={Palette.cocoa[400]}
+              placeholder="例如：生炒前洗净并控干水分，煎至两面金黄再下酱汁，肉质格外焦香..."
+              placeholderTextColor={Palette.inkLight}
               multiline
               numberOfLines={2}
             />
@@ -348,10 +590,14 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
 
         {/* 底部保存按钮 */}
         <View style={styles.footer}>
-          <Pressable style={styles.saveBtn} onPress={handleSave}>
+          <TouchableOpacity
+            style={styles.saveBtn}
+            onPress={handleSave}
+            activeOpacity={0.85}
+          >
             <Check size={18} color="#FFFFFF" strokeWidth={2.5} />
             <Text style={styles.saveBtnText}>保存菜谱</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </BottomSheetModal>
@@ -360,7 +606,9 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
 
 const styles = StyleSheet.create({
   sheetContainer: {
-    height: '90%',
+    height: '92%',
+    maxHeight: '92%',
+    backgroundColor: Palette.canvas,
   },
   keyboardContainer: {
     flex: 1,
@@ -370,202 +618,301 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 18,
+    paddingTop: 12,
     paddingBottom: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: Palette.oat[200],
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Palette.dockBorder,
+    backgroundColor: Palette.canvas,
+  },
+  headerTitleWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  headerIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Palette.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: Palette.cocoa[900],
+    fontSize: 16,
+    fontWeight: '800',
+    color: Palette.ink,
   },
   subtitle: {
-    fontSize: 12,
-    color: Palette.cocoa[400],
+    fontSize: 11,
+    color: Palette.inkMuted,
     marginTop: 2,
   },
   closeBtn: {
-    padding: 6,
-    borderRadius: Radius.full,
-    backgroundColor: Palette.oat[100],
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Palette.tagWarm,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollBody: {
     flex: 1,
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 32,
+    padding: 16,
+    paddingBottom: 36,
   },
-  fieldGroup: {
-    marginBottom: 20,
-  },
-  fieldLabel: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: Palette.cocoa[700],
-    marginBottom: 8,
-  },
-  textInput: {
-    backgroundColor: Palette.oat[100],
-    borderRadius: Radius.md,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: Palette.cocoa[900],
-  },
-  textArea: {
-    minHeight: 72,
-    textAlignVertical: 'top',
-  },
-  chipsScroll: {
+  aiBanner: {
     flexDirection: 'row',
-  },
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: Radius.full,
-    backgroundColor: Palette.oat[100],
-    marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FEF3C7',
+    borderRadius: Radius.lg,
+    padding: 12,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: '#FDE68A',
+    marginBottom: 14,
+    gap: 10,
   },
-  chipActive: {
-    backgroundColor: Palette.sand[100],
-    borderColor: Palette.cocoa[900],
-  },
-  chipText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: Palette.cocoa[700],
-  },
-  chipTextActive: {
-    color: Palette.cocoa[900],
-    fontWeight: '700',
-  },
-  twoCols: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  inputWithIcon: {
+  aiBannerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Palette.oat[100],
-    borderRadius: Radius.md,
-    paddingHorizontal: 10,
-  },
-  iconPrefix: {
-    marginRight: 6,
-  },
-  textInputWithIcon: {
+    gap: 10,
     flex: 1,
-    paddingVertical: 10,
-    fontSize: 14,
-    color: Palette.cocoa[900],
   },
-  difficultyRow: {
-    flexDirection: 'row',
-    backgroundColor: Palette.oat[100],
-    borderRadius: Radius.md,
-    padding: 3,
+  aiBannerIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#FFFBEB',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  diffBtn: {
+  aiBannerTextCol: {
     flex: 1,
+  },
+  aiBannerTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#92400E',
+  },
+  aiBannerDesc: {
+    fontSize: 10,
+    color: '#B45309',
+    marginTop: 2,
+    lineHeight: 14,
+  },
+  aiBannerBtn: {
+    backgroundColor: '#EA580C',
+    paddingHorizontal: 12,
     paddingVertical: 8,
+    borderRadius: 14,
+  },
+  aiBannerBtnDisabled: {
+    opacity: 0.6,
+  },
+  aiBtnRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: Radius.sm,
+    gap: 4,
   },
-  diffBtnActive: {
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  diffBtnText: {
+  aiBannerBtnText: {
+    color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600',
-    color: Palette.cocoa[400],
-  },
-  diffBtnTextActive: {
-    color: Palette.cocoa[900],
     fontWeight: '700',
   },
-  sectionHeaderRow: {
+  fieldCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: Radius.lg,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#EFEAE2',
+    marginBottom: 12,
+  },
+  twoColsRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  fieldHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 8,
   },
+  fieldTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  fieldLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: Palette.ink,
+  },
+  fieldSubHint: {
+    fontSize: 11,
+    color: Palette.inkLight,
+  },
+  headerRightActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  aiActionPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#F7D4BC',
+  },
+  aiActionPillText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Palette.primary,
+  },
   addInlineBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    backgroundColor: Palette.sand[100],
-    borderRadius: Radius.sm,
+    backgroundColor: Palette.tagWarm,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    gap: 3,
   },
   addInlineText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Palette.ink,
+  },
+  textInput: {
+    backgroundColor: Palette.sheet,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: '#E7DFD4',
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    fontSize: 13,
+    color: Palette.ink,
+  },
+  textArea: {
+    minHeight: 70,
+    textAlignVertical: 'top',
+    lineHeight: 18,
+  },
+  chipsScroll: {
+    flexDirection: 'row',
+    gap: 6,
+    paddingVertical: 4,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 14,
+    backgroundColor: Palette.tagWarm,
+  },
+  chipActive: {
+    backgroundColor: Palette.primary,
+  },
+  chipText: {
     fontSize: 12,
+    color: Palette.ink,
+    fontWeight: '500',
+  },
+  chipTextActive: {
+    color: '#FFFFFF',
     fontWeight: '700',
-    color: Palette.cocoa[900],
+  },
+  diffRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 2,
+  },
+  diffBtn: {
+    flex: 1,
+    paddingVertical: 9,
+    borderRadius: Radius.md,
+    backgroundColor: Palette.tagWarm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  diffBtnActive: {
+    backgroundColor: Palette.primary,
+  },
+  diffBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Palette.ink,
+  },
+  diffBtnTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  ingredientList: {
+    gap: 8,
   },
   ingredientRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 8,
   },
   deleteRowBtn: {
-    padding: 6,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Palette.tagWarm,
   },
-  stepCard: {
-    backgroundColor: Palette.oat[50],
+  stepsList: {
+    gap: 10,
+  },
+  stepCardItem: {
+    backgroundColor: Palette.sheet,
     borderRadius: Radius.md,
     padding: 10,
-    marginBottom: 10,
     borderWidth: 1,
-    borderColor: Palette.oat[200],
+    borderColor: '#EFEAE2',
   },
   stepTopBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   stepBadge: {
-    backgroundColor: Palette.cocoa[900],
-    paddingHorizontal: 8,
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 7,
     paddingVertical: 2,
-    borderRadius: Radius.sm,
+    borderRadius: 6,
   },
   stepBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: Palette.primary,
   },
   footer: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 24,
-    borderTopWidth: 1,
-    borderTopColor: Palette.oat[200],
-    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: Palette.canvas,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: Palette.dockBorder,
   },
   saveBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    backgroundColor: Palette.cocoa[900],
-    paddingVertical: 14,
+    backgroundColor: Palette.primary,
     borderRadius: Radius.lg,
+    paddingVertical: 13,
+    gap: 6,
   },
   saveBtnText: {
+    color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
-    color: '#FFFFFF',
   },
 });
