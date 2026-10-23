@@ -7,10 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# 依赖与构建产物
 node_modules
 dist
-dist-ssr
-release/android
+.expo
+web-build
+*.tsbuildinfo
+
+# CNG 生成的原生工程（用 npx expo prebuild 重新生成，不入库）
+/mobile/ios
+/mobile/android
 
 # 安卓签名（不进仓库，口径见 README「应用更新」）
 keystore.properties
@@ -29,7 +35,6 @@ build-log*.txt
 *.njsproj
 *.sln
 *.sw?
-# 本机开发环境（cargo 镜像/代理、Claude 本地设置、打包调试日志）
-.cargo/
-src-tauri/.cargo/
+
+# 本机开发环境（Claude 本地设置、打包调试日志）
 .claude/

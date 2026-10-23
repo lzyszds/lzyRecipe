@@ -120,11 +120,21 @@ function applyPayload(payload: SyncPayload): void {
   }
 
   if (Array.isArray(payload.importedRecipes)) {
-    // 按 id 合并，本地独有的保留
+    // 按 id 合并，通过 updatedAt 时间戳比较，本地更新时间更新或相同则保留本地，绝不被远端旧数据覆盖
     const local = useImportedRecipesStore.getState().importedRecipes;
     const map = new Map(local.map((r) => [r.id, r]));
-    for (const recipe of payload.importedRecipes) {
-      map.set(recipe.id, recipe);
+    for (const remoteRecipe of payload.importedRecipes) {
+      const localRecipe = map.get(remoteRecipe.id);
+      if (!localRecipe) {
+        map.set(remoteRecipe.id, remoteRecipe);
+      } else {
+        const localTime = new Date(localRecipe.updatedAt || localRecipe.createdAt || 0).getTime();
+        const remoteTime = new Date(remoteRecipe.updatedAt || remoteRecipe.createdAt || 0).getTime();
+        // 只有当云端更新时间严格晚于本地修改时间时，才接受云端覆盖；否则坚决保留本地最新修改
+        if (remoteTime > localTime) {
+          map.set(remoteRecipe.id, remoteRecipe);
+        }
+      }
     }
     useImportedRecipesStore.setState({ importedRecipes: [...map.values()] });
   }
@@ -154,9 +164,22 @@ function applyPayload(payload: SyncPayload): void {
 
   if (payload.settings?.ai) {
     const localAi = useSettingsStore.getState().ai;
+    const remoteAi = payload.settings.ai;
     useSettingsStore.getState().setAi({
-      ...payload.settings.ai,
-      apiKey: payload.settings.ai.apiKey?.trim() || localAi.apiKey,
+      ...remoteAi,
+      apiKey: remoteAi.apiKey?.trim() || localAi.apiKey,
+      channelKeys: {
+        ...(localAi.channelKeys || {}),
+        ...(remoteAi.channelKeys || {}),
+      },
+      channelModels: {
+        ...(localAi.channelModels || {}),
+        ...(remoteAi.channelModels || {}),
+      },
+      channelBaseUrls: {
+        ...(localAi.channelBaseUrls || {}),
+        ...(remoteAi.channelBaseUrls || {}),
+      },
     });
   }
 }
@@ -185,6 +208,9 @@ async function pushPayload(config: CloudSyncConfig): Promise<void> {
   });
 }
 
+let isSyncing = false;
+let pendingSync = false;
+
 /**
  * 双向同步：先拉取合并云端数据，再把合并后的完整快照推回云端
  */
@@ -196,6 +222,12 @@ export async function syncNow(
     return false;
   }
 
+  if (isSyncing) {
+    pendingSync = true;
+    return false;
+  }
+
+  isSyncing = true;
   useSyncStore.setState({ status: 'syncing', message: '正在同步…' });
   try {
     const remote = await fetchRemote(config);
@@ -208,6 +240,14 @@ export async function syncNow(
   } catch (err: any) {
     finish('error', err instanceof Error ? err.message : String(err));
     return false;
+  } finally {
+    isSyncing = false;
+    if (pendingSync) {
+      pendingSync = false;
+      setTimeout(() => {
+        void syncNow(useSettingsStore.getState().sync);
+      }, 300);
+    }
   }
 }
 
@@ -252,6 +292,28 @@ export async function testConnection(
   });
   return res?.ok === true;
 }
+
+import { registerSyncRunner, triggerAutoSync } from './syncTrigger';
+
+export { triggerAutoSync };
+
+let autoSyncDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+function performDebouncedAutoSync(delayMs = 500) {
+  const sync = useSettingsStore.getState().sync;
+  if (!isSyncConfigured(sync) || !sync.autoSync) return;
+
+  if (autoSyncDebounceTimer) {
+    clearTimeout(autoSyncDebounceTimer);
+  }
+
+  autoSyncDebounceTimer = setTimeout(() => {
+    autoSyncDebounceTimer = null;
+    void syncNow(sync);
+  }, delayMs);
+}
+
+registerSyncRunner(performDebouncedAutoSync);
 
 let autoSyncStarted = false;
 

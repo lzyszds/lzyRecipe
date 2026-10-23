@@ -1,0 +1,4 @@
+# Bun 配置：Expo/RN 项目统一使用 hoisted 布局，避免 isolated 依赖模式
+# 导致部分原生包解析异常（参考 Expo 官方 monorepo 指南）。
+[install]
+linker = "hoisted"

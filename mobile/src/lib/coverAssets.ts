@@ -1,3 +1,5 @@
+// 本地封面兜底映射：由 scripts/covers-common.mjs 自动生成，请勿手改。
+// 图片源目录 public/covers/，需同步到同步服务器 /data/covers/ 才能在线访问。
 export const LOCAL_COVERS: Record<string, any> = {
   "/covers/b001.jpg": require("@/assets/covers/b001.jpg"),
   "/covers/b002.jpg": require("@/assets/covers/b002.jpg"),

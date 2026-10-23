@@ -62,6 +62,8 @@ export function createNote(input: NotesDraft & { attachments?: NoteAttachment[] 
   };
 }
 
+import { triggerAutoSync } from '@/lib/syncTrigger';
+
 export const useNotesStore = create<NotesState>()(
   persist(
     (set, get) => ({
@@ -69,20 +71,25 @@ export const useNotesStore = create<NotesState>()(
       addNote: (input) => {
         const note = createNote(input);
         set((state) => ({ notes: [note, ...state.notes] }));
+        triggerAutoSync(1000);
         return note.id;
       },
-      updateNote: (id, patch) =>
+      updateNote: (id, patch) => {
         set((state) => ({
           notes: state.notes.map((note) =>
             note.id === id ? { ...note, ...patch, updatedAt: nowIso() } : note
           ),
-        })),
-      removeNote: (id) =>
+        }));
+        triggerAutoSync(1000);
+      },
+      removeNote: (id) => {
         set((state) => ({
           notes: state.notes.map((note) =>
             note.id === id ? { ...note, deleted: true, updatedAt: nowIso() } : note
           ),
-        })),
+        }));
+        triggerAutoSync(1000);
+      },
       mergeRemote: (remote) => {
         const map = new Map(get().notes.map((note) => [note.id, note]));
         for (const incoming of remote) {

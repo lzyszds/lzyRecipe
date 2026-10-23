@@ -1,14 +1,22 @@
 /**
  * 从百度图片搜索下载内置菜谱真实封面，保存到 public/covers/{id}.jpg
  * 运行：npm run covers:photos（需联网，国内百度）
+ *
+ * 下载完成后会自动同步一份到 mobile/assets/covers/（App 本地兜底），
+ * 并重建 mobile/src/lib/coverAssets.ts 的 require 映射。目录关系见 scripts/covers-common.mjs。
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
+import {
+  recipesTsPath,
+  serverCoversDir,
+  parseRecipes,
+  rewriteCoverImages,
+  syncBundleCovers,
+  localCoverExists,
+} from './covers-common.mjs';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '..');
-const outDir = join(root, 'public', 'covers');
+const outDir = serverCoversDir;
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36';
@@ -81,16 +89,10 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-const recipesTs = readFileSync(join(root, 'src', 'data', 'recipes.ts'), 'utf8');
-const recipeRegex = /id: '([^']+)',\s*\n\s*name: '([^']+)',\s*\n\s*category: '([^']+)'/g;
+const recipesTs = readFileSync(recipesTsPath, 'utf8');
+const recipes = parseRecipes(recipesTs);
 
 mkdirSync(outDir, { recursive: true });
-
-let match;
-const recipes = [];
-while ((match = recipeRegex.exec(recipesTs)) !== null) {
-  recipes.push({ id: match[1], name: match[2] });
-}
 
 let ok = 0;
 let skip = 0;
@@ -137,17 +139,18 @@ for (const { id, name } of recipes) {
   await sleep(800);
 }
 
-const updated = recipesTs.replace(
-  /(id: '([^']+)',[\s\S]*?coverImage: ')[^']+(')/g,
-  (full, prefix, id, suffix) => {
-    const has = recipes.some((r) => r.id === id);
-    if (!has) return full;
-    const jpg = join(outDir, `${id}.jpg`);
-    if (existsSync(jpg)) return `${prefix}/covers/${id}.jpg${suffix}`;
-    return full;
-  }
-);
-writeFileSync(join(root, 'src', 'data', 'recipes.ts'), updated, 'utf8');
+const updated = rewriteCoverImages(recipesTs, ({ id, current }) => {
+  const jpg = join(outDir, `${id}.jpg`);
+  if (!existsSync(jpg)) return null;
+  // 只替换指向本地占位图的路径；不覆盖内嵌 base64 与 http 外链
+  if (!current.startsWith('/covers/')) return null;
+  if (localCoverExists(current) && /\.(jpe?g|png|webp)$/.test(current)) return null;
+  return `/covers/${id}.jpg`;
+});
+writeFileSync(recipesTsPath, updated, 'utf8');
 
 console.log(`\nDone: ${ok} downloaded, ${skip} skipped, ${fail} failed`);
 console.log('Updated recipes.ts coverImage paths where JPG exists');
+
+const sync = syncBundleCovers();
+console.log(`Synced bundle covers: ${sync.copied} copied, ${sync.mapped} mapped`);

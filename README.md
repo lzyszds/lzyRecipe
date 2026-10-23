@@ -1,57 +1,76 @@
-# React + TypeScript + Vite
+# 萌厨食光（lzyRecipe）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一款简洁优雅的菜谱收藏与管理应用（Expo + React Native + expo-router，TypeScript）。
 
-Currently, two official plugins are available:
+## 仓库结构
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+本仓库是 **bun workspace**，仓库根只放工程配置与工具脚本，Expo 应用位于 `mobile/`。
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+lzyRecipe/                       ← 仓库根 = workspace 根
+├── package.json                 workspace 声明 + 代理脚本（bun run start/lint/...）
+├── bunfig.toml                  bun 安装策略（hoisted，避免 isolated 依赖解析问题）
+├── bun.lock                     唯一的锁文件
+├── scripts/                     封面生成 / 下载脚本（Node ESM）
+│   └── covers-common.mjs        路径与读写工具（recipes.ts 读写、封面目录同步）
+├── public/covers/               同步服务器的静态封面源（需上传到服务器 /data/covers/）
+├── docs/                        补充文档（菜谱导入结构、图片托管、更新说明）
+└── mobile/                      ← Expo 应用本体
+    ├── app.json                 应用配置（CNG：原生工程由 prebuild 生成，不入库）
+    ├── tsconfig.json            TS 配置，@/* → ./src/*
+    ├── metro.config.js          Metro 配置（含 Web 端调试用反向代理）
+    ├── eslint.config.js         ESLint Flat Config（eslint-config-expo）
+    ├── assets/
+    │   ├── covers/              打包进 App 的本地兜底封面（jpg）
+    │   └── images/              图标与启动图
+    └── src/
+        ├── app/                 路由（expo-router 文件式路由）
+        │   ├── _layout.tsx      根布局（Stack）
+        │   ├── (tabs)/          底部标签页（首页/菜谱/便当盒/我的）
+        │   ├── +not-found.tsx   未匹配路由兜底页
+        │   ├── recipe/[id].tsx  菜谱详情
+        │   ├── favorites.tsx / search.tsx / notes.tsx
+        ├── components/          UI 组件
+        ├── constants/           主题与设计常量
+        ├── data/                内置静态数据（recipes.ts / 分类）
+        ├── hooks/               自定义 Hook
+        ├── lib/                 业务逻辑（云同步、AI、封面、上传…）
+        ├── store/               zustand 状态
+        └── types/               类型定义（Recipe 等）
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 常用命令
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+统一在仓库根执行（脚本会转发到 `mobile/`）：
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+bun install            # 安装依赖（根目录一次性装好，mobile/node_modules 不再单独存在）
+
+bun run start          # 启动 Expo 开发服务
+bun run android        # 在 Android 模拟器/真机上运行（expo run:android）
+bun run ios            # 在 iOS 模拟器上运行
+bun run web            # 浏览器里调试
+
+bun run lint           # ESLint（eslint-config-expo，SDK 58 规则集）
+bun run typecheck      # tsc --noEmit
+bun run doctor         # expo-doctor 体检
+
+bun run covers         # 生成莫兰迪风格 SVG 占位封面到 public/covers/
+bun run covers:photos  # 从百度图片搜索下载真实封面到 public/covers/（需联网）
 ```
+
+## 两条封面目录的关系
+
+| 目录 | 用途 |
+| --- | --- |
+| `public/covers/` | 同步服务器的静态托管源，需上传到服务器 `/data/covers/`，App 内通过 `https://<同步域名>/covers/xxx.jpg` 在线访问 |
+| `mobile/assets/covers/` | 打包进 App 的本地兜底封面，通过 `mobile/src/lib/coverAssets.ts` 的 `require` 映射离线渲染 |
+
+`bun run covers` / `bun run covers:photos` 会自动把 `public/covers/` 里的真实照片同步到
+`mobile/assets/covers/` 并重建 `coverAssets.ts` 映射，两个目录不会漂移。
+
+## 文档索引
+
+- [菜谱导入数据结构](docs/recipe-import.md) —— 外部菜谱导入的 JSON 结构与字段规则
+- [服务器图片上传与静态托管](docs/server-image-storage.md)
+- [应用更新说明](docs/updates.md)

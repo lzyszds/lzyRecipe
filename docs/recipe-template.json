@@ -1,0 +1,27 @@
+[
+  {
+    "id": "u200",
+    "name": "示例菜名（如：宫保鸡丁）",
+    "category": "川菜",
+    "coverImage": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=800&q=80",
+    "description": "一句25字左右的菜品介绍，写清风味与口感。",
+    "ingredients": [
+      { "name": "鸡胸肉", "amount": "300g" },
+      { "name": "花生米", "amount": "50g" },
+      { "name": "干辣椒", "amount": "10g" },
+      { "name": "生抽", "amount": "2勺" }
+    ],
+    "steps": [
+      { "order": 1, "description": "鸡胸肉切丁，加生抽、料酒、淀粉腌10分钟。" },
+      { "order": 2, "description": "热油下花生米炸至微黄捞出。" },
+      { "order": 3, "description": "爆香干辣椒，倒入鸡丁翻炒至变色。" },
+      { "order": 4, "description": "回锅花生米，调味翻匀出锅。" }
+    ],
+    "tips": "花生米要凉油下锅小火慢炸，才不会发苦。",
+    "cookTime": 25,
+    "difficulty": "easy",
+    "createdAt": "2024-01-23",
+    "updatedAt": "2024-01-23",
+    "aiGenerated": false
+  }
+]

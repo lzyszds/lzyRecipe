@@ -127,33 +127,26 @@ export default function RecipeDetailScreen() {
               <ArrowLeft size={18} color={Palette.cocoa[900]} />
             </TouchableOpacity>
 
-            <Animated.Text
-              style={[styles.navBarTitle, { opacity: titleOpacity }]}
-              numberOfLines={1}
-            >
-              {recipe.name}
-            </Animated.Text>
-
-            <View style={styles.topRightActions}>
-              <TouchableOpacity
-                style={styles.iconCircle}
-                onPress={() => setEditModalVisible(true)}
-                activeOpacity={0.8}
+            <View style={styles.navBarTitleContainer} pointerEvents="none">
+              <Animated.Text
+                style={[styles.navBarTitle, { opacity: titleOpacity }]}
+                numberOfLines={1}
               >
-                <Edit3 size={16} color={Palette.cocoa[700]} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.iconCircle}
-                onPress={() => toggleFavorite(recipe.id)}
-                activeOpacity={0.8}
-              >
-                <Heart
-                  size={18}
-                  color={favorite ? Palette.apricot[500] : Palette.cocoa[700]}
-                  fill={favorite ? Palette.apricot[500] : 'transparent'}
-                />
-              </TouchableOpacity>
+                {recipe.name}
+              </Animated.Text>
             </View>
+
+            <TouchableOpacity
+              style={styles.iconCircle}
+              onPress={() => toggleFavorite(recipe.id)}
+              activeOpacity={0.8}
+            >
+              <Heart
+                size={18}
+                color={favorite ? Palette.apricot[500] : Palette.cocoa[700]}
+                fill={favorite ? Palette.apricot[500] : 'transparent'}
+              />
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>
@@ -403,19 +396,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    position: 'relative',
+  },
+  navBarTitleContainer: {
+    position: 'absolute',
+    left: 64,
+    right: 64,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   navBarTitle: {
-    flex: 1,
     fontSize: 16,
     fontWeight: '700',
     color: Palette.cocoa[900],
     textAlign: 'center',
-    marginHorizontal: 10,
-  },
-  topRightActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
   },
   iconCircle: {
     width: 36,

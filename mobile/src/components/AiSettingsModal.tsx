@@ -52,17 +52,11 @@ interface AiSettingsModalProps {
 
 const PRESETS = [
   {
-    id: 'custom',
-    name: '自定义接口 (OpenAI 规范)',
-    baseUrl: '',
-    model: '',
-    desc: '自由填写任意兼容 OpenAI /chat/completions 规范的 API 接口',
-  },
-  {
     id: 'nvidia',
     name: 'NVIDIA NIM',
     baseUrl: 'https://integrate.api.nvidia.com/v1',
     model: 'meta/llama-3.1-70b-instruct',
+    placeholderKey: 'nvapi-xxxxxxxxxxxx',
     desc: '英伟达云端高性能微服务，支持 Llama 3.1、Nemotron 等，含免费体验额度',
   },
   {
@@ -70,7 +64,16 @@ const PRESETS = [
     name: '硅基流动',
     baseUrl: 'https://api.siliconflow.cn/v1',
     model: 'deepseek-ai/DeepSeek-V3',
+    placeholderKey: 'sk-xxxxxxxxxxxx',
     desc: '国内优质模型托管平台，支持 DeepSeek-V3/R1、Qwen 等，极速响应',
+  },
+  {
+    id: 'custom',
+    name: '自定义接口 (OpenAI 规范)',
+    baseUrl: '',
+    model: '',
+    placeholderKey: '填入自定义渠道对应的 API Key',
+    desc: '自由填写任意兼容 OpenAI /chat/completions 规范的 API 接口',
   },
 ];
 
@@ -84,15 +87,38 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
   const syncConfigured = isSyncConfigured(sync);
 
   const getPresetId = (url: string) => {
-    if (url === 'https://integrate.api.nvidia.com/v1') return 'nvidia';
-    if (url === 'https://api.siliconflow.cn/v1') return 'siliconflow';
+    if (url.includes('integrate.api.nvidia.com')) return 'nvidia';
+    if (url.includes('siliconflow.cn')) return 'siliconflow';
+    if (url.includes('deepseek.com')) return 'deepseek';
     return 'custom';
   };
 
-  const [baseUrl, setBaseUrl] = useState(ai.baseUrl || 'https://integrate.api.nvidia.com/v1');
-  const [apiKey, setApiKey] = useState(ai.apiKey || '');
-  const [model, setModel] = useState(ai.model || 'meta/llama-3.1-70b-instruct');
-  const [selectedPresetId, setSelectedPresetId] = useState<string>(getPresetId(ai.baseUrl || ''));
+  const [channelKeys, setChannelKeys] = useState<Record<string, string>>({
+    nvidia: '',
+    siliconflow: '',
+    deepseek: '',
+    custom: '',
+  });
+
+  const [channelModels, setChannelModels] = useState<Record<string, string>>({
+    nvidia: 'meta/llama-3.1-70b-instruct',
+    siliconflow: 'deepseek-ai/DeepSeek-V3',
+    deepseek: 'deepseek-chat',
+    custom: '',
+  });
+
+  const [channelBaseUrls, setChannelBaseUrls] = useState<Record<string, string>>({
+    nvidia: 'https://integrate.api.nvidia.com/v1',
+    siliconflow: 'https://api.siliconflow.cn/v1',
+    deepseek: 'https://api.deepseek.com/v1',
+    custom: '',
+  });
+
+  const [selectedPresetId, setSelectedPresetId] = useState<string>('nvidia');
+  const [baseUrl, setBaseUrl] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('');
+
   const [showKey, setShowKey] = useState(false);
   const [testing, setTesting] = useState(false);
   const [syncingCloud, setSyncingCloud] = useState(false);
@@ -111,56 +137,142 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
 
   useEffect(() => {
     if (visible) {
-      const currentUrl = ai.baseUrl || 'https://integrate.api.nvidia.com/v1';
-      setBaseUrl(currentUrl);
-      setApiKey(ai.apiKey || '');
-      setModel(ai.model || 'meta/llama-3.1-70b-instruct');
-      setSelectedPresetId(getPresetId(currentUrl));
+      const currentAi = useSettingsStore.getState().ai;
+      const activeProvider = currentAi.providerId || getPresetId(currentAi.baseUrl || '');
+      setSelectedPresetId(activeProvider);
+
+      const keys: Record<string, string> = {
+        nvidia: '',
+        siliconflow: '',
+        deepseek: '',
+        custom: '',
+        ...(currentAi.channelKeys || {}),
+      };
+      if (currentAi.apiKey && !keys[activeProvider]) {
+        keys[activeProvider] = currentAi.apiKey;
+      }
+      setChannelKeys(keys);
+
+      const models: Record<string, string> = {
+        nvidia: 'meta/llama-3.1-70b-instruct',
+        siliconflow: 'deepseek-ai/DeepSeek-V3',
+        deepseek: 'deepseek-chat',
+        custom: '',
+        ...(currentAi.channelModels || {}),
+      };
+      if (currentAi.model && !models[activeProvider]) {
+        models[activeProvider] = currentAi.model;
+      }
+      setChannelModels(models);
+
+      const baseUrls: Record<string, string> = {
+        nvidia: 'https://integrate.api.nvidia.com/v1',
+        siliconflow: 'https://api.siliconflow.cn/v1',
+        deepseek: 'https://api.deepseek.com/v1',
+        custom: '',
+        ...(currentAi.channelBaseUrls || {}),
+      };
+      if (currentAi.baseUrl && !baseUrls[activeProvider]) {
+        baseUrls[activeProvider] = currentAi.baseUrl;
+      }
+      setChannelBaseUrls(baseUrls);
+
+      const preset = PRESETS.find((p) => p.id === activeProvider) || PRESETS[0];
+      setBaseUrl(activeProvider === 'custom' ? (baseUrls.custom || '') : preset.baseUrl);
+      setApiKey(keys[activeProvider] || '');
+      setModel(models[activeProvider] || preset.model);
+
       setTestResult(null);
       setViewMode('form');
       setSearchQuery('');
       setSelectedFilter('all');
     }
-  }, [visible, ai]);
+  }, [visible]);
 
   const handleApplyPreset = (preset: (typeof PRESETS)[0]) => {
-    setSelectedPresetId(preset.id);
-    if (preset.id === 'custom') {
-      toast({ type: 'info', message: '已切换为自定义接口（支持任意 OpenAI API 格式）' });
-    } else {
-      setBaseUrl(preset.baseUrl);
-      setModel(preset.model);
-      toast({ type: 'info', message: `已应用 ${preset.name} 预设` });
-    }
+    const nextId = preset.id;
+    setSelectedPresetId(nextId);
+
+    const nextUrl = nextId === 'custom' ? (channelBaseUrls.custom || '') : preset.baseUrl;
+    const nextKey = channelKeys[nextId] || '';
+    const nextModel = channelModels[nextId] || preset.model;
+
+    setBaseUrl(nextUrl);
+    setApiKey(nextKey);
+    setModel(nextModel);
+
     setRemoteModels([]);
     setTestResult(null);
+    toast({ type: 'info', message: `已切换至 ${preset.name}（独立 Key 模式）` });
+  };
+
+  const handleApiKeyChange = (text: string) => {
+    setApiKey(text);
+    setChannelKeys((prev) => ({
+      ...prev,
+      [selectedPresetId]: text,
+    }));
   };
 
   const handleBaseUrlChange = (text: string) => {
     setBaseUrl(text);
-    setSelectedPresetId(getPresetId(text.trim()));
+    if (selectedPresetId === 'custom') {
+      setChannelBaseUrls((prev) => ({
+        ...prev,
+        custom: text,
+      }));
+    }
+  };
+
+  const handleModelChange = (text: string) => {
+    setModel(text);
+    setChannelModels((prev) => ({
+      ...prev,
+      [selectedPresetId]: text,
+    }));
   };
 
   const handleSave = async () => {
-    const finalBaseUrl = baseUrl.trim() || 'https://integrate.api.nvidia.com/v1';
+    const currentPreset = PRESETS.find((p) => p.id === selectedPresetId) || PRESETS[0];
+    const finalBaseUrl =
+      selectedPresetId === 'custom'
+        ? baseUrl.trim()
+        : baseUrl.trim() || currentPreset.baseUrl;
     const finalApiKey = apiKey.trim();
-    const finalModel = model.trim() || 'meta/llama-3.1-70b-instruct';
+    const finalModel = model.trim() || currentPreset.model;
+
+    const updatedChannelKeys = {
+      ...channelKeys,
+      [selectedPresetId]: finalApiKey,
+    };
+    const updatedChannelModels = {
+      ...channelModels,
+      [selectedPresetId]: finalModel,
+    };
+    const updatedChannelBaseUrls = {
+      ...channelBaseUrls,
+      [selectedPresetId]: finalBaseUrl,
+    };
 
     setAi({
+      providerId: selectedPresetId,
       baseUrl: finalBaseUrl,
       apiKey: finalApiKey,
       model: finalModel,
+      channelKeys: updatedChannelKeys,
+      channelModels: updatedChannelModels,
+      channelBaseUrls: updatedChannelBaseUrls,
     });
 
     if (syncConfigured) {
       try {
         await pushToCloud();
-        toast({ type: 'success', message: 'AI 配置已保存并成功同步至云端' });
+        toast({ type: 'success', message: '所有渠道独立配置已保存并同步至云端' });
       } catch (err: any) {
         toast({ type: 'warning', message: '已保存至本地（云端同步失败，请检查网络）' });
       }
     } else {
-      toast({ type: 'success', message: 'AI 配置已保存' });
+      toast({ type: 'success', message: '所有渠道独立配置已保存' });
     }
     onClose();
   };
@@ -170,20 +282,41 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
       toast({ type: 'warning', message: '请先在「设置 - 云同步」中配置私人密钥' });
       return;
     }
-    const finalBaseUrl = baseUrl.trim() || 'https://integrate.api.nvidia.com/v1';
+    const currentPreset = PRESETS.find((p) => p.id === selectedPresetId) || PRESETS[0];
+    const finalBaseUrl =
+      selectedPresetId === 'custom'
+        ? baseUrl.trim()
+        : baseUrl.trim() || currentPreset.baseUrl;
     const finalApiKey = apiKey.trim();
-    const finalModel = model.trim() || 'meta/llama-3.1-70b-instruct';
+    const finalModel = model.trim() || currentPreset.model;
+
+    const updatedChannelKeys = {
+      ...channelKeys,
+      [selectedPresetId]: finalApiKey,
+    };
+    const updatedChannelModels = {
+      ...channelModels,
+      [selectedPresetId]: finalModel,
+    };
+    const updatedChannelBaseUrls = {
+      ...channelBaseUrls,
+      [selectedPresetId]: finalBaseUrl,
+    };
 
     setAi({
+      providerId: selectedPresetId,
       baseUrl: finalBaseUrl,
       apiKey: finalApiKey,
       model: finalModel,
+      channelKeys: updatedChannelKeys,
+      channelModels: updatedChannelModels,
+      channelBaseUrls: updatedChannelBaseUrls,
     });
 
     setSyncingCloud(true);
     try {
       await pushToCloud();
-      toast({ type: 'success', message: 'API Key 与配置已成功上传至云端' });
+      toast({ type: 'success', message: '各渠道独立配置已上传至云端' });
     } catch (err: any) {
       toast({ type: 'error', message: err.message || '上传云端失败，请检查网络' });
     } finally {
@@ -193,6 +326,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
 
   const handleTest = async () => {
     const tempConfig: AiSettings = {
+      providerId: selectedPresetId,
       baseUrl: baseUrl.trim(),
       apiKey: apiKey.trim(),
       model: model.trim(),
@@ -215,15 +349,13 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
         latencyMs: res.latencyMs,
         msg: `连接成功 (耗时 ${res.latencyMs}ms)\nAI 回复:「${res.reply}」`,
       });
-      setAi(tempConfig);
-      if (syncConfigured) {
-        pushToCloud().catch(() => {});
-      }
+      toast({ type: 'success', message: `连接成功 (耗时 ${res.latencyMs}ms)` });
     } catch (err: any) {
       setTestResult({
         ok: false,
         msg: err.message || '连接失败，请检查网络或密钥配置',
       });
+      toast({ type: 'error', message: err.message || '连接失败，请检查网络或配置' });
     } finally {
       setTesting(false);
     }
@@ -256,6 +388,10 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
 
   const handleSelectModel = (selectedId: string) => {
     setModel(selectedId);
+    setChannelModels((prev) => ({
+      ...prev,
+      [selectedPresetId]: selectedId,
+    }));
     setViewMode('form');
     toast({ type: 'success', message: `已选用模型: ${selectedId}` });
   };
@@ -301,6 +437,8 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
     return result;
   }, [remoteModels, selectedFilter, searchQuery]);
 
+  const currentPreset = PRESETS.find((p) => p.id === selectedPresetId) || PRESETS[0];
+
   return (
     <BottomSheetModal
       visible={visible}
@@ -319,7 +457,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 <View style={styles.titleTextWrap}>
                   <Text style={styles.sheetTitle}>AI 助手配置</Text>
                   <Text style={styles.sheetSubtitle} numberOfLines={1}>
-                    OpenAI 格式 · 支持 NVIDIA/硅基/自定义
+                    多渠道独立 Key · 支持 NVIDIA/硅基/DeepSeek/自定义
                   </Text>
                 </View>
               </View>
@@ -341,7 +479,10 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
             >
               {/* 常用服务商快捷预设 */}
               <View style={styles.presetSection}>
-                <Text style={styles.fieldLabel}>常用渠道商：</Text>
+                <View style={styles.labelRowBetween}>
+                  <Text style={styles.fieldLabel}>常用渠道商：</Text>
+                  <Text style={styles.channelTip}>每个渠道独立配置 Key</Text>
+                </View>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
@@ -349,6 +490,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 >
                   {PRESETS.map((p) => {
                     const isSelected = selectedPresetId === p.id;
+                    const hasKey = Boolean(channelKeys[p.id]?.trim());
                     return (
                       <TouchableOpacity
                         key={p.id}
@@ -367,6 +509,14 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                         >
                           {p.name}
                         </Text>
+                        {hasKey && (
+                          <View
+                            style={[
+                              styles.keyBadgeDot,
+                              isSelected && styles.keyBadgeDotActive,
+                            ]}
+                          />
+                        )}
                       </TouchableOpacity>
                     );
                   })}
@@ -381,7 +531,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 </View>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="https://integrate.api.nvidia.com/v1"
+                  placeholder={currentPreset.baseUrl || 'https://api.openai.com/v1'}
                   placeholderTextColor={Palette.cocoa[400]}
                   value={baseUrl}
                   onChangeText={handleBaseUrlChange}
@@ -389,23 +539,32 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                   autoCorrect={false}
                 />
                 <Text style={styles.inputHint}>
-                  支持任何遵循 OpenAI /chat/completions 规范的 API 接口
+                  {selectedPresetId === 'custom'
+                    ? '自定义接口：支持任何遵循 OpenAI /chat/completions 规范的 API 接口'
+                    : currentPreset.desc}
                 </Text>
               </View>
 
               {/* 字段 2：API Key 与云端存储状态 */}
               <View style={styles.inputGroup}>
-                <View style={styles.labelRow}>
-                  <KeyRound size={14} color={Palette.cocoa[700]} />
-                  <Text style={styles.fieldLabel}>API Key (令牌密钥)</Text>
+                <View style={styles.labelRowBetween}>
+                  <View style={styles.labelRow}>
+                    <KeyRound size={14} color={Palette.cocoa[700]} />
+                    <Text style={styles.fieldLabel}>API Key (令牌密钥)</Text>
+                  </View>
+                  <View style={styles.channelBadgeWrap}>
+                    <Text style={styles.channelBadgeText}>
+                      {currentPreset.name} 专属 Key
+                    </Text>
+                  </View>
                 </View>
                 <View style={styles.keyInputWrapper}>
                   <TextInput
                     style={[styles.textInput, { flex: 1, paddingRight: 40 }]}
-                    placeholder="nvapi-xxxxxxxx / sk-xxxxxxxx"
+                    placeholder={currentPreset.placeholderKey || '请输入当前渠道的专属 API Key'}
                     placeholderTextColor={Palette.cocoa[400]}
                     value={apiKey}
-                    onChangeText={setApiKey}
+                    onChangeText={handleApiKeyChange}
                     secureTextEntry={!showKey}
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -422,6 +581,9 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                     )}
                   </TouchableOpacity>
                 </View>
+                <Text style={styles.inputHint}>
+                  每个渠道独立保存 API Key，切换渠道自动同步专属密钥，互不影响与覆盖
+                </Text>
 
                 {/* 云端存储提示与手动上传 */}
                 <View
@@ -443,8 +605,8 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                       ]}
                     >
                       {syncConfigured
-                        ? '云端同步已绑定：保存时密钥将自动加密同步至您的云服务器'
-                        : '未开启云端同步：密钥仅存本地，配置「云同步」可多端共享'}
+                        ? '云端同步已绑定：保存时所有渠道独立 Key 将加密同步至云服务器'
+                        : '未开启云端同步：各渠道 Key 仅保存在本机，配置「云同步」可多端共享'}
                     </Text>
                   </View>
                   {syncConfigured && (
@@ -493,15 +655,15 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                 </View>
                 <TextInput
                   style={styles.textInput}
-                  placeholder="meta/llama-3.1-70b-instruct 或 deepseek-ai/DeepSeek-V3"
+                  placeholder={currentPreset.model || '输入当前渠道生效的模型名称'}
                   placeholderTextColor={Palette.cocoa[400]}
                   value={model}
-                  onChangeText={setModel}
+                  onChangeText={handleModelChange}
                   autoCapitalize="none"
                   autoCorrect={false}
                 />
                 <Text style={styles.inputHint}>
-                  点击右上角「自动拉取模型」可实时拉取当前渠道所有模型（含参数大小、免费额度）
+                  点击右上角「自动拉取模型」可根据当前渠道与 Key 实时拉取所有可用模型
                 </Text>
               </View>
 
@@ -846,6 +1008,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   presetChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 20,
@@ -856,6 +1020,33 @@ const styles = StyleSheet.create({
   presetChipActive: {
     backgroundColor: 'rgba(217, 107, 56, 0.12)',
     borderColor: Palette.primary,
+  },
+  keyBadgeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#10B981',
+    marginLeft: 6,
+  },
+  keyBadgeDotActive: {
+    backgroundColor: Palette.primary,
+  },
+  channelTip: {
+    fontSize: 11,
+    color: Palette.cocoa[400],
+  },
+  channelBadgeWrap: {
+    backgroundColor: 'rgba(217, 107, 56, 0.08)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(217, 107, 56, 0.2)',
+  },
+  channelBadgeText: {
+    fontSize: 11,
+    color: Palette.primary,
+    fontWeight: '600',
   },
   presetChipText: {
     fontSize: 12,

@@ -19,14 +19,17 @@ import {
   Info,
   ShieldCheck,
   Cloud,
+  FileUp,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
 import { useAllRecipes } from '@/lib/recipes';
+import { useImportedRecipesStore } from '@/store/importedRecipesStore';
 import { useSettingsStore, isSyncConfigured, isAiConfigured } from '@/store/settingsStore';
 import { useSyncStore } from '@/lib/cloudSync';
 import { SyncSettingsModal } from '@/components/SyncSettingsModal';
 import { AiSettingsModal } from '@/components/AiSettingsModal';
+import { RecipeImportModal } from '@/components/RecipeImportModal';
 import { Palette } from '@/constants/theme';
 
 export default function ProfileScreen() {
@@ -34,12 +37,14 @@ export default function ProfileScreen() {
   const { favorites } = useFavoritesStore();
   const { notes } = useNotesStore();
   const allRecipes = useAllRecipes();
+  const importedRecipes = useImportedRecipesStore((s) => s.importedRecipes);
   const validNotes = activeNotes(notes);
 
   const { sync, ai } = useSettingsStore();
   const { status: syncStatus, lastSyncedAt } = useSyncStore();
   const [syncModalVisible, setSyncModalVisible] = React.useState(false);
   const [aiModalVisible, setAiModalVisible] = React.useState(false);
+  const [importModalVisible, setImportModalVisible] = React.useState(false);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -157,7 +162,7 @@ export default function ProfileScreen() {
               <Text style={styles.menuTitle}>AI 智能厨师</Text>
               <Text style={styles.menuSubtitle}>
                 {!isAiConfigured(ai)
-                  ? '配置 OpenAI 兼容接口（DeepSeek/通义/OpenAI）'
+                  ? '配置多渠道模型接口（NVIDIA/硅基/DeepSeek/自定义）'
                   : `${ai.model || '已接入'} · 随时待命`}
               </Text>
             </View>
@@ -174,6 +179,31 @@ export default function ProfileScreen() {
               />
               <Text style={styles.statusPillText}>
                 {!isAiConfigured(ai) ? '未配置' : '已就绪'}
+              </Text>
+            </View>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
+          </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          {/* 菜谱导入入口 */}
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => setImportModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#F0FDF4' }]}>
+              <FileUp size={18} color="#16A34A" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.menuTitle}>菜谱智能导入</Text>
+              <Text style={styles.menuSubtitle}>
+                AI 自由提取 · JSON 文件/剪贴板批量导入
+              </Text>
+            </View>
+            <View style={styles.statusPill}>
+              <Text style={[styles.statusPillText, { color: '#16A34A', fontWeight: '700' }]}>
+                {importedRecipes.length > 0 ? `已导入 ${importedRecipes.length} 道` : 'AI / JSON'}
               </Text>
             </View>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
@@ -270,6 +300,13 @@ export default function ProfileScreen() {
       <AiSettingsModal
         visible={aiModalVisible}
         onClose={() => setAiModalVisible(false)}
+      />
+
+      {/* 菜谱导入与去重弹窗 */}
+      <RecipeImportModal
+        visible={importModalVisible}
+        onClose={() => setImportModalVisible(false)}
+        onOpenAiSettings={() => setAiModalVisible(true)}
       />
     </SafeAreaView>
   );

@@ -1,10 +1,21 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+/**
+ * 为内置菜谱生成莫兰迪风格 SVG 占位封面，并回写 recipes.ts 的 coverImage 路径。
+ * 运行：npm run covers
+ *
+ * 真实照片用 npm run covers:photos 下载；两份图片目录的关系见 scripts/covers-common.mjs。
+ */
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { join } from 'path';
+import {
+  recipesTsPath,
+  serverCoversDir,
+  parseRecipes,
+  rewriteCoverImages,
+  syncBundleCovers,
+  localCoverExists,
+} from './covers-common.mjs';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '..');
-const outDir = join(root, 'public', 'covers');
+const outDir = serverCoversDir;
 
 const CATEGORY_EMOJI = {
   川菜: '🌶️', 粤菜: '🥘', 湘菜: '🔥', 鲁菜: '🥢', 西餐: '🍽️',
@@ -85,17 +96,15 @@ function buildSvg(name, category) {
 </svg>`;
 }
 
-const recipesTs = readFileSync(join(root, 'src', 'data', 'recipes.ts'), 'utf8');
-const recipeRegex = /id: '([^']+)',\s*\n\s*name: '([^']+)',\s*\n\s*category: '([^']+)'/g;
+const recipesTs = readFileSync(recipesTsPath, 'utf8');
+const recipes = parseRecipes(recipesTs);
 
 mkdirSync(outDir, { recursive: true });
 
-let match;
-let count = 0;
 const ids = new Set();
+let count = 0;
 
-while ((match = recipeRegex.exec(recipesTs)) !== null) {
-  const [, id, name, category] = match;
+for (const { id, name, category } of recipes) {
   if (ids.has(id)) continue;
   ids.add(id);
   writeFileSync(join(outDir, `${id}.svg`), buildSvg(name, category), 'utf8');
@@ -104,14 +113,16 @@ while ((match = recipeRegex.exec(recipesTs)) !== null) {
 
 console.log(`Generated ${count} cover SVGs in public/covers/`);
 
-const updated = recipesTs.replace(
-  /(id: '([^']+)',[\s\S]*?coverImage: ')[^']+(')/g,
-  (full, prefix, id, suffix) => {
-    if (!ids.has(id)) return full;
-    // 已下载真实照片（jpg/png/webp）的菜谱保留原封面
-    if (/\/(covers\/[^']+\.(jpe?g|png|webp))$/.test(prefix)) return full;
-    return `${prefix}/covers/${id}.svg${suffix}`;
-  }
-);
-writeFileSync(join(root, 'src', 'data', 'recipes.ts'), updated, 'utf8');
+const updated = rewriteCoverImages(recipesTs, ({ id, current }) => {
+  // 已有可用封面一律保留：内嵌 base64、http 外链、以及指向真实存在的本地资源
+  if (current.startsWith('data:') || current.startsWith('http')) return null;
+  if (localCoverExists(current)) return null;
+  // 封面缺失时退回本菜谱专属图：优先真实照片，其次占位 SVG
+  if (existsSync(join(outDir, `${id}.jpg`))) return `/covers/${id}.jpg`;
+  return `/covers/${id}.svg`;
+});
+writeFileSync(recipesTsPath, updated, 'utf8');
 console.log('Updated recipes.ts coverImage paths');
+
+const sync = syncBundleCovers();
+console.log(`Synced bundle covers: ${sync.copied} copied, ${sync.mapped} mapped`);

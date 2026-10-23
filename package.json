@@ -3,17 +3,23 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "packageManager": "bun@1.4.0",
+  "workspaces": [
+    "mobile"
+  ],
   "scripts": {
-    "start": "npm --prefix mobile run start",
-    "dev": "npm --prefix mobile run start",
-    "android": "npm --prefix mobile run android",
-    "ios": "npm --prefix mobile run ios",
-    "web": "npm --prefix mobile run web",
-    "mobile": "npm --prefix mobile run start",
-    "mobile:android": "npm --prefix mobile run android",
-    "mobile:ios": "npm --prefix mobile run ios",
-    "mobile:web": "npm --prefix mobile run web",
+    "start": "bun run --filter lzyrecipe-mobile start",
+    "dev": "bun run --filter lzyrecipe-mobile start",
+    "android": "bun run --filter lzyrecipe-mobile android",
+    "ios": "bun run --filter lzyrecipe-mobile ios",
+    "web": "bun run --filter lzyrecipe-mobile web",
+    "lint": "bun run --filter lzyrecipe-mobile lint",
+    "typecheck": "bun run --filter lzyrecipe-mobile typecheck",
+    "doctor": "bunx expo-doctor@latest",
     "covers": "node scripts/generate-covers.mjs",
     "covers:photos": "node scripts/fetch-covers.mjs"
-  }
+  },
+  "trustedDependencies": [
+    "unrs-resolver"
+  ]
 }

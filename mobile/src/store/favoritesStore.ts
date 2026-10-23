@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { safeAsyncStorage } from '@/lib/safeStorage';
 
+import { triggerAutoSync } from '@/lib/syncTrigger';
+
 interface FavoritesState {
   favorites: string[];
   addFavorite: (recipeId: string) => void;
@@ -14,16 +16,20 @@ export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
       favorites: [],
-      addFavorite: (recipeId: string) =>
+      addFavorite: (recipeId: string) => {
         set((state) => ({
           favorites: state.favorites.includes(recipeId)
             ? state.favorites
             : [...state.favorites, recipeId],
-        })),
-      removeFavorite: (recipeId: string) =>
+        }));
+        triggerAutoSync(800);
+      },
+      removeFavorite: (recipeId: string) => {
         set((state) => ({
           favorites: state.favorites.filter((id) => id !== recipeId),
-        })),
+        }));
+        triggerAutoSync(800);
+      },
       isFavorite: (recipeId: string) => get().favorites.includes(recipeId),
       toggleFavorite: (recipeId: string) => {
         const { favorites, addFavorite, removeFavorite } = get();

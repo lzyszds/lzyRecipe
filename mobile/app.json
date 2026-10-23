@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mobile",
+    "name": "萌厨食光",
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,10 +17,11 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.mobile"
     },
     "web": {
-      "output": "server",
+      "output": "single",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
@@ -31,6 +32,14 @@
           "backgroundColor": "#208AEF",
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "萌厨食光需要访问你的相册，以便为菜谱添加封面或步骤配图。",
+          "cameraPermission": "萌厨食光需要使用相机来拍摄菜谱封面或步骤配图。",
+          "microphonePermission": false
         }
       ]
     ],

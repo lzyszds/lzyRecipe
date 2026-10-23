@@ -616,12 +616,12 @@ const styles = StyleSheet.create({
   },
   daysScroll: {
     paddingHorizontal: 16,
-    gap: 6,
+    gap: 3,
     marginTop: 12
   },
   dayChip: {
-    width: 52,
-    height: 52,
+    width: 50,
+    height: 50,
     borderRadius: 14,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
@@ -835,7 +835,7 @@ const styles = StyleSheet.create({
   },
   bottomBarWrapper: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 100,
     left: 16,
     right: 16,
   },

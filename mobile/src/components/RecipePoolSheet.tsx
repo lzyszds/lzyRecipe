@@ -124,9 +124,8 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
 
   if (!visible || !targetDate || !targetMeal) return null;
 
-  const targetLabel = `${formatMonthDay(targetDate)} ${getWeekdayName(targetDate)} · ${
-    MEAL_LABELS[targetMeal]
-  }`;
+  const targetLabel = `${formatMonthDay(targetDate)} ${getWeekdayName(targetDate)} · ${MEAL_LABELS[targetMeal]
+    }`;
 
   return (
     <BottomSheetModal
@@ -137,182 +136,182 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
       <SafeAreaView edges={['bottom']} style={styles.safeArea}>
         {/* 顶栏 */}
         <View style={styles.header}>
-              <View>
-                <Text style={styles.sheetTitle}>放入便当格</Text>
-                <Text style={styles.sheetSubtitle}>目标餐位：{targetLabel}</Text>
-              </View>
-              <TouchableOpacity
-                onPress={onClose}
-                style={styles.closeBtn}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <X size={18} color={Palette.cocoa[700]} />
-              </TouchableOpacity>
-            </View>
+          <View>
+            <Text style={styles.sheetTitle}>放入便当格</Text>
+            <Text style={styles.sheetSubtitle}>目标餐位：{targetLabel}</Text>
+          </View>
+          <TouchableOpacity
+            onPress={onClose}
+            style={styles.closeBtn}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <X size={18} color={Palette.cocoa[700]} />
+          </TouchableOpacity>
+        </View>
 
-            {/* 快捷标签栏 */}
-            <View style={styles.tabBar}>
-              <TouchableOpacity
-                style={[styles.tabItem, activeTab === 'pool' && styles.tabItemActive]}
-                onPress={() => setActiveTab('pool')}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeTab === 'pool' && styles.tabItemTextActive,
-                  ]}
-                >
-                  想吃候选池 ({poolRecipes.length})
-                </Text>
-              </TouchableOpacity>
+        {/* 快捷标签栏 */}
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={[styles.tabItem, activeTab === 'pool' && styles.tabItemActive]}
+            onPress={() => setActiveTab('pool')}
+          >
+            <Text
+              style={[
+                styles.tabItemText,
+                activeTab === 'pool' && styles.tabItemTextActive,
+              ]}
+            >
+              想吃候选池 ({poolRecipes.length})
+            </Text>
+          </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[styles.tabItem, activeTab === 'fav' && styles.tabItemActive]}
-                onPress={() => setActiveTab('fav')}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeTab === 'fav' && styles.tabItemTextActive,
-                  ]}
-                >
-                  我的收藏 ({favRecipes.length})
-                </Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabItem, activeTab === 'fav' && styles.tabItemActive]}
+            onPress={() => setActiveTab('fav')}
+          >
+            <Text
+              style={[
+                styles.tabItemText,
+                activeTab === 'fav' && styles.tabItemTextActive,
+              ]}
+            >
+              我的收藏 ({favRecipes.length})
+            </Text>
+          </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[styles.tabItem, activeTab === 'fast' && styles.tabItemActive]}
-                onPress={() => setActiveTab('fast')}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeTab === 'fast' && styles.tabItemTextActive,
-                  ]}
-                >
-                  快手菜 (≤20分)
-                </Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabItem, activeTab === 'fast' && styles.tabItemActive]}
+            onPress={() => setActiveTab('fast')}
+          >
+            <Text
+              style={[
+                styles.tabItemText,
+                activeTab === 'fast' && styles.tabItemTextActive,
+              ]}
+            >
+              快手菜 (≤20分)
+            </Text>
+          </TouchableOpacity>
 
-              <TouchableOpacity
-                style={[styles.tabItem, activeTab === 'all' && styles.tabItemActive]}
-                onPress={() => setActiveTab('all')}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeTab === 'all' && styles.tabItemTextActive,
-                  ]}
-                >
-                  全部菜谱
-                </Text>
-              </TouchableOpacity>
-            </View>
+          <TouchableOpacity
+            style={[styles.tabItem, activeTab === 'all' && styles.tabItemActive]}
+            onPress={() => setActiveTab('all')}
+          >
+            <Text
+              style={[
+                styles.tabItemText,
+                activeTab === 'all' && styles.tabItemTextActive,
+              ]}
+            >
+              全部菜谱
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-            {/* 搜索框 */}
-            <View style={styles.searchBarWrapper}>
-              <View style={styles.searchBar}>
-                <Search size={14} color={Palette.cocoa[400]} />
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="搜索想吃的菜名、食材..."
-                  placeholderTextColor={Palette.cocoa[400]}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                />
-                {Boolean(searchQuery) && (
-                  <TouchableOpacity onPress={() => setSearchQuery('')}>
-                    <X size={14} color={Palette.cocoa[400]} />
+        {/* 搜索框 */}
+        <View style={styles.searchBarWrapper}>
+          <View style={styles.searchBar}>
+            <Search size={14} color={Palette.cocoa[400]} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="搜索想吃的菜名、食材..."
+              placeholderTextColor={Palette.cocoa[400]}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {Boolean(searchQuery) && (
+              <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <X size={14} color={Palette.cocoa[400]} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
+        {/* 菜谱列表（多选） */}
+        <FlatList
+          data={displayedRecipes}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => {
+            const isSelected = selectedIds.has(item.id);
+            return (
+              <TouchableOpacity
+                style={[styles.dishRow, isSelected && styles.dishRowSelected]}
+                onPress={() => toggleSelect(item.id)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.dishThumb}>
+                  <RecipeImage
+                    coverImage={item.coverImage}
+                    name={item.name}
+                    category={item.category}
+                  />
+                </View>
+
+                <View style={styles.dishInfo}>
+                  <Text style={styles.dishName} numberOfLines={1}>
+                    {item.name}
+                  </Text>
+                  <Text style={styles.dishMeta}>
+                    {item.category} · ⏱ {item.cookTime}分钟
+                  </Text>
+                </View>
+
+                {/* 午餐带饭快捷入口 */}
+                {targetMeal === 'lunch' && (
+                  <TouchableOpacity
+                    style={styles.workdayBtn}
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      handleApplyWorkdayLunch(item.id);
+                    }}
+                  >
+                    <Text style={styles.workdayBtnText}>一键周一至五带饭</Text>
                   </TouchableOpacity>
                 )}
-              </View>
-            </View>
 
-            {/* 菜谱列表（多选） */}
-            <FlatList
-              data={displayedRecipes}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.listContent}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => {
-                const isSelected = selectedIds.has(item.id);
-                return (
-                  <TouchableOpacity
-                    style={[styles.dishRow, isSelected && styles.dishRowSelected]}
-                    onPress={() => toggleSelect(item.id)}
-                    activeOpacity={0.8}
-                  >
-                    <View style={styles.dishThumb}>
-                      <RecipeImage
-                        coverImage={item.coverImage}
-                        name={item.name}
-                        category={item.category}
-                      />
-                    </View>
-
-                    <View style={styles.dishInfo}>
-                      <Text style={styles.dishName} numberOfLines={1}>
-                        {item.name}
-                      </Text>
-                      <Text style={styles.dishMeta}>
-                        {item.category} · ⏱ {item.cookTime}分钟
-                      </Text>
-                    </View>
-
-                    {/* 午餐带饭快捷入口 */}
-                    {targetMeal === 'lunch' && (
-                      <TouchableOpacity
-                        style={styles.workdayBtn}
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          handleApplyWorkdayLunch(item.id);
-                        }}
-                      >
-                        <Text style={styles.workdayBtnText}>一键周一至五带饭</Text>
-                      </TouchableOpacity>
-                    )}
-
-                    <View
-                      style={[
-                        styles.checkCircle,
-                        isSelected && styles.checkCircleSelected,
-                      ]}
-                    >
-                      {isSelected && <Check size={14} color="#FFFFFF" strokeWidth={3} />}
-                    </View>
-                  </TouchableOpacity>
-                );
-              }}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>没有找到相关菜品</Text>
-                  {activeTab === 'pool' && (
-                    <Text style={styles.emptyHint}>
-                      去菜谱库点「放进想吃池」，随时收纳想吃的灵感！
-                    </Text>
-                  )}
+                <View
+                  style={[
+                    styles.checkCircle,
+                    isSelected && styles.checkCircleSelected,
+                  ]}
+                >
+                  {isSelected && <Check size={14} color="#FFFFFF" strokeWidth={3} />}
                 </View>
-              }
-            />
-
-            {/* 底部确认栏 */}
-            <View style={styles.footer}>
-              <Text style={styles.footerSelectedText}>
-                已选 <Text style={styles.highlightNum}>{selectedIds.size}</Text> 道菜
-              </Text>
-              <TouchableOpacity
-                style={[
-                  styles.confirmBtn,
-                  selectedIds.size === 0 && styles.confirmBtnDisabled,
-                ]}
-                onPress={handleConfirmAdd}
-                disabled={selectedIds.size === 0}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.confirmBtnText}>放入便当格</Text>
               </TouchableOpacity>
+            );
+          }}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>没有找到相关菜品</Text>
+              {activeTab === 'pool' && (
+                <Text style={styles.emptyHint}>
+                  去菜谱库点「放进想吃池」，随时收纳想吃的灵感！
+                </Text>
+              )}
             </View>
-          </SafeAreaView>
+          }
+        />
+
+        {/* 底部确认栏 */}
+        <View style={styles.footer}>
+          <Text style={styles.footerSelectedText}>
+            已选 <Text style={styles.highlightNum}>{selectedIds.size}</Text> 道菜
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.confirmBtn,
+              selectedIds.size === 0 && styles.confirmBtnDisabled,
+            ]}
+            onPress={handleConfirmAdd}
+            disabled={selectedIds.size === 0}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.confirmBtnText}>放入便当格</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     </BottomSheetModal>
   );
 };
@@ -474,6 +473,8 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     paddingVertical: 40,
+    paddingHorizontal: 20,
+    display: "flex",
     alignItems: 'center',
     gap: 6,
   },

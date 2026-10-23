@@ -75,7 +75,7 @@ function renderDifficultyBadge(difficulty: DifficultyLevel) {
 }
 
 // 模式 A：黄金比例“左图右文”精品横卡（默认推荐）
-const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
+const CompactHorizontalCard = React.memo(function CompactHorizontalCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const { isInPool, togglePool } = useBentoStore();
@@ -184,7 +184,7 @@ const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
 });
 
 // 模式 B：杂志感大图海报卡
-const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
+const MagazineCard = React.memo(function MagazineCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
   const { isInPool, togglePool } = useBentoStore();

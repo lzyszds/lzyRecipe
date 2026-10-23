@@ -4,6 +4,8 @@ import { safeAsyncStorage } from '@/lib/safeStorage';
 import { Recipe } from '../types';
 import { useFavoritesStore } from './favoritesStore';
 
+import { triggerAutoSync } from '@/lib/syncTrigger';
+
 interface ImportedRecipesState {
   importedRecipes: Recipe[];
   addImportedRecipes: (recipes: Recipe[]) => void;
@@ -17,35 +19,53 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
   persist(
     (set) => ({
       importedRecipes: [],
-      addImportedRecipes: (recipes: Recipe[]) =>
+      addImportedRecipes: (recipes: Recipe[]) => {
+        const now = new Date().toISOString();
         set((state) => {
           const existingIds = new Set(state.importedRecipes.map((r) => r.id));
-          const newRecipes = recipes.filter((r) => !existingIds.has(r.id));
+          const newRecipes = recipes
+            .filter((r) => !existingIds.has(r.id))
+            .map((r) => ({
+              ...r,
+              createdAt: r.createdAt || now,
+              updatedAt: r.updatedAt || now,
+            }));
           return {
             importedRecipes: [...state.importedRecipes, ...newRecipes],
           };
-        }),
-      saveOrUpdateRecipe: (recipe: Recipe) =>
+        });
+        triggerAutoSync(800);
+      },
+      saveOrUpdateRecipe: (recipe: Recipe) => {
+        const now = new Date().toISOString();
+        const recipeWithTimestamp: Recipe = {
+          ...recipe,
+          createdAt: recipe.createdAt || now,
+          updatedAt: now,
+        };
         set((state) => {
           const exists = state.importedRecipes.some((r) => r.id === recipe.id);
           if (exists) {
             return {
               importedRecipes: state.importedRecipes.map((r) =>
-                r.id === recipe.id ? recipe : r
+                r.id === recipe.id ? recipeWithTimestamp : r
               ),
             };
           }
           return {
-            importedRecipes: [...state.importedRecipes, recipe],
+            importedRecipes: [...state.importedRecipes, recipeWithTimestamp],
           };
-        }),
-      updateImportedRecipeCover: (recipeId, coverImage, fallbackRecipe) =>
+        });
+        triggerAutoSync(500);
+      },
+      updateImportedRecipeCover: (recipeId, coverImage, fallbackRecipe) => {
+        const now = new Date().toISOString();
         set((state) => {
           const exists = state.importedRecipes.some((r) => r.id === recipeId);
           if (exists) {
             return {
               importedRecipes: state.importedRecipes.map((r) =>
-                r.id === recipeId ? { ...r, coverImage } : r
+                r.id === recipeId ? { ...r, coverImage, updatedAt: now } : r
               ),
             };
           }
@@ -53,22 +73,26 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
             return {
               importedRecipes: [
                 ...state.importedRecipes,
-                { ...fallbackRecipe, coverImage },
+                { ...fallbackRecipe, coverImage, updatedAt: now },
               ],
             };
           }
           return state;
-        }),
+        });
+        triggerAutoSync(300);
+      },
       removeImportedRecipe: (recipeId: string) => {
         useFavoritesStore.getState().removeFavorite(recipeId);
         set((state) => ({
           importedRecipes: state.importedRecipes.filter((r) => r.id !== recipeId),
         }));
+        triggerAutoSync(500);
       },
       clearImportedRecipes: () => {
         const ids = useImportedRecipesStore.getState().importedRecipes.map((r) => r.id);
         ids.forEach((id) => useFavoritesStore.getState().removeFavorite(id));
         set({ importedRecipes: [] });
+        triggerAutoSync(500);
       },
     }),
     {
