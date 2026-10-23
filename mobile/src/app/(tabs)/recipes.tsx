@@ -1,146 +1,93 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  SectionList,
   TouchableOpacity,
   TextInput,
+  Modal,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { Search, X, UtensilsCrossed, ChefHat } from 'lucide-react-native';
+import {
+  Search,
+  X,
+  LayoutGrid,
+  ChevronDown,
+  UtensilsCrossed,
+  Sparkles,
+} from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeCard } from '@/components/RecipeCard';
-import { Recipe } from '@/types';
 import { Palette } from '@/constants/theme';
+
+const ALL = '全部';
 
 export default function RecipesScreen() {
   const params = useLocalSearchParams<{ category?: string }>();
   const allRecipes = useAllRecipes();
   const rawCategories = getCategoriesWithCounts(allRecipes);
 
-  // 过滤出有菜谱的有效分类，构建 sections
-  const sections = useMemo(() => {
-    return rawCategories
-      .map((cat, index) => {
-        const catRecipes = allRecipes.filter((r) => r.category === cat.name);
-        return {
-          title: cat.name,
-          icon: cat.icon,
-          count: catRecipes.length,
-          sectionIndex: index,
-          data: catRecipes,
-        };
-      })
-      .filter((s) => s.data.length > 0);
+  const [activeCategory, setActiveCategory] = useState<string>(
+    params.category || ALL
+  );
+  const [keyword, setKeyword] = useState<string>('');
+  const [matrixOpen, setMatrixOpen] = useState<boolean>(false);
+
+  const horizontalNavRef = useRef<FlatList>(null);
+
+  // 分类列表包含全部
+  const categories = useMemo(() => {
+    return [
+      { id: 'all', name: ALL, icon: '🍽️', count: allRecipes.length },
+      ...rawCategories,
+    ];
   }, [allRecipes, rawCategories]);
 
-  // 左侧分类列表
-  const categoryNavItems = useMemo(() => {
-    return sections.map((s, idx) => ({
-      name: s.title,
-      icon: s.icon,
-      count: s.count,
-      sectionIndex: idx,
-    }));
-  }, [sections]);
-
-  // 初始选中分类
-  const initialIndex = useMemo(() => {
-    if (params.category) {
-      const idx = sections.findIndex((s) => s.title === params.category);
-      return idx >= 0 ? idx : 0;
-    }
-    return 0;
-  }, [params.category, sections]);
-
-  const [activeIndex, setActiveIndex] = useState<number>(initialIndex);
-  const [keyword, setKeyword] = useState<string>('');
-
-  const leftListRef = useRef<FlatList>(null);
-  const sectionListRef = useRef<SectionList<Recipe>>(null);
-  const isClickingRef = useRef<boolean>(false);
-  const clickTimerRef = useRef<any>(null);
-
-  // 搜索结果
-  const searchResults = useMemo(() => {
+  // 过滤后的菜谱列表
+  const filteredRecipes = useMemo(() => {
     const kw = keyword.trim().toLowerCase();
-    if (!kw) return [];
-    return allRecipes.filter(
-      (r) =>
+    return allRecipes.filter((r) => {
+      const matchCategory = activeCategory === ALL || r.category === activeCategory;
+      if (!matchCategory) return false;
+      if (!kw) return true;
+      return (
         r.name.toLowerCase().includes(kw) ||
         r.category.toLowerCase().includes(kw) ||
         r.ingredients.some((ing) => ing.name.toLowerCase().includes(kw))
-    );
-  }, [allRecipes, keyword]);
-
-  // 点击左侧分类导航
-  const handleSelectCategory = (index: number) => {
-    if (index === activeIndex) return;
-    setActiveIndex(index);
-
-    // 锁定滚动监听，防止 scrollToLocation 触发时高亮抖动
-    isClickingRef.current = true;
-    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-    clickTimerRef.current = setTimeout(() => {
-      isClickingRef.current = false;
-    }, 600);
-
-    // 平滑滚动到右侧对应的 Section
-    sectionListRef.current?.scrollToLocation({
-      sectionIndex: index,
-      itemIndex: 0,
-      animated: true,
-      viewOffset: 0,
+      );
     });
+  }, [allRecipes, activeCategory, keyword]);
 
-    // 左侧也保持可见
-    leftListRef.current?.scrollToIndex({
-      index,
-      animated: true,
-      viewPosition: 0.35,
-    });
+  // 选择分类
+  const selectCategory = (name: string, index?: number) => {
+    setActiveCategory(name);
+    setMatrixOpen(false);
+
+    // 将横滑胶囊居中滚动到该位置
+    const targetIndex =
+      index !== undefined ? index : categories.findIndex((c) => c.name === name);
+    if (targetIndex >= 0) {
+      horizontalNavRef.current?.scrollToIndex({
+        index: targetIndex,
+        animated: true,
+        viewPosition: 0.3,
+      });
+    }
   };
-
-  // 右侧滚动时，监听视口最上方的分类
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: any[] }) => {
-      if (isClickingRef.current || viewableItems.length === 0) return;
-
-      // 找到可见项中属于哪个 section
-      const topItem = viewableItems[0];
-      if (topItem?.section) {
-        const secIndex = (topItem.section as any).sectionIndex;
-        if (typeof secIndex === 'number' && secIndex !== activeIndex) {
-          setActiveIndex(secIndex);
-          // 自动让左侧导航跟着滚动到当前项
-          leftListRef.current?.scrollToIndex({
-            index: secIndex,
-            animated: true,
-            viewPosition: 0.35,
-          });
-        }
-      }
-    },
-    [activeIndex]
-  );
-
-  const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 20,
-    waitForInteraction: true,
-  }).current;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* 1. 顶部搜索框：固定吸顶，永不随滚动消失 */}
-      <View style={styles.fixedSearchBarContainer}>
+      {/* 1. 顶层吸顶控制区：搜索框 + 灵动分类条 + 全景矩阵展开按钮 */}
+      <View style={styles.stickyHeader}>
+        {/* 搜索框 */}
         <View style={styles.searchBar}>
-          <Search size={16} color={Palette.cocoa[400]} />
+          <Search size={15} color={Palette.cocoa[400]} />
           <TextInput
             style={styles.searchInput}
-            placeholder="搜索全库菜谱、食材、菜系..."
+            placeholder="搜索菜名、食材、菜系..."
             placeholderTextColor={Palette.cocoa[400]}
             value={keyword}
             onChangeText={setKeyword}
@@ -149,100 +96,175 @@ export default function RecipesScreen() {
           />
           {keyword.length > 0 && (
             <TouchableOpacity onPress={() => setKeyword('')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <X size={16} color={Palette.cocoa[400]} />
+              <X size={15} color={Palette.cocoa[400]} />
             </TouchableOpacity>
           )}
         </View>
+
+        {/* 分类胶囊横滑栏 + 右侧矩阵面板抽屉按钮 */}
+        <View style={styles.categoryNavRow}>
+          <FlatList
+            ref={horizontalNavRef}
+            data={categories}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.categoryScrollContent}
+            renderItem={({ item, index }) => {
+              const isActive = activeCategory === item.name;
+              return (
+                <TouchableOpacity
+                  style={[
+                    styles.categoryPill,
+                    isActive && styles.categoryPillActive,
+                  ]}
+                  onPress={() => selectCategory(item.name, index)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.categoryPillIcon}>{item.icon}</Text>
+                  <Text
+                    style={[
+                      styles.categoryPillText,
+                      isActive && styles.categoryPillTextActive,
+                    ]}
+                  >
+                    {item.name}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.categoryPillCount,
+                      isActive && styles.categoryPillCountActive,
+                    ]}
+                  >
+                    {item.count}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+
+          {/* 右侧展开全景面板按钮 */}
+          <TouchableOpacity
+            style={styles.matrixTriggerBtn}
+            onPress={() => setMatrixOpen(true)}
+            activeOpacity={0.75}
+          >
+            <LayoutGrid size={15} color={Palette.cocoa[700]} />
+            <ChevronDown size={11} color={Palette.cocoa[400]} style={{ marginTop: 1 }} />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* 2. 主体区：搜索模式 or 左侧分类+右侧列表联动 */}
-      {keyword.trim().length > 0 ? (
-        // 搜索模式
-        <View style={styles.searchResultsContainer}>
-          <Text style={styles.searchResultHeader}>
-            找到 <Text style={styles.bold}>{searchResults.length}</Text> 道符合的菜谱
-          </Text>
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.searchListContent}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => <RecipeCard recipe={item} compact />}
-            ListEmptyComponent={
-              <View style={styles.emptyContainer}>
-                <UtensilsCrossed size={40} color={Palette.cocoa[200]} />
-                <Text style={styles.emptyText}>未找到与“{keyword}”相关的菜谱</Text>
+      {/* 2. 双列高清大图瀑布流列表 */}
+      <FlatList
+        data={filteredRecipes}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={styles.gridRow}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View style={styles.listHeaderSummary}>
+            <Text style={styles.summaryText}>
+              {activeCategory === ALL ? '全部精选美食' : `${activeCategory}合集`}
+              <Text style={styles.summaryBold}> · {filteredRecipes.length} 道</Text>
+            </Text>
+          </View>
+        }
+        renderItem={({ item }) => (
+          <View style={styles.gridItem}>
+            <RecipeCard recipe={item} />
+          </View>
+        )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <UtensilsCrossed size={42} color={Palette.cocoa[200]} />
+            <Text style={styles.emptyTitle}>暂无相关美味</Text>
+            <Text style={styles.emptySubtitle}>尝试搜索其他食材，或切换到“全部”分类查看</Text>
+            <TouchableOpacity
+              style={styles.resetBtn}
+              onPress={() => {
+                setKeyword('');
+                selectCategory(ALL, 0);
+              }}
+            >
+              <Text style={styles.resetBtnText}>重置筛选条件</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
+
+      {/* 3. 全景分类矩阵弹窗面板 (一目了然看全所有菜系) */}
+      <Modal
+        visible={matrixOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMatrixOpen(false)}
+      >
+        <Pressable
+          style={styles.matrixOverlay}
+          onPress={() => setMatrixOpen(false)}
+        >
+          <Pressable style={styles.matrixCard} onPress={(e) => e.stopPropagation()}>
+            <View style={styles.matrixHeader}>
+              <View style={styles.matrixTitleRow}>
+                <Sparkles size={16} color={Palette.apricot[500]} />
+                <Text style={styles.matrixTitle}>全部分类导航</Text>
+                <Text style={styles.matrixSubtitle}>（共 {categories.length} 个分类）</Text>
               </View>
-            }
-          />
-        </View>
-      ) : (
-        // 左侧分类 + 右侧联动浏览模式
-        <View style={styles.splitLayout}>
-          {/* 左侧垂直分类栏 */}
-          <View style={styles.leftNavWrapper}>
-            <FlatList
-              ref={leftListRef}
-              data={categoryNavItems}
-              keyExtractor={(item) => item.name}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.leftNavContent}
-              renderItem={({ item, index }) => {
-                const isActive = activeIndex === index;
+              <TouchableOpacity
+                onPress={() => setMatrixOpen(false)}
+                style={styles.matrixCloseBtn}
+              >
+                <X size={18} color={Palette.cocoa[400]} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.matrixGrid}>
+              {categories.map((cat, idx) => {
+                const isSelected = activeCategory === cat.name;
                 return (
                   <TouchableOpacity
-                    style={[styles.leftNavItem, isActive && styles.leftNavItemActive]}
-                    onPress={() => handleSelectCategory(index)}
+                    key={cat.id}
+                    style={[
+                      styles.matrixItem,
+                      isSelected && styles.matrixItemActive,
+                    ]}
+                    onPress={() => selectCategory(cat.name, idx)}
                     activeOpacity={0.8}
                   >
-                    {isActive && <View style={styles.activeIndicator} />}
-                    <Text style={styles.leftNavIcon}>{item.icon}</Text>
+                    <Text style={styles.matrixItemIcon}>{cat.icon}</Text>
                     <Text
-                      style={[styles.leftNavLabel, isActive && styles.leftNavLabelActive]}
+                      style={[
+                        styles.matrixItemText,
+                        isSelected && styles.matrixItemTextActive,
+                      ]}
                       numberOfLines={1}
                     >
-                      {item.name}
+                      {cat.name}
                     </Text>
-                    <Text
-                      style={[styles.leftNavCount, isActive && styles.leftNavCountActive]}
+                    <View
+                      style={[
+                        styles.matrixItemBadge,
+                        isSelected && styles.matrixItemBadgeActive,
+                      ]}
                     >
-                      {item.count}
-                    </Text>
+                      <Text
+                        style={[
+                          styles.matrixItemBadgeText,
+                          isSelected && styles.matrixItemBadgeTextActive,
+                        ]}
+                      >
+                        {cat.count}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 );
-              }}
-            />
-          </View>
-
-          {/* 右侧按分类分组滚动列表 */}
-          <View style={styles.rightContentWrapper}>
-            <SectionList
-              ref={sectionListRef}
-              sections={sections}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.rightListContent}
-              onViewableItemsChanged={onViewableItemsChanged}
-              viewabilityConfig={viewabilityConfig}
-              stickySectionHeadersEnabled={true}
-              renderSectionHeader={({ section: { title, icon, count } }) => (
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionHeaderIcon}>{icon}</Text>
-                  <Text style={styles.sectionHeaderTitle}>{title}</Text>
-                  <View style={styles.sectionBadge}>
-                    <Text style={styles.sectionBadgeText}>{count} 道</Text>
-                  </View>
-                </View>
-              )}
-              renderItem={({ item }) => (
-                <View style={styles.recipeCardWrapper}>
-                  <RecipeCard recipe={item} compact />
-                </View>
-              )}
-            />
-          </View>
-        </View>
-      )}
+              })}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -252,29 +274,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Palette.oat[50],
   },
-  fixedSearchBarContainer: {
-    paddingHorizontal: 14,
-    paddingTop: 8,
-    paddingBottom: 10,
+  stickyHeader: {
     backgroundColor: Palette.oat[50],
+    paddingTop: 6,
+    paddingBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#EFE9E0',
+    borderBottomColor: '#EDE7DE',
     zIndex: 10,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    marginHorizontal: 14,
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: Palette.oat[200],
+    borderColor: '#ECE4DA',
     paddingHorizontal: 12,
     height: 40,
     gap: 8,
-    shadowColor: Palette.cocoa[900],
+    shadowColor: '#2D231E',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.03,
-    shadowRadius: 3,
+    shadowRadius: 4,
   },
   searchInput: {
     flex: 1,
@@ -282,116 +304,93 @@ const styles = StyleSheet.create({
     color: Palette.cocoa[900],
     paddingVertical: 0,
   },
-  splitLayout: {
-    flex: 1,
+  categoryNavRow: {
     flexDirection: 'row',
-  },
-  leftNavWrapper: {
-    width: 82,
-    backgroundColor: '#F7F3ED',
-    borderRightWidth: 1,
-    borderRightColor: '#ECE5DB',
-  },
-  leftNavContent: {
-    paddingVertical: 4,
-  },
-  leftNavItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 6,
     alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-    gap: 3,
+    marginTop: 10,
+    paddingLeft: 14,
   },
-  leftNavItemActive: {
+  categoryScrollContent: {
+    gap: 8,
+    paddingRight: 10,
+  },
+  categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#ECE4DA',
+    paddingHorizontal: 11,
+    paddingVertical: 6,
+    gap: 5,
   },
-  activeIndicator: {
-    position: 'absolute',
-    left: 0,
-    top: 10,
-    bottom: 10,
-    width: 3.5,
+  categoryPillActive: {
     backgroundColor: Palette.apricot[500],
-    borderTopRightRadius: 3,
-    borderBottomRightRadius: 3,
+    borderColor: Palette.apricot[500],
+    shadowColor: Palette.apricot[500],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
-  leftNavIcon: {
-    fontSize: 16,
+  categoryPillIcon: {
+    fontSize: 12,
   },
-  leftNavLabel: {
-    fontSize: 11,
-    fontWeight: '500',
+  categoryPillText: {
+    fontSize: 12,
+    fontWeight: '600',
     color: Palette.cocoa[700],
-    textAlign: 'center',
   },
-  leftNavLabelActive: {
-    fontWeight: '800',
-    color: Palette.apricot[600],
+  categoryPillTextActive: {
+    color: '#FFFFFF',
   },
-  leftNavCount: {
-    fontSize: 9.5,
+  categoryPillCount: {
+    fontSize: 10,
     color: Palette.cocoa[400],
   },
-  leftNavCountActive: {
-    color: Palette.apricot[500],
-    fontWeight: '600',
+  categoryPillCountActive: {
+    color: 'rgba(255, 255, 255, 0.88)',
   },
-  rightContentWrapper: {
-    flex: 1,
-    backgroundColor: Palette.oat[50],
+  matrixTriggerBtn: {
+    width: 44,
+    height: 34,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderLeftWidth: 1,
+    borderLeftColor: '#EBE3D7',
+    paddingRight: 6,
+    paddingLeft: 4,
+    flexDirection: 'row',
+    gap: 2,
   },
-  rightListContent: {
-    paddingHorizontal: 10,
+  listContainer: {
+    paddingHorizontal: 14,
+    paddingTop: 8,
     paddingBottom: 28,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Palette.oat[50],
-    paddingVertical: 8,
+  listHeaderSummary: {
+    paddingVertical: 6,
     paddingHorizontal: 2,
-    gap: 6,
+    marginBottom: 4,
   },
-  sectionHeaderIcon: {
-    fontSize: 14,
-  },
-  sectionHeaderTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: Palette.cocoa[900],
-  },
-  sectionBadge: {
-    backgroundColor: Palette.oat[100],
-    paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 8,
-    marginLeft: 2,
-  },
-  sectionBadgeText: {
-    fontSize: 10,
+  summaryText: {
+    fontSize: 11.5,
     fontWeight: '600',
     color: Palette.cocoa[400],
   },
-  recipeCardWrapper: {
-    marginBottom: 8,
-  },
-  searchResultsContainer: {
-    flex: 1,
-    paddingHorizontal: 14,
-    paddingTop: 10,
-  },
-  searchResultHeader: {
-    fontSize: 11,
-    color: Palette.cocoa[400],
-    marginBottom: 10,
-  },
-  bold: {
-    fontWeight: '700',
+  summaryBold: {
     color: Palette.apricot[600],
+    fontWeight: '700',
   },
-  searchListContent: {
-    paddingBottom: 24,
+  gridRow: {
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 12,
+  },
+  gridItem: {
+    width: '48%',
+    flexGrow: 1,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -399,8 +398,123 @@ const styles = StyleSheet.create({
     paddingVertical: 80,
     gap: 10,
   },
-  emptyText: {
-    fontSize: 13,
+  emptyTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
+    marginTop: 4,
+  },
+  emptySubtitle: {
+    fontSize: 12,
     color: Palette.cocoa[400],
+    textAlign: 'center',
+  },
+  resetBtn: {
+    marginTop: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 10,
+    backgroundColor: Palette.apricot[100],
+  },
+  resetBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Palette.apricot[600],
+  },
+  matrixOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(30, 24, 20, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  matrixCard: {
+    width: '100%',
+    maxHeight: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 10,
+  },
+  matrixHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F2ECE5',
+    marginBottom: 14,
+  },
+  matrixTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  matrixTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: Palette.cocoa[900],
+  },
+  matrixSubtitle: {
+    fontSize: 11,
+    color: Palette.cocoa[400],
+  },
+  matrixCloseBtn: {
+    padding: 4,
+  },
+  matrixGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    justifyContent: 'space-between',
+  },
+  matrixItem: {
+    width: '31%',
+    backgroundColor: Palette.oat[50],
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#ECE4DA',
+    gap: 4,
+  },
+  matrixItemActive: {
+    backgroundColor: Palette.apricot[50],
+    borderColor: Palette.apricot[400],
+  },
+  matrixItemIcon: {
+    fontSize: 20,
+    marginBottom: 2,
+  },
+  matrixItemText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
+  },
+  matrixItemTextActive: {
+    color: Palette.apricot[600],
+  },
+  matrixItemBadge: {
+    backgroundColor: Palette.oat[100],
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
+    borderRadius: 6,
+  },
+  matrixItemBadgeActive: {
+    backgroundColor: Palette.apricot[100],
+  },
+  matrixItemBadgeText: {
+    fontSize: 9.5,
+    fontWeight: '600',
+    color: Palette.cocoa[400],
+  },
+  matrixItemBadgeTextActive: {
+    color: Palette.apricot[600],
   },
 });

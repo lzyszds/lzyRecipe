@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Heart } from 'lucide-react-native';
+import { Heart, Clock, Plus } from 'lucide-react-native';
 import { Recipe, DifficultyLevel } from '../types';
 import { RecipeImage } from './RecipeImage';
 import { useFavoritesStore } from '../store/favoritesStore';
@@ -41,7 +41,9 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
     e?.stopPropagation?.();
     const result = addToFirstEmptySlot(recipe.id);
     if (result) {
-      // 成功加入提示
+      Alert.alert('已加入餐盘', `「${recipe.name}」已添加至本周计划！`);
+    } else {
+      Alert.alert('提示', '本周餐盘已满，可前往周计划调整');
     }
   };
 
@@ -87,6 +89,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
     );
   }
 
+  // 大图杂志双列卡片
   return (
     <TouchableOpacity
       style={styles.card}
@@ -107,24 +110,33 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
           <Heart
             size={15}
             color={favorite ? Palette.apricot[500] : '#FFFFFF'}
-            fill={favorite ? Palette.apricot[500] : 'rgba(0,0,0,0.25)'}
+            fill={favorite ? Palette.apricot[500] : 'rgba(0,0,0,0.3)'}
           />
         </TouchableOpacity>
+
+        {/* 封面下方的时长小药丸 */}
+        <View style={styles.timeBadge}>
+          <Clock size={10} color="#FFFFFF" />
+          <Text style={styles.timeBadgeText}>{recipe.cookTime}分</Text>
+        </View>
       </View>
 
       <View style={styles.body}>
         <Text style={styles.title} numberOfLines={1}>
           {recipe.name}
         </Text>
+        
         <View style={styles.metaRow}>
-          <Text style={styles.metaText} numberOfLines={1}>
-            {recipe.category} · {recipe.cookTime}分
-          </Text>
+          <View style={styles.categoryBadge}>
+            <Text style={styles.categoryBadgeText}>{recipe.category}</Text>
+          </View>
           <TouchableOpacity
             style={styles.addPlanBtn}
             onPress={handleAddToPlan}
+            activeOpacity={0.8}
           >
-            <Text style={styles.addPlanBtnText}>+ 餐盘</Text>
+            <Plus size={11} color={Palette.apricot[600]} />
+            <Text style={styles.addPlanBtnText}>餐盘</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -135,11 +147,11 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
-    padding: 8,
+    borderRadius: 16,
+    padding: 7,
     borderWidth: 1,
-    borderColor: Palette.oat[100],
-    shadowColor: Palette.cocoa[900],
+    borderColor: '#F2ECE5',
+    shadowColor: '#2C221C',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -147,8 +159,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageContainer: {
-    height: 116,
-    borderRadius: 10,
+    height: 130,
+    borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: Palette.oat[100],
     position: 'relative',
@@ -160,23 +172,41 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.12,
-    shadowRadius: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+  },
+  timeBadge: {
+    position: 'absolute',
+    bottom: 6,
+    left: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    gap: 3,
+  },
+  timeBadgeText: {
+    fontSize: 9.5,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   body: {
     paddingTop: 8,
-    paddingHorizontal: 2,
-    paddingBottom: 2,
+    paddingHorizontal: 4,
+    paddingBottom: 4,
   },
   title: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 13.5,
+    fontWeight: '800',
     color: Palette.cocoa[900],
+    letterSpacing: 0.2,
   },
   metaRow: {
     flexDirection: 'row',
@@ -184,22 +214,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 6,
   },
-  metaText: {
-    fontSize: 11,
-    color: Palette.cocoa[400],
-    flex: 1,
+  categoryBadge: {
+    backgroundColor: Palette.oat[100],
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  categoryBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: Palette.cocoa[700],
   },
   addPlanBtn: {
-    paddingHorizontal: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 6,
     backgroundColor: Palette.apricot[50],
     borderWidth: 1,
     borderColor: Palette.apricot[200],
+    gap: 2,
   },
   addPlanBtnText: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     color: Palette.apricot[600],
   },
   compactCard: {
