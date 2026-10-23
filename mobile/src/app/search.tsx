@@ -124,6 +124,10 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 10,
     gap: 10,
+    backgroundColor: Palette.oat[50],
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Palette.dockBorder,
+    zIndex: 10,
   },
   backBtn: {
     width: 36,

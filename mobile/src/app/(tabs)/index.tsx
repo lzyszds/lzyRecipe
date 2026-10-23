@@ -12,19 +12,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Search, Heart, Sparkles, ChefHat, Calendar, ChevronRight } from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeCard } from '@/components/RecipeCard';
-import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
+import { useBentoStore } from '@/store/bentoStore';
+import { getTodayString, formatMonthDay, getWeekdayName } from '@/lib/bentoDate';
+import { buildGroceryList } from '@/lib/grocery';
 import { Palette } from '@/constants/theme';
 
 export default function HomeScreen() {
   const router = useRouter();
   const allRecipes = useAllRecipes();
   const categories = getCategoriesWithCounts(allRecipes);
-  const { plans } = useWeeklyPlanStore();
+  const recipeMap = React.useMemo(() => new Map(allRecipes.map((r) => [r.id, r])), [allRecipes]);
 
-  // 今日是星期几 (0:周日, 1:周一...) 映射到 0~6
-  const jsDay = new Date().getDay();
-  const todayIndex = jsDay === 0 ? 6 : jsDay - 1;
-  const todayPlan = plans.find((p) => p.dayIndex === todayIndex);
+  const todayStr = getTodayString();
+  const { getDayBento, bentoByDate } = useBentoStore();
+  const todayBento = getDayBento(todayStr);
+
+  const groceryToday = React.useMemo(
+    () => buildGroceryList([todayStr], bentoByDate, allRecipes).todayItems,
+    [todayStr, bentoByDate, allRecipes]
+  );
 
   // 精选菜谱
   const FEATURED_NAMES = [
@@ -42,11 +48,11 @@ export default function HomeScreen() {
   ).filter((r): r is NonNullable<typeof r> => Boolean(r));
   const displayRecipes = featured.length > 0 ? featured : allRecipes.slice(0, 8);
 
-  // 今日餐盘统计
+  // 今日三餐便当列表
   const todayMeals = [
-    { label: '早', item: todayPlan?.breakfast },
-    { label: '午', item: todayPlan?.lunch },
-    { label: '晚', item: todayPlan?.dinner },
+    { label: '早', items: todayBento.breakfast },
+    { label: '午', items: todayBento.lunch },
+    { label: '晚', items: todayBento.dinner },
   ];
 
   return (
@@ -87,7 +93,7 @@ export default function HomeScreen() {
           <Text style={styles.searchPlaceholder}>搜索菜名、食材、菜系...</Text>
         </TouchableOpacity>
 
-        {/* 今日餐盘小卡片 */}
+        {/* 今日便当盒小卡片 */}
         <TouchableOpacity
           style={styles.planCard}
           onPress={() => router.push('/weekly-plan')}
@@ -95,30 +101,40 @@ export default function HomeScreen() {
         >
           <View style={styles.planCardHeader}>
             <View style={styles.planCardTitleRow}>
-              <Calendar size={14} color={Palette.apricot[500]} />
-              <Text style={styles.planCardTitle}>今日餐盘计划</Text>
+              <Calendar size={14} color={Palette.primary} />
+              <Text style={styles.planCardTitle}>
+                今日便当盒 ({formatMonthDay(todayStr)} {getWeekdayName(todayStr)})
+              </Text>
             </View>
             <View style={styles.planCardAction}>
-              <Text style={styles.planCardActionText}>周计划</Text>
+              <Text style={styles.planCardActionText}>一周便当</Text>
               <ChevronRight size={13} color={Palette.cocoa[400]} />
             </View>
           </View>
 
           <View style={styles.mealSlotsRow}>
             {todayMeals.map((m, idx) => {
-              const recipe = m.item?.recipeId
-                ? allRecipes.find((r) => r.id === m.item?.recipeId)
-                : null;
+              const dishNames = m.items
+                .map((item) => recipeMap.get(item.recipeId)?.name)
+                .filter(Boolean);
               return (
                 <View key={idx} style={styles.mealSlot}>
                   <Text style={styles.mealSlotTag}>{m.label}</Text>
                   <Text style={styles.mealSlotName} numberOfLines={1}>
-                    {recipe ? recipe.name : '未安排'}
+                    {dishNames.length > 0 ? dishNames.join('、') : '未安排'}
                   </Text>
                 </View>
               );
             })}
           </View>
+
+          {groceryToday.length > 0 && (
+            <View style={styles.groceryNoticeBar}>
+              <Text style={styles.groceryNoticeText} numberOfLines={1}>
+                🛒 今日急需备菜：{groceryToday.map((i) => i.name).slice(0, 3).join('、')}等 {groceryToday.length} 项食材
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
         {/* 精选菜谱网格 */}
         <View style={styles.sectionHeader}>
@@ -153,6 +169,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 16,
+    paddingTop: 12,
     paddingBottom: 110,
   },
   header: {
@@ -162,6 +179,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 12,
+    backgroundColor: Palette.canvas,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Palette.dockBorder,
+    zIndex: 10,
   },
   titleRow: {
     flexDirection: 'row',
@@ -272,6 +293,18 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Palette.cocoa[700],
     flex: 1,
+  },
+  groceryNoticeBar: {
+    marginTop: 8,
+    backgroundColor: 'rgba(217, 107, 56, 0.08)',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  groceryNoticeText: {
+    fontSize: 10,
+    color: Palette.primary,
+    fontWeight: '600',
   },
   sectionHeader: {
     flexDirection: 'row',

@@ -5,8 +5,9 @@ import { Heart, Clock, Plus, Check } from 'lucide-react-native';
 import { Recipe, DifficultyLevel } from '../types';
 import { RecipeImage } from './RecipeImage';
 import { useFavoritesStore } from '../store/favoritesStore';
-import { useTodayPlateStore } from '../store/todayPlateStore';
+import { useBentoStore } from '../store/bentoStore';
 import { useMealPlanSheetStore } from '../store/mealPlanSheetStore';
+import { toast } from '../store/feedbackStore';
 import { Palette } from '../constants/theme';
 
 interface RecipeCardProps {
@@ -23,9 +24,9 @@ const difficultyLabel: Record<DifficultyLevel, string> = {
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
+  const { isInPool, togglePool } = useBentoStore();
   const favorite = isFavorite(recipe.id);
-  const inPlate = isInPlate(recipe.id);
+  const inPool = isInPool(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -37,17 +38,21 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
-    showToast(favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`);
+    toast({
+      type: 'info',
+      message: favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`,
+    });
   };
 
   const handleAddToPlan = (e: any) => {
     e?.stopPropagation?.();
-    const added = togglePlate(recipe.id);
-    showToast(
-      added
-        ? `🍽️「${recipe.name}」已加入今日餐盘`
-        : `已从餐盘移出「${recipe.name}」`
-    );
+    const added = togglePool(recipe.id);
+    toast({
+      type: added ? 'success' : 'info',
+      message: added
+        ? `🍱「${recipe.name}」已放入想吃候选池`
+        : `已从候选池移出「${recipe.name}」`,
+    });
   };
 
   const handleLongPress = () => {
@@ -145,11 +150,11 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
             <Text style={styles.categoryBadgeText}>{recipe.category}</Text>
           </View>
           <TouchableOpacity
-            style={[styles.addPlanBtn, inPlate && styles.addPlanBtnActive]}
+            style={[styles.addPlanBtn, inPool && styles.addPlanBtnActive]}
             onPress={handleAddToPlan}
             activeOpacity={0.8}
           >
-            {inPlate ? (
+            {inPool ? (
               <>
                 <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
                 <Text style={styles.addPlanBtnTextActive}>已加</Text>

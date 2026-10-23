@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,13 +20,13 @@ import {
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
-import { useWeeklyPlanStore } from '@/store/weeklyPlanStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
-import { useTodayPlateStore } from '@/store/todayPlateStore';
+import { useBentoStore } from '@/store/bentoStore';
+import { toast } from '@/store/feedbackStore';
 import { RecipeImage } from '@/components/RecipeImage';
 import { DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
-import { Plus, Check } from 'lucide-react-native';
+import { Plus, Check, Bookmark } from 'lucide-react-native';
 
 const difficultyConfig: Record<DifficultyLevel, { label: string }> = {
   easy: { label: '简单' },
@@ -41,9 +41,9 @@ export default function RecipeDetailScreen() {
   const recipe = allRecipes.find((r) => r.id === id);
 
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { addToFirstEmptySlot } = useWeeklyPlanStore();
 
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   if (!recipe) {
     return (
@@ -59,6 +59,25 @@ export default function RecipeDetailScreen() {
   const favorite = isFavorite(recipe.id);
   const difficulty = difficultyConfig[recipe.difficulty] || { label: '普通' };
 
+  // 微信式滚动渐变动画：导航栏背景与标题无缝浮现
+  const headerBgOpacity = scrollY.interpolate({
+    inputRange: [20, 100],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
+  const headerBorderOpacity = scrollY.interpolate({
+    inputRange: [70, 110],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
+  const titleOpacity = scrollY.interpolate({
+    inputRange: [50, 110],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
   const toggleIngredient = (index: number) => {
     const next = new Set(checkedIngredients);
     if (next.has(index)) {
@@ -69,16 +88,17 @@ export default function RecipeDetailScreen() {
     setCheckedIngredients(next);
   };
 
-  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
-  const inPlate = isInPlate(recipe.id);
+  const { isInPool, togglePool } = useBentoStore();
+  const inPool = isInPool(recipe.id);
 
-  const handleToggleTodayPlate = () => {
-    const added = togglePlate(recipe.id);
-    showToast(
-      added
-        ? `🍽️「${recipe.name}」已加入今日餐盘`
-        : `已从餐盘移出「${recipe.name}」`
-    );
+  const handleTogglePool = () => {
+    const added = togglePool(recipe.id);
+    toast({
+      type: added ? 'success' : 'info',
+      message: added
+        ? `🍱「${recipe.name}」已放入想吃候选池！`
+        : `已从想吃候选池移出「${recipe.name}」`,
+    });
   };
 
   const handleAddToWeeklyPlan = () => {
@@ -87,20 +107,23 @@ export default function RecipeDetailScreen() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* 顶部大封面 */}
-        <View style={styles.coverWrapper}>
-          <RecipeImage
-            coverImage={recipe.coverImage}
-            name={recipe.name}
-            category={recipe.category}
-          />
-          {/* 返回按钮 & 收藏按钮 */}
-          <SafeAreaView style={styles.topBar} edges={['top']}>
+      {/* 微信式置顶固定导航栏（永不随滚动脱离画面） */}
+      <View style={styles.fixedNavBar}>
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            styles.navBarBackground,
+            { opacity: headerBgOpacity },
+          ]}
+        />
+        <Animated.View
+          style={[
+            styles.navBarBorder,
+            { opacity: headerBorderOpacity },
+          ]}
+        />
+        <SafeAreaView edges={['top']} style={styles.navBarSafeArea}>
+          <View style={styles.navBarRow}>
             <TouchableOpacity
               style={styles.iconCircle}
               onPress={() => router.back()}
@@ -108,6 +131,13 @@ export default function RecipeDetailScreen() {
             >
               <ArrowLeft size={18} color={Palette.cocoa[900]} />
             </TouchableOpacity>
+
+            <Animated.Text
+              style={[styles.navBarTitle, { opacity: titleOpacity }]}
+              numberOfLines={1}
+            >
+              {recipe.name}
+            </Animated.Text>
 
             <View style={styles.topRightActions}>
               <TouchableOpacity
@@ -122,7 +152,27 @@ export default function RecipeDetailScreen() {
                 />
               </TouchableOpacity>
             </View>
-          </SafeAreaView>
+          </View>
+        </SafeAreaView>
+      </View>
+
+      <Animated.ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: false }
+        )}
+      >
+        {/* 顶部大封面 */}
+        <View style={styles.coverWrapper}>
+          <RecipeImage
+            coverImage={recipe.coverImage}
+            name={recipe.name}
+            category={recipe.category}
+          />
         </View>
 
         {/* 菜谱主信息卡 */}
@@ -225,24 +275,24 @@ export default function RecipeDetailScreen() {
             <Text style={styles.tipsContent}>{recipe.tips}</Text>
           </View>
         )}
-      </ScrollView>
+      </Animated.ScrollView>
 
       {/* 底部固定操作栏 */}
       <SafeAreaView style={styles.bottomBar} edges={['bottom']}>
         <TouchableOpacity
-          style={[styles.todayPlateBtn, inPlate && styles.todayPlateBtnActive]}
-          onPress={handleToggleTodayPlate}
+          style={[styles.todayPlateBtn, inPool && styles.todayPlateBtnActive]}
+          onPress={handleTogglePool}
           activeOpacity={0.8}
         >
-          {inPlate ? (
+          {inPool ? (
             <>
               <Check size={16} color="#FFFFFF" strokeWidth={2.5} />
-              <Text style={styles.todayPlateBtnTextActive}>已在餐盘</Text>
+              <Text style={styles.todayPlateBtnTextActive}>已在想吃池</Text>
             </>
           ) : (
             <>
               <Plus size={16} color={Palette.primary} strokeWidth={2.5} />
-              <Text style={styles.todayPlateBtnText}>加今日餐盘</Text>
+              <Text style={styles.todayPlateBtnText}>放进想吃池</Text>
             </>
           )}
         </TouchableOpacity>
@@ -253,7 +303,7 @@ export default function RecipeDetailScreen() {
           activeOpacity={0.85}
         >
           <CalendarPlus size={16} color="#FFFFFF" />
-          <Text style={styles.schedulePlanBtnText}>排入周计划</Text>
+          <Text style={styles.schedulePlanBtnText}>排入便当盒</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>
@@ -277,16 +327,41 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.oat[100],
     position: 'relative',
   },
-  topBar: {
+  fixedNavBar: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
+    zIndex: 100,
+  },
+  navBarBackground: {
+    backgroundColor: Palette.canvas,
+  },
+  navBarBorder: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: Palette.dockBorder,
+  },
+  navBarSafeArea: {
+    width: '100%',
+  },
+  navBarRow: {
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 8,
+  },
+  navBarTitle: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
+    textAlign: 'center',
+    marginHorizontal: 10,
   },
   topRightActions: {
     flexDirection: 'row',
@@ -300,6 +375,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.92)',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: 'rgba(0, 0, 0, 0.06)',
   },
   mainInfoCard: {
     backgroundColor: '#FFFFFF',

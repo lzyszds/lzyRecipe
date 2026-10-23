@@ -25,7 +25,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="weekly-plan"
         options={{
-          title: '周计划',
+          title: '便当盒',
         }}
       />
       <Tabs.Screen

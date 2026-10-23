@@ -10,6 +10,7 @@ import {
 } from '../store/settingsStore';
 import { Recipe } from '../types';
 import { getAllRecipes } from './recipes';
+import { useBentoStore } from '../store/bentoStore';
 
 /** 同步内容快照：服务端按密钥区分用户，多端完全一致 */
 export interface SyncPayload {
@@ -22,8 +23,13 @@ export interface SyncPayload {
     templates?: any[];
   };
   notes: Note[];
+  bento?: {
+    recipePool: string[];
+    bentoByDate: Record<string, import('../store/bentoStore').DayBento>;
+  };
   settings?: {
     sync: CloudSyncConfig;
+    ai?: import('../store/settingsStore').AiSettings;
   };
 }
 
@@ -96,7 +102,14 @@ export function collectPayload(): SyncPayload {
       includeOptionalGroups: plan.includeOptionalGroups,
     },
     notes: useNotesStore.getState().notes,
-    settings: { sync: settings.sync },
+    bento: {
+      recipePool: useBentoStore.getState().recipePool,
+      bentoByDate: useBentoStore.getState().bentoByDate,
+    },
+    settings: {
+      sync: settings.sync,
+      ai: settings.ai,
+    },
   };
 }
 
@@ -130,8 +143,20 @@ function applyPayload(payload: SyncPayload): void {
     });
   }
 
+  if (payload.bento) {
+    useBentoStore.getState().mergeBentoData(payload.bento);
+  }
+
   if (Array.isArray(payload.notes)) {
     useNotesStore.getState().mergeRemote(payload.notes);
+  }
+
+  if (payload.settings?.ai) {
+    const localAi = useSettingsStore.getState().ai;
+    useSettingsStore.getState().setAi({
+      ...payload.settings.ai,
+      apiKey: payload.settings.ai.apiKey?.trim() || localAi.apiKey,
+    });
   }
 }
 

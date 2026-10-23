@@ -1,0 +1,330 @@
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { safeAsyncStorage } from '@/lib/safeStorage';
+import { getTodayString, getWeekDates, getMondayOf } from '@/lib/bentoDate';
+import type { Recipe } from '@/types';
+
+export type MealType = 'breakfast' | 'lunch' | 'dinner';
+
+export interface MealSlotItem {
+  recipeId: string;
+  eatenAt: string | null; // ISO 时间戳，null 表示未吃
+}
+
+export interface DayBento {
+  date: string; // YYYY-MM-DD
+  breakfast: MealSlotItem[];
+  lunch: MealSlotItem[];
+  dinner: MealSlotItem[];
+}
+
+export const createEmptyDayBento = (date: string): DayBento => ({
+  date,
+  breakfast: [],
+  lunch: [],
+  dinner: [],
+});
+
+interface BentoState {
+  // 1. 想吃候选池（RecipePool，从收藏/搜索/推荐随手加入）
+  recipePool: string[];
+
+  // 2. 每天的便当盒，以真实日期 YYYY-MM-DD 为 Key
+  bentoByDate: Record<string, DayBento>;
+
+  // 3. 采购清单打勾状态，Key 为材料名或组合 Key
+  purchasedIngredients: Record<string, boolean>;
+
+  // 候选池操作
+  addToPool: (recipeId: string) => void;
+  removeFromPool: (recipeId: string) => void;
+  togglePool: (recipeId: string) => boolean;
+  isInPool: (recipeId: string) => boolean;
+  clearPool: () => void;
+
+  // 便当餐位操作
+  getDayBento: (date: string) => DayBento;
+  addDishesToMeal: (date: string, mealType: MealType, recipeIds: string[]) => void;
+  removeDishFromMeal: (date: string, mealType: MealType, recipeId: string) => void;
+  clearMeal: (date: string, mealType: MealType) => void;
+  clearDay: (date: string) => void;
+
+  // “已吃掉” 打卡动效与状态
+  toggleEaten: (date: string, mealType: MealType, recipeId: string) => void;
+
+  // 上班族快捷：一键“午餐带饭”（选中一道菜排入周一至周五全部午餐）
+  applyLunchBentoToWorkdays: (mondayStr: string, recipeId: string) => void;
+
+  // 智能填充空餐位（保留空白与已有菜，绝不覆盖已有手排）
+  smartFillEmptySlots: (mondayStr: string, allRecipes: Recipe[]) => number;
+
+  // 采购单打勾与清空
+  togglePurchased: (ingKey: string) => void;
+  clearPurchased: () => void;
+
+  // 数据同步或导入外部 bento
+  mergeBentoData: (incoming: {
+    recipePool?: string[];
+    bentoByDate?: Record<string, DayBento>;
+  }) => void;
+}
+
+export const useBentoStore = create<BentoState>()(
+  persist(
+    (set, get) => ({
+      recipePool: [],
+      bentoByDate: {},
+      purchasedIngredients: {},
+
+      addToPool: (recipeId) =>
+        set((state) => {
+          if (state.recipePool.includes(recipeId)) return state;
+          return { recipePool: [recipeId, ...state.recipePool] };
+        }),
+
+      removeFromPool: (recipeId) =>
+        set((state) => ({
+          recipePool: state.recipePool.filter((id) => id !== recipeId),
+        })),
+
+      togglePool: (recipeId) => {
+        const current = get().recipePool;
+        const exists = current.includes(recipeId);
+        if (exists) {
+          set({ recipePool: current.filter((id) => id !== recipeId) });
+          return false;
+        } else {
+          set({ recipePool: [recipeId, ...current] });
+          return true;
+        }
+      },
+
+      isInPool: (recipeId) => get().recipePool.includes(recipeId),
+
+      clearPool: () => set({ recipePool: [] }),
+
+      getDayBento: (date) => {
+        const state = get();
+        return state.bentoByDate[date] || createEmptyDayBento(date);
+      },
+
+      addDishesToMeal: (date, mealType, recipeIds) =>
+        set((state) => {
+          const currentDay = state.bentoByDate[date] || createEmptyDayBento(date);
+          const currentSlot = currentDay[mealType] || [];
+          const existingIds = new Set(currentSlot.map((item) => item.recipeId));
+
+          const newItems: MealSlotItem[] = [];
+          for (const id of recipeIds) {
+            if (!existingIds.has(id)) {
+              newItems.push({ recipeId: id, eatenAt: null });
+            }
+          }
+
+          if (newItems.length === 0) return state;
+
+          return {
+            bentoByDate: {
+              ...state.bentoByDate,
+              [date]: {
+                ...currentDay,
+                [mealType]: [...currentSlot, ...newItems],
+              },
+            },
+          };
+        }),
+
+      removeDishFromMeal: (date, mealType, recipeId) =>
+        set((state) => {
+          const currentDay = state.bentoByDate[date];
+          if (!currentDay) return state;
+
+          return {
+            bentoByDate: {
+              ...state.bentoByDate,
+              [date]: {
+                ...currentDay,
+                [mealType]: currentDay[mealType].filter((item) => item.recipeId !== recipeId),
+              },
+            },
+          };
+        }),
+
+      clearMeal: (date, mealType) =>
+        set((state) => {
+          const currentDay = state.bentoByDate[date];
+          if (!currentDay) return state;
+          return {
+            bentoByDate: {
+              ...state.bentoByDate,
+              [date]: {
+                ...currentDay,
+                [mealType]: [],
+              },
+            },
+          };
+        }),
+
+      clearDay: (date) =>
+        set((state) => {
+          const currentDay = state.bentoByDate[date];
+          if (!currentDay) return state;
+          return {
+            bentoByDate: {
+              ...state.bentoByDate,
+              [date]: createEmptyDayBento(date),
+            },
+          };
+        }),
+
+      toggleEaten: (date, mealType, recipeId) =>
+        set((state) => {
+          const currentDay = state.bentoByDate[date];
+          if (!currentDay) return state;
+
+          const updated = currentDay[mealType].map((item) => {
+            if (item.recipeId !== recipeId) return item;
+            return {
+              ...item,
+              eatenAt: item.eatenAt ? null : new Date().toISOString(),
+            };
+          });
+
+          return {
+            bentoByDate: {
+              ...state.bentoByDate,
+              [date]: {
+                ...currentDay,
+                [mealType]: updated,
+              },
+            },
+          };
+        }),
+
+      applyLunchBentoToWorkdays: (mondayStr, recipeId) =>
+        set((state) => {
+          const weekDates = getWeekDates(mondayStr);
+          // 周一到周五: index 0 ~ 4
+          const workdays = weekDates.slice(0, 5);
+          const nextBento = { ...state.bentoByDate };
+
+          for (const d of workdays) {
+            const dayBento = nextBento[d] || createEmptyDayBento(d);
+            const exists = dayBento.lunch.some((item) => item.recipeId === recipeId);
+            if (!exists) {
+              nextBento[d] = {
+                ...dayBento,
+                lunch: [...dayBento.lunch, { recipeId, eatenAt: null }],
+              };
+            }
+          }
+
+          return { bentoByDate: nextBento };
+        }),
+
+      smartFillEmptySlots: (mondayStr, allRecipes) => {
+        if (!allRecipes.length) return 0;
+        let filledCount = 0;
+
+        const weekDates = getWeekDates(mondayStr);
+        const breakfastCandidates = allRecipes.filter((r) =>
+          ['早餐', '主食', '点心', '汤'].includes(r.category)
+        );
+        const mealCandidates = allRecipes.filter(
+          (r) => !['饮品', '甜点'].includes(r.category)
+        );
+
+        const getRandom = (arr: Recipe[]) => arr[Math.floor(Math.random() * arr.length)];
+
+        set((state) => {
+          const nextBento = { ...state.bentoByDate };
+
+          for (const d of weekDates) {
+            const dayBento = nextBento[d] || createEmptyDayBento(d);
+            let dayChanged = false;
+
+            // 1. 早餐如果为空，填 1 道
+            let nextBreakfast = [...dayBento.breakfast];
+            if (nextBreakfast.length === 0) {
+              const pick = getRandom(breakfastCandidates.length ? breakfastCandidates : allRecipes);
+              if (pick) {
+                nextBreakfast.push({ recipeId: pick.id, eatenAt: null });
+                filledCount++;
+                dayChanged = true;
+              }
+            }
+
+            // 2. 午餐如果为空，填 2 道
+            let nextLunch = [...dayBento.lunch];
+            if (nextLunch.length === 0) {
+              const pick1 = getRandom(mealCandidates);
+              let pick2 = getRandom(mealCandidates);
+              if (pick1 && pick2 && pick1.id === pick2.id) {
+                pick2 = getRandom(mealCandidates);
+              }
+              if (pick1) nextLunch.push({ recipeId: pick1.id, eatenAt: null });
+              if (pick2 && pick2.id !== pick1?.id) nextLunch.push({ recipeId: pick2.id, eatenAt: null });
+              filledCount += nextLunch.length;
+              dayChanged = true;
+            }
+
+            // 3. 晚餐如果为空，填 2 道
+            let nextDinner = [...dayBento.dinner];
+            if (nextDinner.length === 0) {
+              const pick1 = getRandom(mealCandidates);
+              let pick2 = getRandom(mealCandidates);
+              if (pick1 && pick2 && pick1.id === pick2.id) {
+                pick2 = getRandom(mealCandidates);
+              }
+              if (pick1) nextDinner.push({ recipeId: pick1.id, eatenAt: null });
+              if (pick2 && pick2.id !== pick1?.id) nextDinner.push({ recipeId: pick2.id, eatenAt: null });
+              filledCount += nextDinner.length;
+              dayChanged = true;
+            }
+
+            if (dayChanged) {
+              nextBento[d] = {
+                ...dayBento,
+                breakfast: nextBreakfast,
+                lunch: nextLunch,
+                dinner: nextDinner,
+              };
+            }
+          }
+
+          return { bentoByDate: nextBento };
+        });
+
+        return filledCount;
+      },
+
+      togglePurchased: (ingKey) =>
+        set((state) => ({
+          purchasedIngredients: {
+            ...state.purchasedIngredients,
+            [ingKey]: !state.purchasedIngredients[ingKey],
+          },
+        })),
+
+      clearPurchased: () => set({ purchasedIngredients: {} }),
+
+      mergeBentoData: (incoming) =>
+        set((state) => {
+          const nextPool = Array.from(
+            new Set([...(incoming.recipePool || []), ...state.recipePool])
+          );
+          const nextBento = { ...state.bentoByDate, ...(incoming.bentoByDate || {}) };
+          return { recipePool: nextPool, bentoByDate: nextBento };
+        }),
+    }),
+    {
+      name: 'lzy-recipe-bento-storage-v1',
+      storage: createJSONStorage(() => safeAsyncStorage),
+      partialize: (state) => ({
+        recipePool: state.recipePool,
+        bentoByDate: state.bentoByDate,
+        purchasedIngredients: state.purchasedIngredients,
+      }),
+    }
+  )
+);

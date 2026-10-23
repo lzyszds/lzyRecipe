@@ -23,9 +23,10 @@ import {
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
 import { useAllRecipes } from '@/lib/recipes';
-import { useSettingsStore, isSyncConfigured } from '@/store/settingsStore';
+import { useSettingsStore, isSyncConfigured, isAiConfigured } from '@/store/settingsStore';
 import { useSyncStore } from '@/lib/cloudSync';
 import { SyncSettingsModal } from '@/components/SyncSettingsModal';
+import { AiSettingsModal } from '@/components/AiSettingsModal';
 import { Palette } from '@/constants/theme';
 
 export default function ProfileScreen() {
@@ -35,12 +36,18 @@ export default function ProfileScreen() {
   const allRecipes = useAllRecipes();
   const validNotes = activeNotes(notes);
 
-  const { sync } = useSettingsStore();
+  const { sync, ai } = useSettingsStore();
   const { status: syncStatus, lastSyncedAt } = useSyncStore();
   const [syncModalVisible, setSyncModalVisible] = React.useState(false);
+  const [aiModalVisible, setAiModalVisible] = React.useState(false);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      {/* 顶部固定导航栏（微信风格，固定在最顶部永不随内容滚动） */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>个人中心</Text>
+      </View>
+
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
@@ -134,6 +141,43 @@ export default function ProfileScreen() {
             </View>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          {/* AI 智能助手设置项 */}
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => setAiModalVisible(true)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#FFF7ED' }]}>
+              <Sparkles size={18} color={Palette.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.menuTitle}>AI 智能厨师</Text>
+              <Text style={styles.menuSubtitle}>
+                {!isAiConfigured(ai)
+                  ? '配置 OpenAI 兼容接口（DeepSeek/通义/OpenAI）'
+                  : `${ai.model || '已接入'} · 随时待命`}
+              </Text>
+            </View>
+            <View style={styles.statusPill}>
+              <View
+                style={[
+                  styles.statusDot,
+                  {
+                    backgroundColor: !isAiConfigured(ai)
+                      ? Palette.cocoa[400]
+                      : '#10B981',
+                  },
+                ]}
+              />
+              <Text style={styles.statusPillText}>
+                {!isAiConfigured(ai) ? '未配置' : '已就绪'}
+              </Text>
+            </View>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
+          </TouchableOpacity>
         </View>
 
         {/* 核心功能列表 */}
@@ -221,6 +265,12 @@ export default function ProfileScreen() {
         visible={syncModalVisible}
         onClose={() => setSyncModalVisible(false)}
       />
+
+      {/* AI 智能厨师配置弹窗 */}
+      <AiSettingsModal
+        visible={aiModalVisible}
+        onClose={() => setAiModalVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -230,12 +280,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Palette.oat[50],
   },
+  header: {
+    height: 46,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    backgroundColor: Palette.oat[50],
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Palette.dockBorder,
+    zIndex: 10,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
+  },
   container: {
     flex: 1,
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 14,
     paddingBottom: 110,
     gap: 16,
   },

@@ -27,7 +27,8 @@ import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeImage } from '@/components/RecipeImage';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { useFavoritesStore } from '@/store/favoritesStore';
-import { useTodayPlateStore } from '@/store/todayPlateStore';
+import { useBentoStore } from '@/store/bentoStore';
+import { toast } from '@/store/feedbackStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { Recipe, DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
@@ -75,9 +76,9 @@ function renderDifficultyBadge(difficulty: DifficultyLevel) {
 const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
+  const { isInPool, togglePool } = useBentoStore();
   const favorite = isFavorite(recipe.id);
-  const inPlate = isInPlate(recipe.id);
+  const inPool = isInPool(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -89,17 +90,18 @@ const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
-    showToast(favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`);
+    toast({ type: 'info', message: favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」` });
   };
 
   const handleTogglePlate = (e: any) => {
     e?.stopPropagation?.();
-    const added = togglePlate(recipe.id);
-    showToast(
-      added
-        ? `🍽️「${recipe.name}」已飞入底部餐盘`
-        : `已从餐盘移出「${recipe.name}」`
-    );
+    const added = togglePool(recipe.id);
+    toast({
+      type: added ? 'success' : 'info',
+      message: added
+        ? `🍱「${recipe.name}」已放入想吃候选池`
+        : `已从想吃候选池移出「${recipe.name}」`,
+    });
   };
 
   const handleLongPress = () => {
@@ -172,19 +174,19 @@ const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
           </Text>
 
           <TouchableOpacity
-            style={[styles.plateActionBtn, inPlate && styles.plateActionBtnActive]}
+            style={[styles.plateActionBtn, inPool && styles.plateActionBtnActive]}
             onPress={handleTogglePlate}
             activeOpacity={0.8}
           >
-            {inPlate ? (
+            {inPool ? (
               <>
                 <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
-                <Text style={styles.plateActionBtnTextActive}>已加</Text>
+                <Text style={styles.plateActionBtnTextActive}>已选</Text>
               </>
             ) : (
               <>
                 <Plus size={11} color={Palette.primary} strokeWidth={2.5} />
-                <Text style={styles.plateActionBtnText}>餐盘</Text>
+                <Text style={styles.plateActionBtnText}>想吃</Text>
               </>
             )}
           </TouchableOpacity>
@@ -198,9 +200,9 @@ const CompactHorizontalCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
 const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { isInPlate, togglePlate, showToast } = useTodayPlateStore();
+  const { isInPool, togglePool } = useBentoStore();
   const favorite = isFavorite(recipe.id);
-  const inPlate = isInPlate(recipe.id);
+  const inPool = isInPool(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -212,17 +214,18 @@ const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
   const handleToggleFavorite = (e: any) => {
     e?.stopPropagation?.();
     toggleFavorite(recipe.id);
-    showToast(favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」`);
+    toast({ type: 'info', message: favorite ? '已取消收藏' : `❤️ 已收藏「${recipe.name}」` });
   };
 
   const handleTogglePlate = (e: any) => {
     e?.stopPropagation?.();
-    const added = togglePlate(recipe.id);
-    showToast(
-      added
-        ? `🍽️「${recipe.name}」已飞入底部餐盘`
-        : `已从餐盘移出「${recipe.name}」`
-    );
+    const added = togglePool(recipe.id);
+    toast({
+      type: added ? 'success' : 'info',
+      message: added
+        ? `🍱「${recipe.name}」已放入想吃候选池`
+        : `已从想吃候选池移出「${recipe.name}」`,
+    });
   };
 
   return (
@@ -275,19 +278,19 @@ const MagazineCard = React.memo<{ recipe: Recipe }>(({ recipe }) => {
         </Text>
 
         <TouchableOpacity
-          style={[styles.plateActionBtnLarge, inPlate && styles.plateActionBtnLargeActive]}
+          style={[styles.plateActionBtnLarge, inPool && styles.plateActionBtnLargeActive]}
           onPress={handleTogglePlate}
           activeOpacity={0.8}
         >
-          {inPlate ? (
+          {inPool ? (
             <>
               <Check size={12} color="#FFFFFF" strokeWidth={2.5} />
-              <Text style={styles.plateActionBtnTextActive}>已加餐盘</Text>
+              <Text style={styles.plateActionBtnTextActive}>已在想吃池</Text>
             </>
           ) : (
             <>
               <Plus size={12} color={Palette.primary} strokeWidth={2.5} />
-              <Text style={styles.plateActionBtnText}>+ 加餐盘</Text>
+              <Text style={styles.plateActionBtnText}>+ 放进想吃池</Text>
             </>
           )}
         </TouchableOpacity>
@@ -312,7 +315,7 @@ export default function RecipesScreen() {
   const [cardLayout, setCardLayout] = useState<CardLayout>('compact');
 
   const { isFavorite } = useFavoritesStore();
-  const { showToast } = useTodayPlateStore();
+  const showToast = (message: string) => toast({ type: 'info', message });
 
   const flatListRef = useRef<FlatList<FlatListItem>>(null);
   const leftSidebarRef = useRef<any>(null);
@@ -764,6 +767,9 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 10,
     backgroundColor: Palette.canvas,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Palette.dockBorder,
+    zIndex: 10,
   },
   searchRow: {
     flexDirection: 'row',
