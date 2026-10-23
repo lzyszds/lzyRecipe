@@ -1,8 +1,0 @@
-[[permission]]
-identifier = "allow-cover-commands"
-description = "允许封面搜索相关命令"
-commands.allow = [
-  "search_cover_baidu_images",
-  "generate_cover_baidu",
-  "search_cover_bing"
-]

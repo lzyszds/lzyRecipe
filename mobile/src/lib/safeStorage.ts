@@ -8,8 +8,8 @@ export const safeAsyncStorage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     try {
       if (AsyncStorage && typeof AsyncStorage.getItem === 'function') {
-        const value = await AsyncStorage.getItem(name);
-        if (value !== null) return value;
+        const value = await AsyncStorage.getItem(name).catch(() => null);
+        if (value !== null && value !== undefined) return value;
       }
     } catch {
       // 容错处理：若原生存储异常，安全回退到内存
@@ -20,7 +20,7 @@ export const safeAsyncStorage: StateStorage = {
   setItem: async (name: string, value: string): Promise<void> => {
     try {
       if (AsyncStorage && typeof AsyncStorage.setItem === 'function') {
-        await AsyncStorage.setItem(name, value);
+        await AsyncStorage.setItem(name, value).catch(() => {});
       }
     } catch {
       // 容错处理
@@ -31,7 +31,7 @@ export const safeAsyncStorage: StateStorage = {
   removeItem: async (name: string): Promise<void> => {
     try {
       if (AsyncStorage && typeof AsyncStorage.removeItem === 'function') {
-        await AsyncStorage.removeItem(name);
+        await AsyncStorage.removeItem(name).catch(() => {});
       }
     } catch {
       // 容错处理

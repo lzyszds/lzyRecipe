@@ -29,7 +29,7 @@ import {
   isToday,
 } from '../lib/bentoDate';
 import { toast } from '../store/feedbackStore';
-import { Palette, Radius } from '../constants/theme';
+import { Palette } from '../constants/theme';
 
 export const AddToMealPlanModal: React.FC = () => {
   const { targetRecipe, closeSheet } = useMealPlanSheetStore();
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Palette.oat[50],
-    borderRadius: Radius.lg,
+    borderRadius: 16,
     padding: 10,
     gap: 12,
     borderWidth: 1,
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
   thumbWrapper: {
     width: 50,
     height: 50,
-    borderRadius: Radius.md,
+    borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: Palette.oat[100],
   },
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 14,
     paddingVertical: 12,
-    borderRadius: Radius.lg,
+    borderRadius: 16,
     borderWidth: 1,
   },
   slotCardLeft: {
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.06)',
     paddingHorizontal: 6,
     paddingVertical: 1,
-    borderRadius: Radius.sm,
+    borderRadius: 6,
   },
   slotCountText: {
     fontSize: 10.5,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 12,
     paddingVertical: 8,
-    borderRadius: Radius.full,
+    borderRadius: 999,
   },
   addSlotBtnText: {
     fontSize: 12,
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 12,
     backgroundColor: 'rgba(217, 107, 56, 0.08)',
-    borderRadius: Radius.lg,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: 'rgba(217, 107, 56, 0.25)',
   },
