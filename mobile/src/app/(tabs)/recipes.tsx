@@ -25,7 +25,10 @@ const difficultyLabel: Record<DifficultyLevel, string> = {
   hard: '困难',
 };
 
-// 纯净扁平无阴影的美食宽幅卡片
+const ALL_CATEGORY = '全部';
+const LEFT_ITEM_HEIGHT = 46;
+
+// 圆润温润的美食大卡片（告别方正生硬）
 const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   const router = useRouter();
   const { isFavorite, toggleFavorite } = useFavoritesStore();
@@ -65,7 +68,7 @@ const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
       onPress={handlePress}
       activeOpacity={0.88}
     >
-      {/* 封面图 */}
+      {/* 柔润大圆角封面 */}
       <View style={styles.cardImageContainer}>
         <RecipeImage
           coverImage={recipe.coverImage}
@@ -85,7 +88,7 @@ const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
           />
         </TouchableOpacity>
 
-        {/* 时长小标签 */}
+        {/* 烹饪时长小胶囊 */}
         <View style={styles.cardTimeBadge}>
           <Clock size={10} color="#FFFFFF" />
           <Text style={styles.cardTimeText}>{recipe.cookTime}分钟</Text>
@@ -112,7 +115,9 @@ const GourmetRightCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
         )}
 
         <View style={styles.cardFooter}>
-          <Text style={styles.cardCategoryLabel}>{recipe.category}</Text>
+          <View style={styles.categoryPill}>
+            <Text style={styles.categoryPillText}>{recipe.category}</Text>
+          </View>
           <TouchableOpacity
             style={styles.cardAddBtn}
             onPress={handleAddToPlan}
@@ -139,7 +144,6 @@ export default function RecipesScreen() {
         const catRecipes = allRecipes.filter((r) => r.category === cat.name);
         return {
           title: cat.name,
-          count: catRecipes.length,
           sectionIndex: index,
           data: catRecipes,
         };
@@ -147,25 +151,27 @@ export default function RecipesScreen() {
       .filter((s) => s.data.length > 0);
   }, [allRecipes, rawCategories]);
 
-  // 左侧导航列表（仅分类名与道数，单行展示，无图标）
+  // 左侧导航列表：包含最顶部的【全部】分类，纯单行，无任何数量与图标
   const categoryNavItems = useMemo(() => {
-    return sections.map((s, idx) => ({
-      name: s.title,
-      count: s.count,
-      sectionIndex: idx,
-    }));
+    return [
+      { name: ALL_CATEGORY, sectionIndex: -1 },
+      ...sections.map((s, idx) => ({
+        name: s.title,
+        sectionIndex: idx,
+      })),
+    ];
   }, [sections]);
 
   // 初始选中索引
-  const initialIndex = useMemo(() => {
-    if (params.category) {
-      const idx = sections.findIndex((s) => s.title === params.category);
+  const initialNavIndex = useMemo(() => {
+    if (params.category && params.category !== ALL_CATEGORY) {
+      const idx = categoryNavItems.findIndex((c) => c.name === params.category);
       return idx >= 0 ? idx : 0;
     }
-    return 0;
-  }, [params.category, sections]);
+    return 0; // 默认选中“全部”
+  }, [params.category, categoryNavItems]);
 
-  const [activeIndex, setActiveIndex] = useState<number>(initialIndex);
+  const [activeNavIndex, setActiveNavIndex] = useState<number>(initialNavIndex);
   const [keyword, setKeyword] = useState<string>('');
 
   const leftListRef = useRef<FlatList>(null);
@@ -185,31 +191,47 @@ export default function RecipesScreen() {
     );
   }, [allRecipes, keyword]);
 
-  // 点击左侧分类
-  const handleSelectCategory = (index: number) => {
-    if (index === activeIndex) return;
-    setActiveIndex(index);
+  // 点击左侧分类导航（安全滚动，彻底杜绝 scrollToIndex 崩溃报错）
+  const handleSelectCategory = (navIndex: number) => {
+    if (navIndex === activeNavIndex) return;
+    setActiveNavIndex(navIndex);
 
     isClickingRef.current = true;
     if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
     clickTimerRef.current = setTimeout(() => {
       isClickingRef.current = false;
-    }, 600);
+    }, 500);
 
-    // 平滑滚动到右侧对应 Section
-    sectionListRef.current?.scrollToLocation({
-      sectionIndex: index,
-      itemIndex: 0,
-      animated: true,
-      viewOffset: 0,
-    });
+    // 如果选中的是【全部】，右侧直接滚到最顶部
+    if (navIndex === 0) {
+      try {
+        sectionListRef.current?.scrollToLocation({
+          sectionIndex: 0,
+          itemIndex: 0,
+          animated: true,
+          viewOffset: 0,
+        });
+      } catch (_) {}
+    } else {
+      const targetSectionIndex = navIndex - 1;
+      try {
+        sectionListRef.current?.scrollToLocation({
+          sectionIndex: targetSectionIndex,
+          itemIndex: 0,
+          animated: true,
+          viewOffset: 0,
+        });
+      } catch (_) {}
+    }
 
-    // 保持左侧分类在可视区
-    leftListRef.current?.scrollToIndex({
-      index,
-      animated: true,
-      viewPosition: 0.35,
-    });
+    // 左侧导航滚动
+    try {
+      leftListRef.current?.scrollToIndex({
+        index: navIndex,
+        animated: true,
+        viewPosition: 0.35,
+      });
+    } catch (_) {}
   };
 
   // 右侧滚动时同步左侧高亮
@@ -220,17 +242,23 @@ export default function RecipesScreen() {
       const topItem = viewableItems[0];
       if (topItem?.section) {
         const secIndex = (topItem.section as any).sectionIndex;
-        if (typeof secIndex === 'number' && secIndex !== activeIndex) {
-          setActiveIndex(secIndex);
-          leftListRef.current?.scrollToIndex({
-            index: secIndex,
-            animated: true,
-            viewPosition: 0.35,
-          });
+        if (typeof secIndex === 'number') {
+          // 映射到 navIndex: secIndex 0 对应 navIndex 1，若就在顶端对应 0
+          const targetNavIndex = secIndex + 1;
+          if (targetNavIndex !== activeNavIndex) {
+            setActiveNavIndex(targetNavIndex);
+            try {
+              leftListRef.current?.scrollToIndex({
+                index: targetNavIndex,
+                animated: true,
+                viewPosition: 0.35,
+              });
+            } catch (_) {}
+          }
         }
       }
     },
-    [activeIndex]
+    [activeNavIndex]
   );
 
   const viewabilityConfig = useRef({
@@ -240,13 +268,13 @@ export default function RecipesScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* 1. 顶部搜索框：固定吸顶无阴影 */}
+      {/* 1. 顶部搜索框：大圆角胶囊 */}
       <View style={styles.header}>
         <View style={styles.searchBar}>
           <Search size={16} color={Palette.cocoa[400]} />
           <TextInput
             style={styles.searchInput}
-            placeholder={`搜索全库 ${allRecipes.length} 道美味灵感...`}
+            placeholder="搜索菜名、食材、菜系..."
             placeholderTextColor={Palette.cocoa[400]}
             value={keyword}
             onChangeText={setKeyword}
@@ -264,12 +292,10 @@ export default function RecipesScreen() {
         </View>
       </View>
 
-      {/* 2. 主体：搜索模式 vs 左右双向联动分类浏览 */}
+      {/* 2. 主体区 */}
       {keyword.trim().length > 0 ? (
         <View style={styles.searchResultsContainer}>
-          <Text style={styles.searchResultHeader}>
-            找到 <Text style={styles.bold}>{searchResults.length}</Text> 道匹配菜谱
-          </Text>
+          <Text style={styles.searchResultHeader}>匹配的菜谱</Text>
           <FlatList
             data={searchResults}
             keyExtractor={(item) => item.id}
@@ -290,28 +316,40 @@ export default function RecipesScreen() {
         </View>
       ) : (
         <View style={styles.splitLayout}>
-          {/* 左侧：纯单行、无图标、无阴影分类菜单栏 */}
+          {/* 左侧：含【全部】、单行、圆润药丸的高亮侧边栏 */}
           <View style={styles.leftNavWrapper}>
             <FlatList
               ref={leftListRef}
               data={categoryNavItems}
               keyExtractor={(item) => item.name}
               showsVerticalScrollIndicator={false}
+              getItemLayout={(data, index) => ({
+                length: LEFT_ITEM_HEIGHT,
+                offset: LEFT_ITEM_HEIGHT * index,
+                index,
+              })}
+              onScrollToIndexFailed={(info) => {
+                setTimeout(() => {
+                  try {
+                    leftListRef.current?.scrollToIndex({
+                      index: info.index,
+                      animated: false,
+                    });
+                  } catch (_) {}
+                }, 100);
+              }}
+              contentContainerStyle={styles.leftNavContent}
               renderItem={({ item, index }) => {
-                const isActive = activeIndex === index;
+                const isActive = activeNavIndex === index;
                 return (
                   <TouchableOpacity
                     style={[
-                      styles.leftNavItem,
-                      isActive && styles.leftNavItemActive,
+                      styles.leftNavPill,
+                      isActive && styles.leftNavPillActive,
                     ]}
                     onPress={() => handleSelectCategory(index)}
                     activeOpacity={0.8}
                   >
-                    {/* 激活时的左侧小高亮条 */}
-                    {isActive && <View style={styles.activeBar} />}
-
-                    {/* 单行排列：分类名 + 数量 */}
                     <Text
                       style={[
                         styles.navLabel,
@@ -321,22 +359,13 @@ export default function RecipesScreen() {
                     >
                       {item.name}
                     </Text>
-
-                    <Text
-                      style={[
-                        styles.navCount,
-                        isActive && styles.navCountActive,
-                      ]}
-                    >
-                      {item.count}
-                    </Text>
                   </TouchableOpacity>
                 );
               }}
             />
           </View>
 
-          {/* 右侧：纯净无阴影大图卡片流 */}
+          {/* 右侧：超圆润大图卡片流 */}
           <View style={styles.rightContentWrapper}>
             <SectionList
               ref={sectionListRef}
@@ -347,10 +376,20 @@ export default function RecipesScreen() {
               onViewableItemsChanged={onViewableItemsChanged}
               viewabilityConfig={viewabilityConfig}
               stickySectionHeadersEnabled={true}
-              renderSectionHeader={({ section: { title, count } }) => (
+              onScrollToIndexFailed={(info) => {
+                setTimeout(() => {
+                  try {
+                    sectionListRef.current?.scrollToLocation({
+                      sectionIndex: info.index,
+                      itemIndex: 0,
+                      animated: false,
+                    });
+                  } catch (_) {}
+                }, 100);
+              }}
+              renderSectionHeader={({ section: { title } }) => (
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionHeaderTitle}>{title}</Text>
-                  <Text style={styles.sectionHeaderCount}>共 {count} 道美味</Text>
                 </View>
               )}
               renderItem={({ item }) => (
@@ -372,7 +411,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.oat[50],
   },
   header: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingTop: 6,
     paddingBottom: 8,
     backgroundColor: Palette.oat[50],
@@ -384,11 +423,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    borderRadius: 22,
     borderWidth: 1,
     borderColor: '#ECE4DA',
-    paddingHorizontal: 12,
-    height: 40,
+    paddingHorizontal: 14,
+    height: 42,
     gap: 8,
   },
   searchInput: {
@@ -401,34 +440,29 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  // 左侧单行无图标菜单栏
+  // 左侧导航：柔润圆角，单行无图标无数量
   leftNavWrapper: {
-    width: 78,
+    width: 76,
     backgroundColor: '#F5F0E8',
     borderRightWidth: 1,
     borderRightColor: '#EAE1D5',
   },
-  leftNavItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 48,
-    paddingHorizontal: 4,
-    position: 'relative',
+  leftNavContent: {
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     gap: 4,
   },
-  leftNavItemActive: {
-    backgroundColor: '#FFFFFF',
+  leftNavPill: {
+    height: LEFT_ITEM_HEIGHT,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
   },
-  activeBar: {
-    position: 'absolute',
-    left: 0,
-    top: 10,
-    bottom: 10,
-    width: 3.5,
-    backgroundColor: Palette.apricot[500],
-    borderTopRightRadius: 2,
-    borderBottomRightRadius: 2,
+  leftNavPillActive: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Palette.apricot[200],
   },
   navLabel: {
     fontSize: 12,
@@ -440,14 +474,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: Palette.apricot[600],
   },
-  navCount: {
-    fontSize: 9,
-    color: Palette.cocoa[400],
-  },
-  navCountActive: {
-    color: Palette.apricot[500],
-    fontWeight: '700',
-  },
   // 右侧内容
   rightContentWrapper: {
     flex: 1,
@@ -458,12 +484,9 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: Palette.oat[50],
     paddingTop: 10,
-    paddingBottom: 8,
+    paddingBottom: 6,
     paddingHorizontal: 2,
   },
   sectionHeaderTitle: {
@@ -472,25 +495,22 @@ const styles = StyleSheet.create({
     color: Palette.cocoa[900],
     letterSpacing: 0.3,
   },
-  sectionHeaderCount: {
-    fontSize: 10.5,
-    color: Palette.cocoa[400],
-    fontWeight: '500',
-  },
   cardItemWrapper: {
     marginBottom: 12,
   },
-  // 宽屏大图纯净卡片（彻底移除所有阴影）
+  // 极具呼吸感与超多圆角的大图美食卡片
   gourmetCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    overflow: 'hidden',
+    borderRadius: 22,
+    padding: 7,
     borderWidth: 1,
     borderColor: '#EFE7DC',
   },
   cardImageContainer: {
     width: '100%',
-    height: 118,
+    height: 124,
+    borderRadius: 16,
+    overflow: 'hidden',
     backgroundColor: Palette.oat[100],
     position: 'relative',
   },
@@ -512,9 +532,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2.5,
+    borderRadius: 999,
     gap: 3,
   },
   cardTimeText: {
@@ -523,7 +543,9 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   cardBody: {
-    padding: 10,
+    paddingTop: 8,
+    paddingHorizontal: 6,
+    paddingBottom: 4,
     gap: 4,
   },
   cardTitleRow: {
@@ -540,9 +562,9 @@ const styles = StyleSheet.create({
   },
   difficultyPill: {
     backgroundColor: Palette.oat[100],
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 999,
   },
   difficultyText: {
     fontSize: 9.5,
@@ -559,17 +581,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 4,
   },
-  cardCategoryLabel: {
+  categoryPill: {
+    backgroundColor: Palette.apricot[50],
+    paddingHorizontal: 8,
+    paddingVertical: 2.5,
+    borderRadius: 999,
+  },
+  categoryPillText: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     color: Palette.apricot[600],
   },
   cardAddBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 999,
     backgroundColor: Palette.apricot[50],
     borderWidth: 1,
     borderColor: Palette.apricot[200],
@@ -587,13 +615,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   searchResultHeader: {
-    fontSize: 11.5,
+    fontSize: 12,
+    fontWeight: '600',
     color: Palette.cocoa[400],
     marginBottom: 10,
-  },
-  bold: {
-    fontWeight: '700',
-    color: Palette.apricot[600],
   },
   searchListContent: {
     paddingBottom: 24,
