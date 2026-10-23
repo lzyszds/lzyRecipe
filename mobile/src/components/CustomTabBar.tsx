@@ -38,7 +38,7 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
   navigation,
 }) => {
   const insets = useSafeAreaInsets();
-  const safeBottom = Math.max(insets.bottom, 10);
+  const safeBottom = Math.max(insets.bottom, 12);
 
   const { plateRecipeIds, openModal } = useTodayPlateStore();
   const allRecipes = useAllRecipes();
@@ -54,10 +54,10 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
   return (
     <View
-      style={[styles.floatingWrapper, { bottom: safeBottom + 2 }]}
+      style={[styles.floatingWrapper, { bottom: safeBottom }]}
       pointerEvents="box-none"
     >
-      {/* 1. 上方胶囊：今日餐盘独立悬浮胶囊（专业双胶囊交互） */}
+      {/* 1. 上方胶囊：今日餐盘独立悬浮岛 */}
       <TouchableOpacity
         style={styles.plateFloatingCapsule}
         onPress={openModal}
@@ -106,8 +106,8 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
         <ChevronRight size={13} color="rgba(255, 255, 255, 0.7)" />
       </TouchableOpacity>
 
-      {/* 2. 下方胶囊：纯净现代路由导航栏（无杂质，优雅居中） */}
-      <View style={styles.navDockContainer}>
+      {/* 2. 下方胶囊：大尺寸宽幅路由菜单栏（全项图文并茂，不再仅显示图标） */}
+      <View style={styles.wideNavDock}>
         {state.routes.map((route: any, index: number) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -127,6 +127,10 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
             }
           };
 
+          const iconColor = isFocused
+            ? Palette.primary
+            : 'rgba(255, 255, 255, 0.68)';
+
           return (
             <TouchableOpacity
               key={route.key}
@@ -134,17 +138,22 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
               accessibilityState={isFocused ? { selected: true } : {}}
               accessibilityLabel={options?.tabBarAccessibilityLabel}
               onPress={onPress}
-              style={[styles.navPill, isFocused && styles.navPillActive]}
+              style={[styles.tabItem, isFocused && styles.tabItemActive]}
               activeOpacity={0.8}
             >
               <Icon
                 size={17}
-                color={isFocused ? Palette.primary : 'rgba(255, 255, 255, 0.65)'}
-                strokeWidth={isFocused ? 2.3 : 2}
+                color={iconColor}
+                strokeWidth={isFocused ? 2.4 : 2}
               />
-              {isFocused && (
-                <Text style={styles.navTextActive}>{config.label}</Text>
-              )}
+              <Text
+                style={[
+                  styles.tabLabel,
+                  isFocused ? styles.tabLabelActive : styles.tabLabelInactive,
+                ]}
+              >
+                {config.label}
+              </Text>
             </TouchableOpacity>
           );
         })}
@@ -159,7 +168,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: 'center',
-    gap: 8, // 上下两胶囊之间优雅间距
+    gap: 7, // 上下两胶囊之间舒适的垂直间隔
     zIndex: 99,
   },
 
@@ -169,11 +178,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Palette.dockBg,
     borderRadius: 999,
-    paddingVertical: 5,
-    paddingLeft: 7,
-    paddingRight: 10,
+    paddingVertical: 5.5,
+    paddingLeft: 8,
+    paddingRight: 11,
     borderWidth: 1,
-    borderColor: 'rgba(217, 107, 56, 0.35)', // 焦糖柿子微流光边框
+    borderColor: 'rgba(217, 107, 56, 0.35)',
     gap: 6,
   },
   avatarStack: {
@@ -226,8 +235,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 
-  // 2. 下方纯净路由胶囊 Dock
-  navDockContainer: {
+  // 2. 下方宽幅大尺寸路由导航栏（左右展开，所有项均显示图标 + 文字）
+  wideNavDock: {
+    width: '92%',
+    maxWidth: 420,
+    height: 56,
     backgroundColor: Palette.dockBg,
     borderRadius: 28,
     paddingHorizontal: 6,
@@ -236,24 +248,30 @@ const styles = StyleSheet.create({
     borderColor: Palette.dockBorder,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    justifyContent: 'space-between',
   },
-  navPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+  tabItem: {
+    flex: 1,
+    height: 44,
     borderRadius: 22,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 5,
   },
-  navPillActive: {
+  tabItemActive: {
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 14,
   },
-  navTextActive: {
-    fontSize: 11.5,
-    fontWeight: '800',
+  tabLabel: {
+    fontSize: 12,
+    letterSpacing: -0.2,
+  },
+  tabLabelActive: {
     color: Palette.ink,
+    fontWeight: '800',
+  },
+  tabLabelInactive: {
+    color: 'rgba(255, 255, 255, 0.72)',
+    fontWeight: '600',
   },
 });
