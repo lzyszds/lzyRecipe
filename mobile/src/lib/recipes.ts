@@ -3,7 +3,14 @@ import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { Category, Recipe } from '../types';
 
 export function getAllRecipes(importedRecipes: Recipe[] = []): Recipe[] {
-  return [...recipes, ...importedRecipes];
+  const map = new Map<string, Recipe>();
+  for (const r of recipes) {
+    map.set(r.id, r);
+  }
+  for (const r of importedRecipes) {
+    map.set(r.id, r);
+  }
+  return Array.from(map.values());
 }
 
 export function getCategoriesWithCounts(allRecipes: Recipe[]): Category[] {

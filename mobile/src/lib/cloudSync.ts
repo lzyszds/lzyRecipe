@@ -82,12 +82,15 @@ async function requestJson<T>(
   }
 }
 
+import { getAllRecipes } from './recipes';
+
 export function collectPayload(): SyncPayload {
   const plan = useWeeklyPlanStore.getState();
   const settings = useSettingsStore.getState();
+  const allRecipes = getAllRecipes(useImportedRecipesStore.getState().importedRecipes);
   return {
     favorites: useFavoritesStore.getState().favorites,
-    importedRecipes: useImportedRecipesStore.getState().importedRecipes,
+    importedRecipes: allRecipes,
     weeklyPlan: {
       weekKey: plan.weekKey,
       plans: plan.plans,
