@@ -1,11 +1,10 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Pressable,
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -19,9 +18,6 @@ import {
   SlidersHorizontal,
   Sparkles,
   ChevronRight,
-  Wifi,
-  BatteryMedium,
-  Check,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
@@ -37,28 +33,41 @@ const INGREDIENT_CHIPS = ['排骨', '五花肉', '冬瓜', '大虾', '番茄', '
 const HERO_IMAGE_FALLBACK =
   'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80';
 
+function getCookingMethodTag(dish: Recipe): string {
+  const t = dish.cookTime || 20;
+  const n = dish.name;
+  if (/红烧|酱烧/.test(n)) return `${t}分钟 · 红烧`;
+  if (/炖|煲|清炖|慢炖|老火|汤/.test(n)) return `${t}分钟 · 慢炖`;
+  if (/蒸|清蒸|粉蒸/.test(n)) return `${t}分钟 · 清蒸`;
+  if (/生炒|生煎/.test(n)) return `${t}分钟 · 生炒`;
+  if (/烤/.test(n)) return `${t}分钟 · 烘烤`;
+  if (/拌|凉/.test(n)) return `${t}分钟 · 凉拌`;
+  if (t <= 20) return `${t}分钟 · 小炒`;
+  return `${t}分钟 · 家常`;
+}
+
+function getCoreIngredients(dish: Recipe): string {
+  if (dish.name.includes('排骨')) return '排骨 · 蒜末 · 柱侯酱';
+  if (dish.name.includes('回锅肉')) return '五花肉 · 青蒜苗 · 豆瓣酱';
+  if (dish.name.includes('红烧肉')) return '五花肉 · 冰糖 · 生抽';
+  const list = dish.ingredients
+    ?.map((i) => i.name.replace(/（.*）|\(.*\)/g, '').trim())
+    .filter(Boolean);
+  if (list && list.length > 0) {
+    return list.slice(0, 3).join(' · ');
+  }
+  return '鲜香下饭 · 烹饪方便';
+}
+
 export default function HomeScreen() {
   const router = useRouter();
   const allRecipes = useAllRecipes();
   const openMealPlanSheet = useMealPlanSheetStore((s) => s.openSheet);
 
   const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
-  const [currentTime, setCurrentTime] = useState<string>('11:30');
 
   const todayStr = getTodayString();
   const weekdayName = getWeekdayName(todayStr);
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      setCurrentTime(`${h}:${m}`);
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 30000);
-    return () => clearInterval(timer);
-  }, []);
 
   // Compute dynamic meal period & inspiration subtitle
   const inspirationSubtitle = useMemo(() => {
@@ -81,7 +90,8 @@ export default function HomeScreen() {
       allRecipes.find((r) => r.name.includes('生炒排骨') || r.name.includes('排骨')) ||
       allRecipes[0];
     const pork =
-      allRecipes.find((r) => r.name.includes('回锅肉') || r.name.includes('红烧肉')) ||
+      allRecipes.find((r) => r.name === '回锅肉' || r.name.includes('回锅肉')) ||
+      allRecipes.find((r) => r.name.includes('红烧肉')) ||
       allRecipes[1];
     return [ribs, pork].filter(Boolean) as Recipe[];
   }, [allRecipes]);
@@ -125,27 +135,9 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      {/* 顶部 Android 风格状态栏与灵动岛 */}
-      <View style={styles.statusBarRow}>
-        {/* 左侧时间 */}
-        <Text style={styles.statusTime}>{currentTime}</Text>
-
-        {/* 顶部灵动岛胶囊组件 */}
+      {/* 顶部居中灵动岛胶囊（纯净浮空，不与真机系统状态栏冲突） */}
+      <View style={styles.topIslandRow}>
         <DynamicIsland />
-
-        {/* 右侧手机状态指示 */}
-        <View style={styles.statusRight}>
-          <View style={styles.signalBars}>
-            <View style={[styles.signalBar, { height: 4 }]} />
-            <View style={[styles.signalBar, { height: 6 }]} />
-            <View style={[styles.signalBar, { height: 9 }]} />
-            <View style={[styles.signalBar, { height: 12 }]} />
-          </View>
-          <Wifi size={14} color="#1C1917" />
-          <View style={styles.batteryBadge}>
-            <Text style={styles.batteryText}>92</Text>
-          </View>
-        </View>
       </View>
 
       <ScrollView
@@ -263,10 +255,7 @@ export default function HomeScreen() {
           {/* 匹配菜谱列表 */}
           <View style={styles.matchedList}>
             {matchedRecipes.map((dish, idx) => {
-              const coreIngredients = dish.ingredients
-                .map((i) => i.name)
-                .slice(0, 3)
-                .join(' · ');
+              const coreIngredients = getCoreIngredients(dish);
 
               const displayName =
                 dish.name.includes('生炒排骨')
@@ -275,10 +264,7 @@ export default function HomeScreen() {
                   ? '川味青蒜苗回锅肉'
                   : dish.name;
 
-              const methodTag =
-                dish.cookTime && dish.cookTime <= 20
-                  ? `${dish.cookTime}分钟 · 小炒`
-                  : `${dish.cookTime || 25}分钟 · 生炒`;
+              const methodTag = getCookingMethodTag(dish);
 
               return (
                 <TouchableOpacity
@@ -300,7 +286,7 @@ export default function HomeScreen() {
                       {displayName}
                     </Text>
                     <Text style={styles.dishCore} numberOfLines={1}>
-                      核心: {coreIngredients || '鲜香下饭 · 烹饪方便'}
+                      核心: {coreIngredients}
                     </Text>
                     <View style={styles.dishTagWrap}>
                       <View style={styles.methodTagPill}>
@@ -386,65 +372,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Palette.canvas,
   },
-  statusBarRow: {
-    flexDirection: 'row',
+  topIslandRow: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'android' ? 8 : 4,
-    paddingBottom: 8,
-    backgroundColor: Palette.canvas,
+    justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? 6 : 2,
+    paddingBottom: 6,
     zIndex: 10,
-  },
-  statusTime: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#1C1917',
-    minWidth: 42,
-  },
-  statusRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    minWidth: 50,
-    justifyContent: 'flex-end',
-  },
-  signalBars: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: 12,
-    gap: 1.5,
-  },
-  signalBar: {
-    width: 2.5,
-    backgroundColor: '#1C1917',
-    borderRadius: 1,
-  },
-  batteryBadge: {
-    backgroundColor: '#1C1917',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-    borderRadius: 4,
-  },
-  batteryText: {
-    color: '#FFFFFF',
-    fontSize: 9,
-    fontWeight: '800',
   },
   container: {
     flex: 1,
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 120,
+    paddingTop: 4,
+    paddingBottom: 170, // 充足间距确保不会被底部悬浮 Dock TabBar 遮挡
   },
   greetingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 6,
-    marginBottom: 16,
+    marginTop: 4,
+    marginBottom: 14,
   },
   greetingLeft: {
     flex: 1,
