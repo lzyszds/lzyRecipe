@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Keyboard,
 } from 'react-native';
 import {
   X,
@@ -24,6 +24,7 @@ import {
   ListOrdered,
   Lightbulb,
   Wand2,
+  ChevronDown,
 } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
 import { Palette, Radius } from '../constants/theme';
@@ -76,9 +77,24 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
       : [{ order: 1, description: '' }]
   );
   const [tips, setTips] = useState(recipe.tips || '');
+  const scrollViewRef = useRef<any>(null);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   // AI 局部/全局生成 loading 状态 (记录正在生成的字段：'all' | 'description' | 'ingredients' | 'steps' | 'tips' | null)
   const [aiGeneratingField, setAiGeneratingField] = useState<RecipeGenField | null>(null);
+
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const showSub = Keyboard.addListener(showEvent, () => setIsKeyboardVisible(true));
+    const hideSub = Keyboard.addListener(hideEvent, () => setIsKeyboardVisible(false));
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (visible) {
@@ -234,10 +250,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
 
   return (
     <BottomSheetModal visible={visible} onClose={onClose} sheetStyle={styles.sheetContainer}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.keyboardContainer}
-      >
+      <View style={styles.keyboardContainer}>
         {/* 顶部标题栏 */}
         <View style={styles.header}>
           <View style={styles.headerTitleWrap}>
@@ -249,16 +262,33 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
               <Text style={styles.subtitle}>智能润色配方、用料与做饭步骤</Text>
             </View>
           </View>
-          <TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
-            <X size={16} color={Palette.inkMuted} />
-          </TouchableOpacity>
+          <View style={styles.headerRightActions}>
+            {isKeyboardVisible && (
+              <TouchableOpacity
+                onPress={() => Keyboard.dismiss()}
+                style={styles.hideKeyboardPill}
+                activeOpacity={0.7}
+              >
+                <ChevronDown size={14} color={Palette.primary} />
+                <Text style={styles.hideKeyboardText}>收起键盘</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn} activeOpacity={0.7}>
+              <X size={16} color={Palette.inkMuted} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <ScrollView
+          ref={scrollViewRef}
           style={styles.scrollBody}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[
+            styles.scrollContent,
+            isKeyboardVisible && { paddingBottom: 160 },
+          ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
         >
           {/* AI 全局一键生成 Banner */}
           <View style={styles.aiBanner}>
@@ -547,6 +577,13 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
                     placeholder="描述具体的处理手法、下锅油温、调料顺序与火候时长..."
                     placeholderTextColor={Palette.inkLight}
                     multiline
+                    onFocus={() => {
+                      if (index >= steps.length - 2) {
+                        setTimeout(() => {
+                          scrollViewRef.current?.scrollToEnd({ animated: true });
+                        }, 200);
+                      }
+                    }}
                   />
                 </View>
               ))}
@@ -583,7 +620,12 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
               placeholder="例如：生炒前洗净并控干水分，煎至两面金黄再下酱汁，肉质格外焦香..."
               placeholderTextColor={Palette.inkLight}
               multiline
-              numberOfLines={2}
+              numberOfLines={3}
+              onFocus={() => {
+                setTimeout(() => {
+                  scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, 200);
+              }}
             />
           </View>
         </ScrollView>
@@ -599,7 +641,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
             <Text style={styles.saveBtnText}>保存菜谱</Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </BottomSheetModal>
   );
 };
@@ -654,6 +696,22 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.tagWarm,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  hideKeyboardPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Palette.primarySoft,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 14,
+    gap: 3,
+    borderWidth: 1,
+    borderColor: '#F7D4BC',
+  },
+  hideKeyboardText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Palette.primary,
   },
   scrollBody: {
     flex: 1,

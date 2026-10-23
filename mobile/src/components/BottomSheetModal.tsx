@@ -9,6 +9,8 @@ import {
   StyleProp,
   ViewStyle,
   PanResponder,
+  Keyboard,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
@@ -23,9 +25,10 @@ const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 /**
  * 原生质感底部抽屉：
- * 1. 遮罩背景原地渐现（绝不跟随从底部滑出），内容卡片自底部平滑滑入；
- * 2. 支持全区域平滑下滑拖拽关闭（Drag to Close），顶部设有原生胶囊拖拽条；
- * 3. 智能手势判定：拖动距离 > 80px 或向下甩动初速度 > 0.4 立即顺滑滑落退出，否则弹性复位。
+ * 1. 遮罩背景原地渐现，内容卡片自底部平滑滑入；
+ * 2. 具备完整的输入法软键盘自适应（Keyboard Avoiding），在 Android / iOS 上软键盘升起时，
+ *    自动平滑上移卡片底部并限制卡片最大高度，彻底解决输入框与操作按钮被软键盘遮挡的问题；
+ * 3. 支持顶部胶囊把手拖拽关闭，软键盘弹出时智能停用页面内手势劫持，保障滚动输入极度顺滑。
  */
 export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
   visible,
@@ -35,6 +38,45 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
 }) => {
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const [isRendered, setIsRendered] = useState(visible);
+
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const keyboardHeightAnim = useRef(new Animated.Value(0)).current;
+  const isKeyboardVisibleRef = useRef(false);
+
+  // 监听输入法软键盘弹出与收起（Android 与 iOS 统一兼容）
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const onShow = (e: any) => {
+      const h = e?.endCoordinates?.height || 0;
+      setKeyboardHeight(h);
+      isKeyboardVisibleRef.current = true;
+      Animated.timing(keyboardHeightAnim, {
+        toValue: h,
+        duration: Platform.OS === 'ios' ? (e.duration || 250) : 160,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const onHide = (e: any) => {
+      setKeyboardHeight(0);
+      isKeyboardVisibleRef.current = false;
+      Animated.timing(keyboardHeightAnim, {
+        toValue: 0,
+        duration: Platform.OS === 'ios' ? (e?.duration || 200) : 140,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    const showSub = Keyboard.addListener(showEvent, onShow);
+    const hideSub = Keyboard.addListener(hideEvent, onHide);
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // 顶部拖拽条响应器：零延迟即时捕获手势
   const handlePanResponder = useRef(
@@ -53,6 +95,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       },
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.dy > 80 || gestureState.vy > 0.4) {
+          Keyboard.dismiss();
           Animated.timing(translateY, {
             toValue: SCREEN_HEIGHT,
             duration: 180,
@@ -72,15 +115,18 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
     })
   ).current;
 
-  // 弹窗卡片背景响应器：仅在明显向下拖动时接管
+  // 弹窗卡片背景响应器：软键盘弹出时严禁劫持滚动
   const bodyPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
       onMoveShouldSetPanResponder: (_, gestureState) => {
-        // 向下滑动超过 12px 且垂直位移明显大于水平位移时接管
+        // 软键盘开启时不劫持任何滑动，交给内层 ScrollView
+        if (isKeyboardVisibleRef.current) return false;
+        // 向下滑动超过 30px 且垂直位移明显大于水平位移时接管
         return (
-          gestureState.dy > 12 &&
-          Math.abs(gestureState.dy) > Math.abs(gestureState.dx * 1.5)
+          gestureState.dy > 30 &&
+          Math.abs(gestureState.dy) > Math.abs(gestureState.dx * 2) &&
+          gestureState.vy > 0.35
         );
       },
       onPanResponderMove: (_, gestureState) => {
@@ -90,6 +136,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       },
       onPanResponderRelease: (_, gestureState) => {
         if (gestureState.dy > 100 || gestureState.vy > 0.45) {
+          Keyboard.dismiss();
           Animated.timing(translateY, {
             toValue: SCREEN_HEIGHT,
             duration: 180,
@@ -121,6 +168,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
         useNativeDriver: true,
       }).start();
     } else {
+      Keyboard.dismiss();
       Animated.timing(translateY, {
         toValue: SCREEN_HEIGHT,
         duration: 200,
@@ -139,15 +187,35 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
       transparent
       animationType="fade"
       statusBarTranslucent={true}
-      onRequestClose={onClose}
+      onRequestClose={() => {
+        Keyboard.dismiss();
+        onClose();
+      }}
     >
       <StatusBar style="light" animated />
-      <View style={styles.overlay}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+      <Animated.View
+        style={[
+          styles.overlay,
+          { paddingBottom: keyboardHeightAnim },
+        ]}
+      >
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
+            Keyboard.dismiss();
+            onClose();
+          }}
+        />
         <Animated.View
           style={[
             styles.sheet,
             sheetStyle,
+            keyboardHeight > 0 && {
+              maxHeight: Math.max(
+                280,
+                SCREEN_HEIGHT - keyboardHeight - (Platform.OS === 'android' ? 36 : 48)
+              ),
+            },
             { transform: [{ translateY }] },
           ]}
           {...bodyPanResponder.panHandlers}
@@ -161,7 +229,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
           </View>
           {children}
         </Animated.View>
-      </View>
+      </Animated.View>
     </Modal>
   );
 };
