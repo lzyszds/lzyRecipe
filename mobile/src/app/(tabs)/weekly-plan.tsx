@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { confirm, toast } from '@/store/feedbackStore';
 import {
   Sparkles,
   Trash2,
@@ -51,25 +51,31 @@ export default function WeeklyPlanScreen() {
 
   const currentDayPlan = plans.find((p) => p.dayIndex === selectedDayIndex);
 
-  const handleSmartFill = () => {
-    Alert.alert(
-      '智能生成周菜单',
-      '将根据菜系和营养搭配，为你一键智能填满这周的三餐，是否继续？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '立即生成',
-          onPress: () => smartShuffleFill(allRecipes),
-        },
-      ]
-    );
+  const handleSmartFill = async () => {
+    const ok = await confirm({
+      title: '智能生成周菜单',
+      message: '将根据菜系与营养搭配，为你一键智能安排本周三餐，是否继续？',
+      confirmText: '立即生成',
+      icon: 'sparkles',
+    });
+    if (ok) {
+      smartShuffleFill(allRecipes);
+      toast({ type: 'success', message: '已为您智能排好本周三餐！' });
+    }
   };
 
-  const handleClear = () => {
-    Alert.alert('清空计划', '确定清空本周的所有安排吗？', [
-      { text: '取消', style: 'cancel' },
-      { text: '清空', style: 'destructive', onPress: clearPlan },
-    ]);
+  const handleClear = async () => {
+    const ok = await confirm({
+      title: '清空计划',
+      message: '确定要清空本周的所有排餐安排吗？',
+      confirmText: '确定清空',
+      destructive: true,
+      icon: 'trash',
+    });
+    if (ok) {
+      clearPlan();
+      toast({ type: 'success', message: '本周计划已清空' });
+    }
   };
 
   return (

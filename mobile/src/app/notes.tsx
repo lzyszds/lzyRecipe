@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ArrowLeft, Plus, FileText, Trash2, X } from 'lucide-react-native';
 import { useNotesStore, activeNotes, Note } from '@/store/notesStore';
+import { confirm, toast } from '@/store/feedbackStore';
 import { Palette } from '@/constants/theme';
 
 export default function NotesScreen() {
@@ -26,7 +26,7 @@ export default function NotesScreen() {
 
   const handleCreate = () => {
     if (!title.trim() && !content.trim()) {
-      Alert.alert('提示', '请至少输入标题或内容');
+      toast({ type: 'warning', message: '请至少输入标题或内容' });
       return;
     }
     addNote({
@@ -37,13 +37,21 @@ export default function NotesScreen() {
     setTitle('');
     setContent('');
     setModalVisible(false);
+    toast({ type: 'success', message: '灵感笔记已保存！' });
   };
 
-  const handleDelete = (id: string) => {
-    Alert.alert('删除笔记', '确定要删除这条笔记吗？', [
-      { text: '取消', style: 'cancel' },
-      { text: '删除', style: 'destructive', onPress: () => removeNote(id) },
-    ]);
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: '删除笔记',
+      message: '确定要删除这条烹饪笔记吗？删除后将无法恢复。',
+      confirmText: '确定删除',
+      destructive: true,
+      icon: 'trash',
+    });
+    if (ok) {
+      removeNote(id);
+      toast({ type: 'success', message: '笔记已删除' });
+    }
   };
 
   return (
@@ -107,6 +115,7 @@ export default function NotesScreen() {
         visible={modalVisible}
         transparent
         animationType="slide"
+        statusBarTranslucent={true}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>

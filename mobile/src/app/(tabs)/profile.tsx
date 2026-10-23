@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { alert } from '@/store/feedbackStore';
 import {
   Heart,
   FileText,
@@ -197,7 +197,12 @@ export default function ProfileScreen() {
           <TouchableOpacity
             style={styles.menuItem}
             onPress={() => {
-              Alert.alert('志得食谱', '版本：v2.0.0 (Expo 原生版)\n打造治愈、纯粹、丝滑的掌上菜谱。');
+              alert({
+                title: '志得食谱',
+                message: '版本：v2.0.0 (Expo 原生版)\n打造治愈、纯粹、丝滑的掌上菜谱。',
+                icon: 'info',
+                confirmText: '太棒了',
+              });
             }}
             activeOpacity={0.7}
           >

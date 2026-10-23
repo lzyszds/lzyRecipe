@@ -256,20 +256,8 @@ export const TodayPlateModal: React.FC = () => {
   );
 };
 
-// 全局浮动极简 Toast
-export const GlobalTodayPlateToast: React.FC = () => {
-  const { toastMessage } = useTodayPlateStore();
-  if (!toastMessage) return null;
-
-  return (
-    <View style={styles.toastContainer} pointerEvents="none">
-      <View style={styles.toastBubble}>
-        <Check size={13} color="#FFFFFF" strokeWidth={2.5} />
-        <Text style={styles.toastText}>{toastMessage}</Text>
-      </View>
-    </View>
-  );
-};
+// 全局自建统一 Toast 托管，避免重复渲染
+export const GlobalTodayPlateToast: React.FC = () => null;
 
 const styles = StyleSheet.create({
   overlay: {

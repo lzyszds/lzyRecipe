@@ -10,10 +10,10 @@ import {
   Switch,
   ActivityIndicator,
   ScrollView,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { confirm, toast } from '@/store/feedbackStore';
 import {
   Cloud,
   X,
@@ -121,59 +121,51 @@ export const SyncSettingsModal: React.FC<SyncSettingsModalProps> = ({
     await syncNow(tempConfig);
   };
 
-  const handlePull = () => {
+  const handlePull = async () => {
     const currentEndpoint = endpoint.trim() || 'https://sync.lzyszds.cn';
-    Alert.alert(
-      '从云端恢复',
-      '将从云端拉取最新菜谱、收藏与备菜计划并覆盖本地同名内容，是否继续？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '确定拉取',
-          onPress: async () => {
-            handleSave(currentEndpoint, token.trim(), autoSync);
-            try {
-              await pullFromCloud({
-                endpoint: currentEndpoint,
-                token: token.trim(),
-                autoSync,
-              });
-              Alert.alert('恢复成功', '已成功从云端拉取漫游数据！');
-            } catch (err: any) {
-              Alert.alert('拉取失败', err?.message || '未知错误');
-            }
-          },
-        },
-      ]
-    );
+    const ok = await confirm({
+      title: '从云端恢复',
+      message: '将从云端拉取最新菜谱、收藏与备菜计划并覆盖本地同名内容，是否继续？',
+      confirmText: '确定拉取',
+      icon: 'cloud',
+    });
+    if (!ok) return;
+
+    handleSave(currentEndpoint, token.trim(), autoSync);
+    try {
+      await pullFromCloud({
+        endpoint: currentEndpoint,
+        token: token.trim(),
+        autoSync,
+      });
+      toast({ type: 'success', message: '已成功从云端恢复漫游数据！' });
+    } catch (err: any) {
+      toast({ type: 'error', message: `拉取失败: ${err?.message || '未知错误'}` });
+    }
   };
 
-  const handlePush = () => {
+  const handlePush = async () => {
     const currentEndpoint = endpoint.trim() || 'https://sync.lzyszds.cn';
-    Alert.alert(
-      '覆盖到云端',
-      '将使用当前手机上的菜谱与计划完全覆盖云端存储，是否继续？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '确定覆盖',
-          style: 'destructive',
-          onPress: async () => {
-            handleSave(currentEndpoint, token.trim(), autoSync);
-            try {
-              await pushToCloud({
-                endpoint: currentEndpoint,
-                token: token.trim(),
-                autoSync,
-              });
-              Alert.alert('推送成功', '当前本地数据已成功同步至云端！');
-            } catch (err: any) {
-              Alert.alert('推送失败', err?.message || '未知错误');
-            }
-          },
-        },
-      ]
-    );
+    const ok = await confirm({
+      title: '覆盖到云端',
+      message: '将使用当前手机上的菜谱与计划完全覆盖云端存储，是否继续？',
+      confirmText: '确定覆盖',
+      destructive: true,
+      icon: 'warning',
+    });
+    if (!ok) return;
+
+    handleSave(currentEndpoint, token.trim(), autoSync);
+    try {
+      await pushToCloud({
+        endpoint: currentEndpoint,
+        token: token.trim(),
+        autoSync,
+      });
+      toast({ type: 'success', message: '本地数据已成功同步覆盖至云端！' });
+    } catch (err: any) {
+      toast({ type: 'error', message: `推送失败: ${err?.message || '未知错误'}` });
+    }
   };
 
   const isConfigured = Boolean((endpoint.trim() || 'https://sync.lzyszds.cn') && token.trim());

@@ -219,20 +219,8 @@ export const AddToMealPlanModal: React.FC = () => {
   );
 };
 
-// 全局浮动轻量 Toast
-export const GlobalMealPlanToast: React.FC = () => {
-  const { toastMessage } = useMealPlanSheetStore();
-  if (!toastMessage) return null;
-
-  return (
-    <View style={styles.toastContainer} pointerEvents="none">
-      <View style={styles.toastBubble}>
-        <Check size={14} color="#FFFFFF" />
-        <Text style={styles.toastText}>{toastMessage}</Text>
-      </View>
-    </View>
-  );
-};
+// 全局自建统一 Toast 托管，避免重复渲染
+export const GlobalMealPlanToast: React.FC = () => null;
 
 const styles = StyleSheet.create({
   overlay: {

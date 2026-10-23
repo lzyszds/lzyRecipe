@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Recipe } from '../types';
+import { useFeedbackStore } from './feedbackStore';
 
 interface MealPlanSheetState {
   targetRecipe: Recipe | null;
@@ -16,10 +17,7 @@ export const useMealPlanSheetStore = create<MealPlanSheetState>((set) => ({
   closeSheet: () => set({ targetRecipe: null }),
   toastMessage: null,
   showToast: (message) => {
-    set({ toastMessage: message });
-    setTimeout(() => {
-      set({ toastMessage: null });
-    }, 2200);
+    useFeedbackStore.getState().showToast(message);
   },
   clearToast: () => set({ toastMessage: null }),
 }));

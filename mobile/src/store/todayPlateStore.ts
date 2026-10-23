@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { safeAsyncStorage } from '@/lib/safeStorage';
+import { useFeedbackStore } from './feedbackStore';
 
 interface TodayPlateState {
   plateRecipeIds: string[];
@@ -69,11 +70,7 @@ export const useTodayPlateStore = create<TodayPlateState>()(
       closeModal: () => set({ isModalOpen: false }),
 
       showToast: (msg) => {
-        if (toastTimeout) clearTimeout(toastTimeout);
-        set({ toastMessage: msg });
-        toastTimeout = setTimeout(() => {
-          set({ toastMessage: null });
-        }, 2200);
+        useFeedbackStore.getState().showToast(msg);
       },
     }),
     {
