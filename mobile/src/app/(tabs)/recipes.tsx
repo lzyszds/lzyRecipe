@@ -247,8 +247,8 @@ const MagazineCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
         {/* 底部融合菜名与耗时 */}
         <View style={styles.magazineOverlay}>
           <View style={styles.magazineOverlayLeft}>
-            <View style={styles.glassTimeBadge}>
-              <Text style={styles.glassTimeText}>
+            <View style={styles.magazineTimeBadge}>
+              <Text style={styles.magazineTimeText}>
                 ⏱ {recipe.cookTime}分钟 · #{recipe.category}
               </Text>
             </View>
@@ -256,7 +256,9 @@ const MagazineCard: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
               {recipe.name}
             </Text>
           </View>
-          {renderDifficultyBadge(recipe.difficulty)}
+          <View style={styles.magazineDiffWrapper}>
+            {renderDifficultyBadge(recipe.difficulty)}
+          </View>
         </View>
       </View>
 
@@ -926,7 +928,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   magazineImageContainer: {
-    height: 136,
+    height: 148,
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: Palette.tagWarm,
@@ -942,27 +944,46 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.88)',
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
   },
   magazineOverlay: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    backgroundColor: 'rgba(26, 21, 18, 0.55)',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(26, 21, 18, 0.65)',
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',
+    gap: 8,
   },
   magazineOverlayLeft: {
     flex: 1,
-    gap: 3,
+    gap: 4,
+  },
+  magazineTimeBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginBottom: 2,
+  },
+  magazineTimeText: {
+    fontSize: 9.5,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   magazineTitle: {
-    fontSize: 14,
+    fontSize: 14.5,
     fontWeight: '800',
     color: '#FFFFFF',
+    lineHeight: 18,
+  },
+  magazineDiffWrapper: {
+    paddingBottom: 1,
   },
   magazineFooter: {
     flexDirection: 'row',
