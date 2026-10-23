@@ -16,6 +16,7 @@ import { wrapCorsProxy } from './proxyUrl';
 /** 同步内容快照：服务端按密钥区分用户，多端完全一致 */
 export interface SyncPayload {
   favorites: string[];
+  favoritesUpdatedAt?: number;
   importedRecipes: Recipe[];
   weeklyPlan: {
     weekKey: string;
@@ -96,6 +97,7 @@ export function collectPayload(): SyncPayload {
   const allRecipes = getAllRecipes(useImportedRecipesStore.getState().importedRecipes);
   return {
     favorites: useFavoritesStore.getState().favorites,
+    favoritesUpdatedAt: useFavoritesStore.getState().favoritesUpdatedAt,
     importedRecipes: allRecipes,
     weeklyPlan: {
       weekKey: plan.weekKey,
@@ -114,9 +116,26 @@ export function collectPayload(): SyncPayload {
   };
 }
 
-function applyPayload(payload: SyncPayload): void {
+function applyPayload(
+  payload: SyncPayload,
+  options: { preferRemoteFavorites?: boolean } = {}
+): void {
   if (Array.isArray(payload.favorites)) {
-    useFavoritesStore.setState({ favorites: payload.favorites });
+    const local = useFavoritesStore.getState();
+    const remoteUpdatedAt =
+      typeof payload.favoritesUpdatedAt === 'number' ? payload.favoritesUpdatedAt : 0;
+
+    if (options.preferRemoteFavorites || remoteUpdatedAt > local.favoritesUpdatedAt) {
+      useFavoritesStore.setState({
+        favorites: payload.favorites,
+        favoritesUpdatedAt: remoteUpdatedAt,
+      });
+    } else if (remoteUpdatedAt === 0 && local.favoritesUpdatedAt === 0) {
+      // 兼容旧版云端数据：没有时间戳时取并集，避免本地刚收藏的菜被旧数据覆盖
+      useFavoritesStore.setState({
+        favorites: Array.from(new Set([...local.favorites, ...payload.favorites])),
+      });
+    }
   }
 
   if (Array.isArray(payload.importedRecipes)) {
@@ -259,7 +278,7 @@ export async function pullFromCloud(
   useSyncStore.setState({ status: 'syncing', message: '正在从云端拉取…' });
   try {
     const remote = await fetchRemote(config);
-    if (remote?.data) applyPayload(remote.data);
+    if (remote?.data) applyPayload(remote.data, { preferRemoteFavorites: true });
     finish('success', '已从云端恢复数据');
   } catch (err: any) {
     finish('error', err instanceof Error ? err.message : String(err));

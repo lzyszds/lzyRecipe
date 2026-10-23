@@ -33,14 +33,6 @@ import { Palette } from '@/constants/theme';
 
 const INGREDIENT_CHIPS = ['排骨', '五花肉', '冬瓜', '大虾', '番茄', '鸡蛋', '牛肉', '青椒'];
 
-const SCENES = [
-  { id: 'all', label: '全部精选' },
-  { id: 'fast', label: '30分快手' },
-  { id: 'chuangxiang', label: '川湘下饭' },
-  { id: 'seafood', label: '鲜香海鲜' },
-  { id: 'soup', label: '滋补靓汤' },
-  { id: 'comfort', label: '家常暖心' },
-];
 
 // 高清主厨推荐保底图
 const HERO_IMAGE_FALLBACK =
@@ -246,30 +238,6 @@ export default function HomeScreen() {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* 场景与灵感快捷标签横滑条 */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scenesScrollContainer}
-          style={styles.scenesScroll}
-        >
-          {SCENES.map((scene) => {
-            const active = activeScene === scene.id;
-            return (
-              <TouchableOpacity
-                key={scene.id}
-                style={[styles.scenePill, active && styles.scenePillActive]}
-                onPress={() => setActiveScene(scene.id)}
-                activeOpacity={0.8}
-              >
-                {active && <Flame size={12} color="#FFFFFF" style={{ marginRight: 4 }} />}
-                <Text style={[styles.scenePillText, active && styles.scenePillTextActive]}>
-                  {scene.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
 
         {/* 今日主厨推荐 Banner 卡片 */}
         {heroRecipe && (
@@ -423,7 +391,7 @@ export default function HomeScreen() {
           <View style={styles.sectionTitleRow}>
             <Sparkles size={16} color="#EA580C" />
             <Text style={styles.sectionTitle}>
-              {SCENES.find((s) => s.id === activeScene)?.label || '精选菜谱'}
+             精选菜谱
             </Text>
             <View style={styles.countBadge}>
               <Text style={styles.countBadgeText}>{feedRecipes.length}</Text>

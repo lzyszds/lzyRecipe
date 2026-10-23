@@ -149,42 +149,103 @@ export function normalizeRecipe(raw: any, index = 0): Recipe {
   if (raw.difficulty === 'easy' || raw.difficulty === '简单') difficulty = 'easy';
   else if (raw.difficulty === 'hard' || raw.difficulty === '困难' || raw.difficulty === '进阶') difficulty = 'hard';
 
-  // 规整化食材
+  // 规整化食材：同时兼容数组、按「主料/辅料/调味料」分组的对象、字符串
   const ingredients: Ingredient[] = [];
-  if (Array.isArray(raw.ingredients)) {
-    for (const item of raw.ingredients) {
-      if (typeof item === 'string') {
-        const parts = item.split(/[:：\s\t]+/);
-        ingredients.push({
-          name: parts[0] || item,
-          amount: parts[1] || '适量',
-        });
-      } else if (item && typeof item === 'object') {
-        ingredients.push({
-          name: String(item.name || '').trim() || '主要食材',
-          amount: String(item.amount || '适量').trim(),
-        });
-      }
+  const pushIngredient = (item: any) => {
+    if (typeof item === 'string') {
+      const line = item.trim();
+      if (!line) return;
+      const parts = line.split(/[:：\s\t]+/);
+      ingredients.push({
+        name: parts[0] || line,
+        amount: parts.slice(1).join(' ') || '适量',
+      });
+      return;
     }
+    if (!item || typeof item !== 'object') return;
+    const name = String(item.name ?? item.ingredient ?? item.title ?? '').trim();
+    const amount = String(item.amount ?? item.quantity ?? item.unit ?? '').trim();
+    if (name) {
+      ingredients.push({ name, amount: amount || '适量' });
+    }
+  };
+  const collectIngredients = (input: any) => {
+    if (Array.isArray(input)) {
+      input.forEach((item) => {
+        if (item && typeof item === 'object' && !Array.isArray(item) && (
+          'name' in item || 'amount' in item || 'quantity' in item
+        )) {
+          pushIngredient(item);
+        } else if (Array.isArray(item)) {
+          item.forEach(pushIngredient);
+        } else {
+          pushIngredient(item);
+        }
+      });
+      return;
+    }
+    if (typeof input === 'string') {
+      input.split(/\r?\n/).forEach(pushIngredient);
+      return;
+    }
+    if (input && typeof input === 'object') {
+      const entries = Object.entries(input);
+      const isNameAmountMap =
+        !('name' in input) &&
+        entries.length > 0 &&
+        entries.every(([, v]) => typeof v === 'string' || typeof v === 'number');
+      if (isNameAmountMap) {
+        entries.forEach(([key, value]) => {
+          const name = key.trim();
+          if (!name) return;
+          const amount = String(value ?? '').trim();
+          ingredients.push({ name, amount: amount || '适量' });
+        });
+        return;
+      }
+      Object.values(input).forEach(collectIngredients);
+    }
+  };
+  collectIngredients(raw.ingredients);
+
+  // 规整化步骤：同时兼容 description / content / text 等字段
+  const steps: Step[] = [];
+  const pushStep = (stepItem: any, idx: number) => {
+    if (typeof stepItem === 'string') {
+      const text = stepItem.trim();
+      if (text) steps.push({ order: idx + 1, description: text });
+      return;
+    }
+    if (!stepItem || typeof stepItem !== 'object') return;
+    const description = String(
+      stepItem.description ?? stepItem.content ?? stepItem.text ?? stepItem.desc ?? ''
+    ).trim();
+    if (!description) return;
+    steps.push({
+      order: Number(stepItem.order) || idx + 1,
+      description,
+      image: stepItem.image ? String(stepItem.image) : undefined,
+    });
+  };
+  if (Array.isArray(raw.steps)) {
+    raw.steps.forEach(pushStep);
+  } else if (typeof raw.steps === 'string') {
+    raw.steps
+      .split(/\r?\n/)
+      .map((s: string) => s.trim())
+      .filter(Boolean)
+      .forEach((s: string, idx: number) => steps.push({ order: idx + 1, description: s }));
   }
 
-  // 规整化步骤
-  const steps: Step[] = [];
-  if (Array.isArray(raw.steps)) {
-    raw.steps.forEach((stepItem: any, idx: number) => {
-      if (typeof stepItem === 'string') {
-        steps.push({
-          order: idx + 1,
-          description: stepItem.trim(),
-        });
-      } else if (stepItem && typeof stepItem === 'object') {
-        steps.push({
-          order: Number(stepItem.order) || idx + 1,
-          description: String(stepItem.description || '').trim(),
-          image: stepItem.image ? String(stepItem.image) : undefined,
-        });
-      }
-    });
+  // 规整化贴士：数组需拼接为字符串
+  let tips = '';
+  if (typeof raw.tips === 'string') {
+    tips = raw.tips.trim();
+  } else if (Array.isArray(raw.tips)) {
+    tips = raw.tips
+      .map((t: any) => (typeof t === 'string' ? t.trim() : ''))
+      .filter(Boolean)
+      .join('\n');
   }
 
   const id =
@@ -200,7 +261,7 @@ export function normalizeRecipe(raw: any, index = 0): Recipe {
     description: typeof raw.description === 'string' ? raw.description.trim() : `${cleanName}，家常美味做法。`,
     ingredients: ingredients.length > 0 ? ingredients : [{ name: '食材', amount: '适量' }],
     steps: steps.length > 0 ? steps : [{ order: 1, description: '下锅烹饪煮熟装盘即可。' }],
-    tips: typeof raw.tips === 'string' ? raw.tips.trim() : '',
+    tips,
     cookTime,
     difficulty,
     createdAt: typeof raw.createdAt === 'string' ? raw.createdAt : now,

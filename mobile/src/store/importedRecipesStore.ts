@@ -11,6 +11,7 @@ interface ImportedRecipesState {
   addImportedRecipes: (recipes: Recipe[]) => void;
   saveOrUpdateRecipe: (recipe: Recipe) => void;
   updateImportedRecipeCover: (recipeId: string, coverImage: string, fallbackRecipe?: Recipe) => void;
+  updateImportedRecipeCovers: (covers: Record<string, string>) => void;
   removeImportedRecipe: (recipeId: string) => void;
   clearImportedRecipes: () => void;
 }
@@ -80,6 +81,15 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
           return state;
         });
         triggerAutoSync(300);
+      },
+      updateImportedRecipeCovers: (covers) => {
+        const now = new Date().toISOString();
+        set((state) => ({
+          importedRecipes: state.importedRecipes.map((r) =>
+            covers[r.id] ? { ...r, coverImage: covers[r.id], updatedAt: now } : r
+          ),
+        }));
+        triggerAutoSync(500);
       },
       removeImportedRecipe: (recipeId: string) => {
         useFavoritesStore.getState().removeFavorite(recipeId);

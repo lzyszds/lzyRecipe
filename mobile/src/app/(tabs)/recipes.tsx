@@ -36,6 +36,10 @@ import { Recipe, DifficultyLevel } from '@/types';
 import { Palette } from '@/constants/theme';
 
 const ALL_CATEGORY = '全部';
+const VIEWABILITY_CONFIG = {
+  itemVisiblePercentThreshold: 20,
+  waitForInteraction: false,
+};
 
 type SortMode = 'default' | 'timeAsc' | 'easyFirst';
 type CardLayout = 'compact' | 'magazine';
@@ -297,6 +301,11 @@ export default function RecipesScreen() {
   const clickTimer = useRef<any>(null);
   const activeCatRef = useRef<string>(selectedCategory);
 
+  // 防止 scrollToIndex 失败重试形成无限滚动
+  const scrollRetryRef = useRef<{ index: number; attempts: number }>({
+    index: -1,
+    attempts: 0,
+  });
   // 左侧导航列表（包含“全部”与已有菜谱的分类）
   const categoryNavItems = useMemo(() => {
     const list = [ALL_CATEGORY];
@@ -433,35 +442,73 @@ export default function RecipesScreen() {
     }
   }, [selectedCategory, categoryNavItems]);
 
+  // 结束点击跳转锁定，恢复滚动跟随
+  const finishClickScroll = useCallback(() => {
+    if (!isClickScrolling.current) return;
+    isClickScrolling.current = false;
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current);
+      clickTimer.current = null;
+    }
+  }, []);
+
+  // scrollToIndex 失败时只做一次补偿重试，避免无限循环滚动
+  const handleScrollToIndexFailed = useCallback(
+    (info: any) => {
+      if (scrollRetryRef.current.index !== info.index) {
+        scrollRetryRef.current = { index: info.index, attempts: 0 };
+      }
+
+      if (scrollRetryRef.current.attempts >= 1) {
+        scrollRetryRef.current = { index: -1, attempts: 0 };
+        finishClickScroll();
+        return;
+      }
+
+      scrollRetryRef.current.attempts += 1;
+      flatListRef.current?.scrollToOffset({
+        offset: Math.max(0, info.averageItemLength * info.index),
+        animated: false,
+      });
+
+      setTimeout(() => {
+        if (scrollRetryRef.current.index !== info.index) return;
+        try {
+          flatListRef.current?.scrollToIndex({
+            index: info.index,
+            animated: true,
+            viewPosition: 0,
+          });
+        } catch {
+          scrollRetryRef.current = { index: -1, attempts: 0 };
+          finishClickScroll();
+        }
+      }, 100);
+    },
+    [finishClickScroll]
+  );
+
   // 点击左侧分类：100% 精准跳转定位
   const handleSelectCategory = (catName: string) => {
     setSelectedCategory(catName);
     activeCatRef.current = catName;
+    scrollRetryRef.current = { index: -1, attempts: 0 };
 
-    // 锁定跟随监听 650ms，防止滚动过程中高亮抖动
+    // 锁定跟随监听，防止滚动过程中高亮抖动；滚动结束后提前解除
     isClickScrolling.current = true;
     if (clickTimer.current) clearTimeout(clickTimer.current);
-    clickTimer.current = setTimeout(() => {
-      isClickScrolling.current = false;
-    }, 650);
+    clickTimer.current = setTimeout(finishClickScroll, 1200);
 
     if (catName === ALL_CATEGORY) {
       flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
     } else {
       const targetIndex = categoryIndexMap[catName];
       if (typeof targetIndex === 'number') {
-        try {
-          flatListRef.current?.scrollToIndex({
-            index: targetIndex,
-            animated: true,
-            viewPosition: 0,
-          });
-        } catch {
-          flatListRef.current?.scrollToOffset({
-            offset: targetIndex * 92,
-            animated: true,
-          });
-        }
+        flatListRef.current?.scrollToIndex({
+          index: targetIndex,
+          animated: true,
+          viewPosition: 0,
+        });
       }
     }
   };
@@ -684,27 +731,11 @@ export default function RecipesScreen() {
             contentContainerStyle={styles.rightListContent}
             showsVerticalScrollIndicator={false}
             onScroll={handleScroll}
+            onMomentumScrollEnd={finishClickScroll}
             scrollEventThrottle={16}
             onViewableItemsChanged={onViewableItemsChanged}
-            viewabilityConfig={{
-              itemVisiblePercentThreshold: 20,
-              waitForInteraction: false,
-            }}
-            onScrollToIndexFailed={(info) => {
-              flatListRef.current?.scrollToOffset({
-                offset: info.averageItemLength * info.index,
-                animated: true,
-              });
-              setTimeout(() => {
-                try {
-                  flatListRef.current?.scrollToIndex({
-                    index: info.index,
-                    animated: true,
-                    viewPosition: 0,
-                  });
-                } catch (_) {}
-              }, 100);
-            }}
+            viewabilityConfig={VIEWABILITY_CONFIG}
+            onScrollToIndexFailed={handleScrollToIndexFailed}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <CookingPot size={42} color={Palette.cocoa[400]} />

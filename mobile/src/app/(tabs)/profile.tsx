@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Cloud,
   FileUp,
+  ImagePlus,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
@@ -30,6 +31,7 @@ import { useSyncStore } from '@/lib/cloudSync';
 import { SyncSettingsModal } from '@/components/SyncSettingsModal';
 import { AiSettingsModal } from '@/components/AiSettingsModal';
 import { RecipeImportModal } from '@/components/RecipeImportModal';
+import { CoverRepairModal } from '@/components/CoverRepairModal';
 import { Palette } from '@/constants/theme';
 
 export default function ProfileScreen() {
@@ -45,6 +47,11 @@ export default function ProfileScreen() {
   const [syncModalVisible, setSyncModalVisible] = React.useState(false);
   const [aiModalVisible, setAiModalVisible] = React.useState(false);
   const [importModalVisible, setImportModalVisible] = React.useState(false);
+  const [coverRepairVisible, setCoverRepairVisible] = React.useState(false);
+
+  const missingCoverCount = importedRecipes.filter(
+    (r) => !String(r.coverImage || '').trim()
+  ).length;
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -159,11 +166,11 @@ export default function ProfileScreen() {
               <Sparkles size={18} color={Palette.primary} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.menuTitle}>AI 智能厨师</Text>
+              <Text style={styles.menuTitle}>AI 智能工具</Text>
               <Text style={styles.menuSubtitle}>
                 {!isAiConfigured(ai)
-                  ? '配置多渠道模型接口（NVIDIA/硅基/DeepSeek/自定义）'
-                  : `${ai.model || '已接入'} · 随时待命`}
+                  ? '配置多渠道模型接口'
+                  : `${ai.model || '已接入'}`}
               </Text>
             </View>
             <View style={styles.statusPill}>
@@ -201,9 +208,39 @@ export default function ProfileScreen() {
                 AI 自由提取 · JSON 文件/剪贴板批量导入
               </Text>
             </View>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
+          </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          {/* 缺失封面批量补全入口 */}
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => setCoverRepairVisible(true)}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#FDF2F8' }]}>
+              <ImagePlus size={18} color="#DB2777" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.menuTitle}>封面缺失补全</Text>
+              <Text style={styles.menuSubtitle}>
+                {missingCoverCount > 0
+                  ? `为 ${missingCoverCount} 道缺少封面的菜谱自动匹配美食图`
+                  : '所有菜谱封面已完整'}
+              </Text>
+            </View>
             <View style={styles.statusPill}>
-              <Text style={[styles.statusPillText, { color: '#16A34A', fontWeight: '700' }]}>
-                {importedRecipes.length > 0 ? `已导入 ${importedRecipes.length} 道` : 'AI / JSON'}
+              <Text
+                style={[
+                  styles.statusPillText,
+                  {
+                    color: missingCoverCount > 0 ? '#DB2777' : '#16A34A',
+                    fontWeight: '700',
+                  },
+                ]}
+              >
+                {missingCoverCount > 0 ? `待补全 ${missingCoverCount}` : '已完成'}
               </Text>
             </View>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
@@ -307,6 +344,12 @@ export default function ProfileScreen() {
         visible={importModalVisible}
         onClose={() => setImportModalVisible(false)}
         onOpenAiSettings={() => setAiModalVisible(true)}
+      />
+
+      {/* 缺失封面批量补全 */}
+      <CoverRepairModal
+        visible={coverRepairVisible}
+        onClose={() => setCoverRepairVisible(false)}
       />
     </SafeAreaView>
   );

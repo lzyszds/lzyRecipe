@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
 import { Palette } from '@/constants/theme';
 import { AddToMealPlanModal } from '@/components/AddToMealPlanModal';
 import { GlobalCustomFeedback } from '@/components/CustomFeedback';
@@ -13,7 +16,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <SafeAreaProvider>
+    <SafeAreaProvider style={{ flex: 1 }} initialMetrics={initialWindowMetrics}>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{

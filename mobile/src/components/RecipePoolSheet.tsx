@@ -4,12 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Pressable,
   FlatList,
   TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { X, Search, Check, Heart, Zap, Sparkles, Plus } from 'lucide-react-native';
+import { X, Search, Check } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
 import { useBentoStore, MealType } from '@/store/bentoStore';
 import { useFavoritesStore } from '@/store/favoritesStore';
@@ -27,7 +26,7 @@ interface RecipePoolSheetProps {
   onClose: () => void;
 }
 
-type TabKey = 'pool' | 'fav' | 'fast' | 'all';
+type TabKey = 'fav' | 'fast' | 'all';
 
 const MEAL_LABELS: Record<MealType, string> = {
   breakfast: '早餐',
@@ -42,27 +41,21 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
   onClose,
 }) => {
   const allRecipes = useAllRecipes();
-  const { recipePool, addDishesToMeal, applyLunchBentoToWorkdays } = useBentoStore();
+  const { addDishesToMeal, applyLunchBentoToWorkdays } = useBentoStore();
   const { favorites } = useFavoritesStore();
 
-  const [activeTab, setActiveTab] = useState<TabKey>('pool');
+  const [activeTab, setActiveTab] = useState<TabKey>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // 重置状态
+  // 重置状态，默认展示全部菜谱
   React.useEffect(() => {
     if (visible) {
       setSelectedIds(new Set());
       setSearchQuery('');
-      // 如果候选池有菜，默认切到候选池，否则默认切到全部或快手
-      setActiveTab(recipePool.length > 0 ? 'pool' : 'all');
+      setActiveTab('all');
     }
-  }, [visible, recipePool.length]);
-
-  const poolRecipes = useMemo(
-    () => allRecipes.filter((r) => recipePool.includes(r.id)),
-    [allRecipes, recipePool]
-  );
+  }, [visible]);
 
   const favRecipes = useMemo(
     () => allRecipes.filter((r) => favorites.includes(r.id)),
@@ -76,8 +69,7 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
 
   const displayedRecipes = useMemo(() => {
     let list: Recipe[] = [];
-    if (activeTab === 'pool') list = poolRecipes;
-    else if (activeTab === 'fav') list = favRecipes;
+    if (activeTab === 'fav') list = favRecipes;
     else if (activeTab === 'fast') list = fastRecipes;
     else list = allRecipes;
 
@@ -89,7 +81,7 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
         r.category.toLowerCase().includes(q) ||
         r.ingredients.some((i) => i.name.toLowerCase().includes(q))
     );
-  }, [activeTab, poolRecipes, favRecipes, fastRecipes, allRecipes, searchQuery]);
+  }, [activeTab, favRecipes, fastRecipes, allRecipes, searchQuery]);
 
   const toggleSelect = (id: string) => {
     const next = new Set(selectedIds);
@@ -151,20 +143,6 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
 
         {/* 快捷标签栏 */}
         <View style={styles.tabBar}>
-          <TouchableOpacity
-            style={[styles.tabItem, activeTab === 'pool' && styles.tabItemActive]}
-            onPress={() => setActiveTab('pool')}
-          >
-            <Text
-              style={[
-                styles.tabItemText,
-                activeTab === 'pool' && styles.tabItemTextActive,
-              ]}
-            >
-              想吃候选池 ({poolRecipes.length})
-            </Text>
-          </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.tabItem, activeTab === 'fav' && styles.tabItemActive]}
             onPress={() => setActiveTab('fav')}
@@ -285,11 +263,6 @@ export const RecipePoolSheet: React.FC<RecipePoolSheetProps> = ({
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Text style={styles.emptyText}>没有找到相关菜品</Text>
-              {activeTab === 'pool' && (
-                <Text style={styles.emptyHint}>
-                  去菜谱库点「放进想吃池」，随时收纳想吃的灵感！
-                </Text>
-              )}
             </View>
           }
         />
@@ -482,10 +455,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: Palette.cocoa[700],
-  },
-  emptyHint: {
-    fontSize: 12,
-    color: Palette.cocoa[400],
   },
   footer: {
     flexDirection: 'row',

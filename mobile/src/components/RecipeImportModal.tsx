@@ -27,6 +27,7 @@ import {
   Trash2,
   Settings,
   HelpCircle,
+  ImagePlus,
 } from 'lucide-react-native';
 import { Recipe } from '@/types';
 import { useSettingsStore, isAiConfigured } from '@/store/settingsStore';
@@ -44,6 +45,7 @@ import {
   DeduplicationItem,
   DeduplicationStrategy,
 } from '@/lib/recipeImport';
+import { fillMissingCovers } from '@/lib/coverImage';
 
 interface RecipeImportModalProps {
   visible: boolean;
@@ -104,6 +106,11 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
   // 预览态
   const [dedupItems, setDedupItems] = useState<DeduplicationItem[]>([]);
   const [strategy, setStrategy] = useState<DeduplicationStrategy>('skip');
+  const [autoFillCovers, setAutoFillCovers] = useState(true);
+  const [importing, setImporting] = useState(false);
+  const [coverProgress, setCoverProgress] = useState<{ done: number; total: number } | null>(
+    null
+  );
 
   const aiReady = isAiConfigured(ai);
 
@@ -116,12 +123,27 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
     return { total, duplicates, newItems, selectedCount };
   }, [dedupItems]);
 
+  // 本次待导入且缺少封面的菜品数量
+  const missingCoverCount = useMemo(
+    () =>
+      dedupItems.filter(
+        (item) =>
+          item.selected &&
+          (strategy !== 'skip' || !item.isDuplicate) &&
+          !String(item.recipe.coverImage || '').trim()
+      ).length,
+    [dedupItems, strategy]
+  );
+
   const handleReset = () => {
     setAiText('');
     setJsonText('');
     setStep('input');
     setDedupItems([]);
     setStrategy('skip');
+    setAutoFillCovers(true);
+    setImporting(false);
+    setCoverProgress(null);
     setLoading(false);
   };
 
@@ -269,19 +291,43 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
       return;
     }
 
+    setImporting(true);
     try {
+      let recipesToSave = finalRecipes;
+      let filledCovers = 0;
+
+      if (autoFillCovers) {
+        const missingTotal = recipesToSave.filter(
+          (r) => !String(r.coverImage || '').trim()
+        ).length;
+        if (missingTotal > 0) {
+          setCoverProgress({ done: 0, total: missingTotal });
+          recipesToSave = await fillMissingCovers(recipesToSave, (p) =>
+            setCoverProgress({ done: p.done, total: p.total })
+          );
+          filledCovers =
+            missingTotal -
+            recipesToSave.filter((r) => !String(r.coverImage || '').trim()).length;
+        }
+      }
+
       if (strategy === 'overwrite') {
-        finalRecipes.forEach((r) => saveOrUpdateRecipe(r));
+        recipesToSave.forEach((r) => saveOrUpdateRecipe(r));
       } else {
-        addImportedRecipes(finalRecipes);
+        addImportedRecipes(recipesToSave);
       }
       toast({
         type: 'success',
-        message: `成功导入 ${finalRecipes.length} 道菜谱！`,
+        message: `成功导入 ${recipesToSave.length} 道菜谱${
+          filledCovers > 0 ? `，已补全 ${filledCovers} 张封面` : ''
+        }！`,
       });
       handleClose();
     } catch (err: any) {
       toast({ type: 'error', message: err.message || '导入失败' });
+    } finally {
+      setImporting(false);
+      setCoverProgress(null);
     }
   };
 
@@ -312,8 +358,11 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
               </View>
             </View>
             <TouchableOpacity
-              style={styles.closeBtn}
-              onPress={handleClose}
+              style={[styles.closeBtn, importing && styles.btnDisabled]}
+              onPress={() => {
+                if (!importing) handleClose();
+              }}
+              disabled={importing}
               activeOpacity={0.7}
             >
               <X size={18} color={Palette.cocoa[700]} />
@@ -637,6 +686,30 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
                 )}
               </View>
 
+              {/* 封面缺失自动补全开关 */}
+              <View style={styles.coverFillCard}>
+                <View style={styles.coverFillIcon}>
+                  <ImagePlus size={16} color={Palette.primary} strokeWidth={2.3} />
+                </View>
+                <View style={styles.coverFillInfo}>
+                  <Text style={styles.coverFillTitle}>自动补全缺失封面</Text>
+                  <Text style={styles.coverFillSubtitle}>
+                    {missingCoverCount > 0
+                      ? `本次有 ${missingCoverCount} 道菜谱缺少封面，导入时自动匹配美食图`
+                      : '所选菜谱均已有封面'}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.coverFillToggle}
+                  onPress={() => setAutoFillCovers((prev) => !prev)}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.switchTrack, autoFillCovers && styles.switchTrackOn]}>
+                    <View style={[styles.switchKnob, autoFillCovers && styles.switchKnobOn]} />
+                  </View>
+                </TouchableOpacity>
+              </View>
+
               {/* 全选操作条 */}
               <View style={styles.selectAllRow}>
                 <TouchableOpacity
@@ -745,11 +818,22 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
                 ))}
               </ScrollView>
 
+              {/* 封面补全进度 */}
+              {coverProgress && (
+                <View style={styles.coverProgressRow}>
+                  <ActivityIndicator size="small" color={Palette.primary} />
+                  <Text style={styles.coverProgressText}>
+                    正在补全封面 {coverProgress.done}/{coverProgress.total}…
+                  </Text>
+                </View>
+              )}
+
               {/* 预览页底部操作栏 */}
               <View style={styles.footerRow}>
                 <TouchableOpacity
-                  style={styles.secondaryBtn}
+                  style={[styles.secondaryBtn, importing && styles.btnDisabled]}
                   onPress={() => setStep('input')}
+                  disabled={importing}
                   activeOpacity={0.8}
                 >
                   <ArrowLeft size={16} color={Palette.cocoa[700]} />
@@ -759,15 +843,23 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
                 <TouchableOpacity
                   style={[
                     styles.primaryConfirmBtn,
-                    previewStats.selectedCount === 0 && styles.btnDisabled,
+                    (previewStats.selectedCount === 0 || importing) && styles.btnDisabled,
                   ]}
                   onPress={handleConfirmImport}
-                  disabled={previewStats.selectedCount === 0}
+                  disabled={previewStats.selectedCount === 0 || importing}
                   activeOpacity={0.85}
                 >
-                  <CheckCircle2 size={16} color="#FFFFFF" />
+                  {importing && coverProgress ? (
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                  ) : (
+                    <CheckCircle2 size={16} color="#FFFFFF" />
+                  )}
                   <Text style={styles.primaryConfirmBtnText}>
-                    确认导入 ({previewStats.selectedCount})
+                    {importing && coverProgress
+                      ? `补全封面 ${coverProgress.done}/${coverProgress.total}`
+                      : importing
+                      ? '正在导入…'
+                      : `确认导入 (${previewStats.selectedCount})`}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -1078,6 +1170,79 @@ const styles = StyleSheet.create({
   strategyItemTextActive: {
     color: Palette.primary,
     fontWeight: '700',
+  },
+  coverFillCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginHorizontal: 16,
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 14,
+    backgroundColor: Palette.apricot[50],
+    borderWidth: 1,
+    borderColor: Palette.apricot[100],
+  },
+  coverFillIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 9,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  coverFillInfo: {
+    flex: 1,
+  },
+  coverFillTitle: {
+    fontSize: 12.5,
+    fontWeight: '800',
+    color: Palette.cocoa[900],
+  },
+  coverFillSubtitle: {
+    fontSize: 10.5,
+    color: Palette.cocoa[400],
+    marginTop: 2,
+  },
+  coverFillToggle: {
+    paddingLeft: 4,
+  },
+  switchTrack: {
+    width: 40,
+    height: 23,
+    borderRadius: 12,
+    backgroundColor: '#D8D0C7',
+    padding: 2,
+    justifyContent: 'center',
+  },
+  switchTrackOn: {
+    backgroundColor: Palette.primary,
+  },
+  switchKnob: {
+    width: 19,
+    height: 19,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+  },
+  switchKnobOn: {
+    alignSelf: 'flex-end',
+  },
+  coverProgressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginHorizontal: 16,
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+    borderRadius: 12,
+    backgroundColor: Palette.oat[50],
+  },
+  coverProgressText: {
+    fontSize: 11.5,
+    fontWeight: '600',
+    color: Palette.cocoa[700],
   },
   selectAllRow: {
     flexDirection: 'row',

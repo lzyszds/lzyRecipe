@@ -1,10 +1,14 @@
 import { recipes, categories } from '../data/recipes';
+import { generatedRecipes } from '../data/generatedRecipes';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { Category, Recipe } from '../types';
 
 export function getAllRecipes(importedRecipes: Recipe[] = []): Recipe[] {
   const map = new Map<string, Recipe>();
   for (const r of recipes) {
+    map.set(r.id, r);
+  }
+  for (const r of generatedRecipes) {
     map.set(r.id, r);
   }
   for (const r of importedRecipes) {

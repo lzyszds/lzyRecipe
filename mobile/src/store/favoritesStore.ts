@@ -6,6 +6,7 @@ import { triggerAutoSync } from '@/lib/syncTrigger';
 
 interface FavoritesState {
   favorites: string[];
+  favoritesUpdatedAt: number;
   addFavorite: (recipeId: string) => void;
   removeFavorite: (recipeId: string) => void;
   isFavorite: (recipeId: string) => boolean;
@@ -16,17 +17,20 @@ export const useFavoritesStore = create<FavoritesState>()(
   persist(
     (set, get) => ({
       favorites: [],
+      favoritesUpdatedAt: 0,
       addFavorite: (recipeId: string) => {
         set((state) => ({
           favorites: state.favorites.includes(recipeId)
             ? state.favorites
             : [...state.favorites, recipeId],
+          favoritesUpdatedAt: Date.now(),
         }));
         triggerAutoSync(800);
       },
       removeFavorite: (recipeId: string) => {
         set((state) => ({
           favorites: state.favorites.filter((id) => id !== recipeId),
+          favoritesUpdatedAt: Date.now(),
         }));
         triggerAutoSync(800);
       },

@@ -1,22 +1,20 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  Home,
-  UtensilsCrossed,
-  CalendarDays,
-  User,
-} from 'lucide-react-native';
-import { Palette } from '@/constants/theme';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Home, UtensilsCrossed, CalendarDays, User } from "lucide-react-native";
+import { Palette } from "@/constants/theme";
 
 const TAB_CONFIG: Record<
   string,
-  { label: string; icon: React.FC<{ size: number; color: string; strokeWidth?: number }> }
+  {
+    label: string;
+    icon: React.FC<{ size: number; color: string; strokeWidth?: number }>;
+  }
 > = {
-  index: { label: '首页', icon: Home },
-  recipes: { label: '菜谱', icon: UtensilsCrossed },
-  'weekly-plan': { label: '便当盒', icon: CalendarDays },
-  profile: { label: '我的', icon: User },
+  index: { label: "首页", icon: Home },
+  recipes: { label: "菜谱", icon: UtensilsCrossed },
+  "weekly-plan": { label: "便当盒", icon: CalendarDays },
+  profile: { label: "我的", icon: User },
 };
 
 interface CustomTabBarProps {
@@ -36,7 +34,10 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
   const safeBottom = Math.max(insets.bottom, 12);
 
   return (
-    <View style={[styles.floatingWrapper, { bottom: safeBottom }]} pointerEvents="box-none">
+    <View
+      style={[styles.floatingWrapper, { bottom: safeBottom }]}
+      pointerEvents="box-none"
+    >
       {/* 宽幅优雅路由菜单栏 */}
       <View style={styles.wideNavDock}>
         {state.routes.map((route: any, index: number) => {
@@ -58,7 +59,9 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
             }
           };
 
-          const iconColor = isFocused ? Palette.primary : 'rgba(255, 255, 255, 0.65)';
+          const iconColor = isFocused
+            ? Palette.primary
+            : "rgba(255, 255, 255, 0.65)";
 
           return (
             <TouchableOpacity
@@ -70,10 +73,21 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
               style={styles.tabBtn}
               activeOpacity={0.7}
             >
-              <View style={[styles.iconWrapper, isFocused && styles.iconWrapperActive]}>
-                <Icon size={20} color={iconColor} strokeWidth={isFocused ? 2.5 : 2} />
+              <View
+                style={[
+                  styles.iconWrapper,
+                  isFocused && styles.iconWrapperActive,
+                ]}
+              >
+                <Icon
+                  size={20}
+                  color={iconColor}
+                  strokeWidth={isFocused ? 2.5 : 2}
+                />
               </View>
-              <Text style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
+              <Text
+                style={[styles.tabLabel, isFocused && styles.tabLabelActive]}
+              >
                 {config.label}
               </Text>
             </TouchableOpacity>
@@ -86,24 +100,24 @@ export const CustomTabBar: React.FC<CustomTabBarProps> = ({
 
 const styles = StyleSheet.create({
   floatingWrapper: {
-    position: 'absolute',
+    position: "absolute",
     left: 20,
     right: 20,
-    alignItems: 'center',
+    alignItems: "center",
     zIndex: 90,
   },
   wideNavDock: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    width: '100%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-around",
+    width: "100%",
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#231F1D', // 深焦糖黑
+    backgroundColor: "#231F1D", // 深焦糖黑
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: "rgba(255, 255, 255, 0.12)",
     paddingHorizontal: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.22,
     shadowRadius: 18,
@@ -111,8 +125,8 @@ const styles = StyleSheet.create({
   },
   tabBtn: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 6,
     gap: 3,
   },
@@ -120,19 +134,20 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconWrapperActive: {
-    backgroundColor: 'rgba(217, 107, 56, 0.18)',
+    backgroundColor: "rgba(217, 107, 56, 0.18)",
+    borderRadius: 8,
   },
   tabLabel: {
     fontSize: 10,
-    fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.6)',
+    fontWeight: "600",
+    color: "rgba(255, 255, 255, 0.6)",
   },
   tabLabelActive: {
     color: Palette.primary,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 });

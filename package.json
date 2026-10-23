@@ -8,16 +8,17 @@
     "mobile"
   ],
   "scripts": {
-    "start": "bun run --filter lzyrecipe-mobile start",
-    "dev": "bun run --filter lzyrecipe-mobile start",
-    "android": "bun run --filter lzyrecipe-mobile android",
-    "ios": "bun run --filter lzyrecipe-mobile ios",
-    "web": "bun run --filter lzyrecipe-mobile web",
+    "start": "bun run --cwd mobile start",
+    "dev": "bun run --cwd mobile start",
+    "android": "bun run --cwd mobile android",
+    "ios": "bun run --cwd mobile ios",
+    "web": "bun run --cwd mobile web",
     "lint": "bun run --filter lzyrecipe-mobile lint",
     "typecheck": "bun run --filter lzyrecipe-mobile typecheck",
     "doctor": "bunx expo-doctor@latest",
     "covers": "node scripts/generate-covers.mjs",
-    "covers:photos": "node scripts/fetch-covers.mjs"
+    "covers:photos": "node scripts/fetch-covers.mjs",
+    "recipes:ai": "node scripts/generate-recipes-ai.mjs"
   },
   "trustedDependencies": [
     "unrs-resolver"

@@ -38,3 +38,7 @@ build-log*.txt
 
 # 本机开发环境（Claude 本地设置、打包调试日志）
 .claude/
+
+# 菜谱生成脚本的本地 Key 与中间产物
+.env.recipe-gen
+.tmp/

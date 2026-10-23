@@ -1,6 +1,7 @@
 import { chatWithAi } from './ai';
 import { useSettingsStore, isAiConfigured } from '../store/settingsStore';
 import { wrapCorsProxy } from './proxyUrl';
+import type { Recipe } from '../types';
 
 const MOBILE_UA =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
@@ -61,12 +62,13 @@ export async function searchBaiduImages(
  */
 export async function generateAiFoodImage(
   recipeName: string,
-  category?: string
+  category?: string,
+  options?: { expandPrompt?: boolean }
 ): Promise<{ imageUrl: string; prompt: string }> {
   let promptText = `Delicious gourmet ${recipeName}, ${category || 'chinese cuisine'}, restaurant plating, professional food photography, 8k resolution, soft natural lighting, shallow depth of field, appetizing details`;
 
   const aiConfig = useSettingsStore.getState().ai;
-  if (isAiConfigured(aiConfig)) {
+  if (options?.expandPrompt !== false && isAiConfigured(aiConfig)) {
     try {
       const reply = await chatWithAi(
         aiConfig,
@@ -104,4 +106,84 @@ export async function generateAiFoodImage(
  */
 export async function persistImageToServer(remoteUrl: string): Promise<string> {
   return remoteUrl.trim();
+}
+
+export interface CoverFillProgress {
+  done: number;
+  total: number;
+  name?: string;
+}
+
+/**
+ * 为单道菜谱寻找可用封面：优先百度美食实拍图，失败时用 AI 生图兜底
+ */
+async function findCoverForRecipe(recipe: Recipe): Promise<string | null> {
+  const queries = [
+    recipe.name,
+    `${recipe.name} ${recipe.category || ''}`.trim(),
+  ].filter((q, idx, arr) => q && arr.indexOf(q) === idx);
+
+  for (const query of queries) {
+    const urls = await searchBaiduImages(query, 0, 8);
+    if (urls.length > 0) {
+      return persistImageToServer(urls[0]);
+    }
+  }
+
+  try {
+    const { imageUrl } = await generateAiFoodImage(recipe.name, recipe.category, {
+      expandPrompt: false,
+    });
+    return imageUrl;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 批量补全菜谱封面：
+ * 1. 仅处理 coverImage 为空的菜谱；
+ * 2. 并发数受限，避免第三方接口限流；
+ * 3. 返回补全后的完整列表，失败项原样保留。
+ */
+export async function fillMissingCovers(
+  recipes: Recipe[],
+  onProgress?: (progress: CoverFillProgress) => void,
+  options?: { concurrency?: number }
+): Promise<Recipe[]> {
+  const missing = recipes.filter((r) => !String(r.coverImage || '').trim());
+  const total = missing.length;
+  if (total === 0) return recipes;
+
+  const covers = new Map<string, string>();
+  let cursor = 0;
+  let done = 0;
+  const concurrency = Math.max(1, Math.min(options?.concurrency ?? 3, 5));
+
+  const worker = async () => {
+    while (cursor < missing.length) {
+      const recipe = missing[cursor];
+      cursor += 1;
+      try {
+        const url = await findCoverForRecipe(recipe);
+        if (url) covers.set(recipe.id, url);
+      } catch (err: any) {
+        console.warn('[fillMissingCovers] failed:', recipe.name, err?.message);
+      }
+      done += 1;
+      onProgress?.({ done, total, name: recipe.name });
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, total) }, () => worker())
+  );
+
+  return recipes.map((recipe) =>
+    covers.has(recipe.id) ? { ...recipe, coverImage: covers.get(recipe.id)! } : recipe
+  );
+}
+
+export function countMissingCovers(recipes: Recipe[]): number {
+  return recipes.filter((r) => !String(r.coverImage || '').trim()).length;
 }
