@@ -24,6 +24,7 @@ import {
   Zap,
   CalendarPlus,
   CookingPot,
+  Clock,
 } from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
 import { RecipeImage } from '@/components/RecipeImage';
@@ -140,7 +141,8 @@ const CompactHorizontalCard = React.memo(function CompactHorizontalCard({ recipe
 
         {/* 左下角毛玻璃耗时胶囊 */}
         <View style={styles.glassTimeBadge}>
-          <Text style={styles.glassTimeText}>⏱ {recipe.cookTime}分</Text>
+          <Clock size={8.5} color="#FFFFFF" strokeWidth={2.4} />
+          <Text style={styles.glassTimeText}>{recipe.cookTime}分</Text>
         </View>
       </View>
 
@@ -243,8 +245,9 @@ const MagazineCard = React.memo(function MagazineCard({ recipe }: { recipe: Reci
         <View style={styles.magazineOverlay}>
           <View style={styles.magazineOverlayLeft}>
             <View style={styles.magazineTimeBadge}>
+              <Clock size={9.5} color="#FFFFFF" strokeWidth={2.4} />
               <Text style={styles.magazineTimeText}>
-                ⏱ {recipe.cookTime}分钟 · #{recipe.category}
+                {recipe.cookTime}分钟 · #{recipe.category}
               </Text>
             </View>
             <Text style={styles.magazineTitle} numberOfLines={1}>
@@ -300,12 +303,6 @@ export default function RecipesScreen() {
   const isClickScrolling = useRef<boolean>(false);
   const clickTimer = useRef<any>(null);
   const activeCatRef = useRef<string>(selectedCategory);
-
-  // 防止 scrollToIndex 失败重试形成无限滚动
-  const scrollRetryRef = useRef<{ index: number; attempts: number }>({
-    index: -1,
-    attempts: 0,
-  });
   // 左侧导航列表（包含“全部”与已有菜谱的分类）
   const categoryNavItems = useMemo(() => {
     const list = [ALL_CATEGORY];
@@ -395,9 +392,39 @@ export default function RecipesScreen() {
     };
   }, [allRecipes, rawCategories, searchQuery, onlyFast, onlyFav, sortMode, isFavorite]);
 
+  // 计算平铺数据项的精确尺寸与布局（O(1) 精准定位，彻底告别虚拟列表计算偏差与抖动）
+  const itemLayouts = useMemo(() => {
+    const list = flatListData;
+    const isCompact = cardLayout === 'compact';
+    const cardH = isCompact ? 124 : 218; // 卡片自身高度 + marginBottom 10
+    const headerH = 54; // 分组标题自身高度 44 + marginBottom 10
+
+    const layouts = new Array(list.length);
+    let offset = 4; // 对应 rightListContent 的 paddingTop: 4
+    for (let i = 0; i < list.length; i++) {
+      const length = list[i].type === 'header' ? headerH : cardH;
+      layouts[i] = { length, offset, index: i };
+      offset += length;
+    }
+    return layouts;
+  }, [flatListData, cardLayout]);
+
+  const getItemLayout = useCallback(
+    (_data: any, index: number) => {
+      if (itemLayouts[index]) {
+        return itemLayouts[index];
+      }
+      const isCompact = cardLayout === 'compact';
+      const defaultLen = isCompact ? 124 : 218;
+      return { length: defaultLen, offset: 4 + index * defaultLen, index };
+    },
+    [itemLayouts, cardLayout]
+  );
+
   // 滚动时动态识别当前视口第一项属于哪个分类（滚动分类跟随功能）
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: any[] }) => {
+      // 正在程序化点击跳转时，严格静默，避免滚动中间状态干扰当前选中的分类
       if (isClickScrolling.current) return;
       if (!viewableItems || viewableItems.length === 0) return;
 
@@ -416,21 +443,6 @@ export default function RecipesScreen() {
     }
   ).current;
 
-  // 监听回到顶部的滚动距离
-  const handleScroll = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (isClickScrolling.current) return;
-      const scrollY = e.nativeEvent.contentOffset.y;
-      if (scrollY <= 20) {
-        if (activeCatRef.current !== ALL_CATEGORY) {
-          activeCatRef.current = ALL_CATEGORY;
-          setSelectedCategory(ALL_CATEGORY);
-        }
-      }
-    },
-    []
-  );
-
   // 当跟随分类改变时，左侧侧边栏自动滑动以保持高亮可见
   useEffect(() => {
     const idx = categoryNavItems.indexOf(selectedCategory);
@@ -442,76 +454,94 @@ export default function RecipesScreen() {
     }
   }, [selectedCategory, categoryNavItems]);
 
-  // 结束点击跳转锁定，恢复滚动跟随
-  const finishClickScroll = useCallback(() => {
-    if (!isClickScrolling.current) return;
+  // 手指主动触摸拖拽开始：立即交还控制权，恢复实时跟随
+  const handleScrollBeginDrag = useCallback(() => {
+    if (clickTimer.current) clearTimeout(clickTimer.current);
     isClickScrolling.current = false;
-    if (clickTimer.current) {
-      clearTimeout(clickTimer.current);
-      clickTimer.current = null;
-    }
   }, []);
 
-  // scrollToIndex 失败时只做一次补偿重试，避免无限循环滚动
+  // 惯性滚动结束：确保缓冲后释放锁定
+  const handleMomentumScrollEnd = useCallback(() => {
+    if (clickTimer.current) clearTimeout(clickTimer.current);
+    clickTimer.current = setTimeout(() => {
+      isClickScrolling.current = false;
+    }, 120);
+  }, []);
+
+  // scrollToIndex 极端边缘失败兜底：直接按精确 offset 滚动
   const handleScrollToIndexFailed = useCallback(
     (info: any) => {
-      if (scrollRetryRef.current.index !== info.index) {
-        scrollRetryRef.current = { index: info.index, attempts: 0 };
+      const layout = itemLayouts[info.index];
+      if (layout) {
+        flatListRef.current?.scrollToOffset({
+          offset: layout.offset,
+          animated: true,
+        });
       }
+      setTimeout(() => {
+        isClickScrolling.current = false;
+      }, 200);
+    },
+    [itemLayouts]
+  );
 
-      if (scrollRetryRef.current.attempts >= 1) {
-        scrollRetryRef.current = { index: -1, attempts: 0 };
-        finishClickScroll();
+  // 执行锚点精准跳转
+  const doJumpToCategory = useCallback(
+    (catName: string) => {
+      setSelectedCategory(catName);
+      activeCatRef.current = catName;
+
+      // 锁定跟随监听，防止滚动过程中途高亮跳跃
+      isClickScrolling.current = true;
+      if (clickTimer.current) clearTimeout(clickTimer.current);
+      clickTimer.current = setTimeout(() => {
+        isClickScrolling.current = false;
+      }, 1000);
+
+      if (catName === ALL_CATEGORY) {
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
         return;
       }
 
-      scrollRetryRef.current.attempts += 1;
-      flatListRef.current?.scrollToOffset({
-        offset: Math.max(0, info.averageItemLength * info.index),
-        animated: false,
-      });
-
-      setTimeout(() => {
-        if (scrollRetryRef.current.index !== info.index) return;
-        try {
-          flatListRef.current?.scrollToIndex({
-            index: info.index,
-            animated: true,
-            viewPosition: 0,
-          });
-        } catch {
-          scrollRetryRef.current = { index: -1, attempts: 0 };
-          finishClickScroll();
-        }
-      }, 100);
-    },
-    [finishClickScroll]
-  );
-
-  // 点击左侧分类：100% 精准跳转定位
-  const handleSelectCategory = (catName: string) => {
-    setSelectedCategory(catName);
-    activeCatRef.current = catName;
-    scrollRetryRef.current = { index: -1, attempts: 0 };
-
-    // 锁定跟随监听，防止滚动过程中高亮抖动；滚动结束后提前解除
-    isClickScrolling.current = true;
-    if (clickTimer.current) clearTimeout(clickTimer.current);
-    clickTimer.current = setTimeout(finishClickScroll, 1200);
-
-    if (catName === ALL_CATEGORY) {
-      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    } else {
       const targetIndex = categoryIndexMap[catName];
-      if (typeof targetIndex === 'number') {
+      if (typeof targetIndex === 'number' && targetIndex >= 0) {
         flatListRef.current?.scrollToIndex({
           index: targetIndex,
           animated: true,
           viewPosition: 0,
         });
+      } else {
+        isClickScrolling.current = false;
+        showToast(`当前筛选下「${catName}」暂无菜谱`);
       }
+    },
+    [categoryIndexMap]
+  );
+
+  // 点击左侧分类导航
+  const handleSelectCategory = useCallback(
+    (catName: string) => {
+      if (searchQuery.trim()) {
+        setSearchQuery('');
+        setTimeout(() => {
+          doJumpToCategory(catName);
+        }, 80);
+        return;
+      }
+      doJumpToCategory(catName);
+    },
+    [searchQuery, doJumpToCategory]
+  );
+
+  // 页面初始加载时若携带 category 参数，自动精准锚定至该分类
+  useEffect(() => {
+    if (params.category && params.category !== ALL_CATEGORY) {
+      const timer = setTimeout(() => {
+        doJumpToCategory(params.category!);
+      }, 350);
+      return () => clearTimeout(timer);
     }
-  };
+  }, [params.category, doJumpToCategory]);
 
   // 切换排序
   const handleCycleSort = () => {
@@ -723,15 +753,14 @@ export default function RecipesScreen() {
                 <MagazineCard recipe={item.recipe} />
               );
             }}
-            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-            initialNumToRender={6}
-            maxToRenderPerBatch={6}
-            windowSize={5}
-            removeClippedSubviews={true}
+            getItemLayout={getItemLayout}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={9}
             contentContainerStyle={styles.rightListContent}
             showsVerticalScrollIndicator={false}
-            onScroll={handleScroll}
-            onMomentumScrollEnd={finishClickScroll}
+            onScrollBeginDrag={handleScrollBeginDrag}
+            onMomentumScrollEnd={handleMomentumScrollEnd}
             scrollEventThrottle={16}
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={VIEWABILITY_CONFIG}
@@ -972,11 +1001,11 @@ const styles = StyleSheet.create({
 
   // 分类分组标题条
   sectionHeaderBar: {
+    height: 44,
+    marginBottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 14,
-    paddingBottom: 6,
     paddingHorizontal: 2,
   },
   sectionHeaderTitle: {
@@ -999,6 +1028,8 @@ const styles = StyleSheet.create({
 
   // 模式 A：精品横卡
   compactCard: {
+    height: 114,
+    marginBottom: 10,
     backgroundColor: Palette.cardBg,
     borderRadius: 20,
     padding: 9,
@@ -1006,6 +1037,7 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 1,
     borderColor: '#EFE7DD',
+    overflow: 'hidden',
   },
   compactImageContainer: {
     width: 94,
@@ -1034,6 +1066,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
   },
   glassTimeText: {
     fontSize: 9,
@@ -1068,7 +1103,9 @@ const styles = StyleSheet.create({
   },
   tagsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    overflow: 'hidden',
     gap: 4,
     marginTop: 5,
   },
@@ -1123,12 +1160,15 @@ const styles = StyleSheet.create({
 
   // 模式 B：杂志大图卡
   magazineCard: {
+    height: 208,
+    marginBottom: 10,
     backgroundColor: Palette.cardBg,
     borderRadius: 22,
     padding: 8,
     borderWidth: 1,
     borderColor: '#EFE7DD',
     gap: 8,
+    overflow: 'hidden',
   },
   magazineImageContainer: {
     height: 148,
@@ -1173,6 +1213,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 6,
     marginBottom: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
   },
   magazineTimeText: {
     fontSize: 9.5,
