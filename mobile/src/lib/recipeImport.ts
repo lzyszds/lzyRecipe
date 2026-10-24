@@ -257,7 +257,13 @@ export function normalizeRecipe(raw: any, index = 0): Recipe {
     id,
     name: cleanName,
     category,
-    coverImage: typeof raw.coverImage === 'string' ? raw.coverImage : '',
+    coverImage:
+      typeof raw.coverImage === 'string' &&
+      (raw.coverImage.startsWith('http://') ||
+        raw.coverImage.startsWith('https://') ||
+        raw.coverImage.startsWith('data:image/'))
+        ? raw.coverImage.trim()
+        : '',
     description: typeof raw.description === 'string' ? raw.description.trim() : `${cleanName}，家常美味做法。`,
     ingredients: ingredients.length > 0 ? ingredients : [{ name: '食材', amount: '适量' }],
     steps: steps.length > 0 ? steps : [{ order: 1, description: '下锅烹饪煮熟装盘即可。' }],

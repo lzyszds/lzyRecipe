@@ -53,7 +53,7 @@ export const recipes: Recipe[] = [
     id: 's002',
     name: '响油鳝丝',
     category: '海鲜',
-    coverImage: '/covers/s002.jpg',
+    coverImage: '',
     description: '经典江浙沪家常菜，鳝丝鲜嫩滑爽，蒜香浓郁，酱汁微甜，淋上热猪油后香气四溢。',
     ingredients: [
       { name: '鳝丝', amount: '400g' },
@@ -86,7 +86,7 @@ export const recipes: Recipe[] = [
     id: 's003',
     name: '小龙虾',
     category: '川菜',
-    coverImage: '/covers/s003.jpg',
+    coverImage: '',
     description: '麻辣鲜香，虾肉细嫩多汁，经典的川湘风味下酒菜，在家自制干净又实惠。',
     ingredients: [
       { name: '小龙虾', amount: '2斤' },
@@ -119,7 +119,7 @@ export const recipes: Recipe[] = [
     id: 's004',
     name: '干煎阿根廷红虾',
     category: '海鲜',
-    coverImage: '/covers/s004.jpg',
+    coverImage: '',
     description: '煎制后的阿根廷红虾肉质白嫩，口感鲜甜浓郁，虾壳酥香。',
     ingredients: [
       { name: '阿根廷红虾', amount: '2-3只' },
@@ -150,7 +150,7 @@ export const recipes: Recipe[] = [
     id: 's005',
     name: '水煮鱼',
     category: '川菜',
-    coverImage: '/covers/s005.jpg',
+    coverImage: '',
     description: '麻辣鲜香、鱼肉嫩滑的经典川菜，巴沙鱼富含优质蛋白且脂肪含量低。',
     ingredients: [
       { name: '巴沙鱼', amount: '500g' },
@@ -179,7 +179,7 @@ export const recipes: Recipe[] = [
     id: 's006',
     name: '油焖大虾',
     category: '鲁菜',
-    coverImage: '/covers/s006.jpg',
+    coverImage: '',
     description: '经典鲁菜，咸甜交融的酱汁包裹整虾，成菜红亮油润，虾肉紧实弹嫩。',
     ingredients: [
       { name: '黑虎虾或明虾', amount: '10只' },
@@ -206,7 +206,7 @@ export const recipes: Recipe[] = [
     id: 's007',
     name: '烤鱼',
     category: '川菜',
-    coverImage: '/covers/s007.jpg',
+    coverImage: '',
     description: '川味烤鱼麻辣鲜香，鱼肉外焦里嫩，配菜吸饱汤汁后格外下饭。',
     ingredients: [
       { name: '草鱼', amount: '约3斤' },
@@ -234,7 +234,7 @@ export const recipes: Recipe[] = [
     id: 's008',
     name: '清蒸鲈鱼',
     category: '粤菜',
-    coverImage: '/covers/s008.jpg',
+    coverImage: '',
     description: '广东经典蒸菜，鱼肉鲜嫩，清淡可口，最大程度保留鱼肉的营养和原味。',
     ingredients: [
       { name: '鲈鱼', amount: '1条（约500g）' },
@@ -259,7 +259,7 @@ export const recipes: Recipe[] = [
     id: 's009',
     name: '白灼虾',
     category: '粤菜',
-    coverImage: '/covers/s009.jpg',
+    coverImage: '',
     description: '粤式经典快手菜，虾肉鲜甜弹嫩，原汁原味，搭配蘸料开胃不油腻。',
     ingredients: [
       { name: '活虾', amount: '250g' },
@@ -288,7 +288,7 @@ export const recipes: Recipe[] = [
     id: 's010',
     name: '红烧鱼',
     category: '家常菜',
-    coverImage: '/covers/s010.jpg',
+    coverImage: '',
     description: '家常风味浓郁的经典菜，咸鲜微甜，鱼肉嫩滑入味。',
     ingredients: [
       { name: '鱼（鲫鱼等）', amount: '1条' },
@@ -320,7 +320,7 @@ export const recipes: Recipe[] = [
     id: 's011',
     name: '红烧鲤鱼',
     category: '鲁菜',
-    coverImage: '/covers/s011.jpg',
+    coverImage: '',
     description: '经典鲁菜代表，鱼肉先炸后炖，外皮微韧，肉质鲜嫩，咸甜酱香。',
     ingredients: [
       { name: '鲤鱼', amount: '约2斤' },
@@ -349,7 +349,7 @@ export const recipes: Recipe[] = [
     id: 's012',
     name: '红烧鱼头',
     category: '家常菜',
-    coverImage: '/covers/s012.jpg',
+    coverImage: '',
     description: '经典家常烧菜，鱼头胶质丰富，肉质滑嫩，汤汁咸鲜微辣，十分下饭。',
     ingredients: [
       { name: '鱼头', amount: '1个' },
@@ -379,7 +379,7 @@ export const recipes: Recipe[] = [
     id: 's013',
     name: '糖醋鲤鱼',
     category: '鲁菜',
-    coverImage: '/covers/s013.jpg',
+    coverImage: '',
     description: '经典鲁菜，鱼肉外酥里嫩，酸甜可口，色泽金黄诱人。',
     ingredients: [
       { name: '鲤鱼', amount: '约3斤' },
@@ -407,7 +407,7 @@ export const recipes: Recipe[] = [
     id: 's014',
     name: '肉蟹煲',
     category: '海鲜',
-    coverImage: '/covers/s014.jpg',
+    coverImage: '',
     description: '蟹肉饱满鲜甜，配菜丰富，汤汁浓郁，是一道适合分享的硬菜。',
     ingredients: [
       { name: '肉蟹', amount: '2只' },
@@ -437,7 +437,7 @@ export const recipes: Recipe[] = [
     id: 's015',
     name: '芥末黄油罗氏虾',
     category: '海鲜',
-    coverImage: '/covers/s015.jpg',
+    coverImage: '',
     description: '西式风味海鲜料理，黄油香浓，芥末微辣，虾肉鲜嫩弹牙。',
     ingredients: [
       { name: '罗氏虾', amount: '8-10只' },
@@ -465,7 +465,7 @@ export const recipes: Recipe[] = [
     id: 's016',
     name: '清蒸生蚝',
     category: '海鲜',
-    coverImage: '/covers/s016.jpg',
+    coverImage: '',
     description: '原汁原味的沿海家常菜，蚝肉鲜嫩多汁，带着淡淡的海水咸香。',
     ingredients: [
       { name: '生蚝', amount: '6个' },
@@ -491,7 +491,7 @@ export const recipes: Recipe[] = [
     id: 's017',
     name: '葱油桂鱼',
     category: '粤菜',
-    coverImage: '/covers/s017.jpg',
+    coverImage: '',
     description: '葱香浓郁、鱼肉鲜嫩的蒸菜，桂鱼富含优质蛋白，做法对新手十分友好。',
     ingredients: [
       { name: '桂鱼', amount: '1斤(500g)' },
@@ -519,7 +519,7 @@ export const recipes: Recipe[] = [
     id: 's018',
     name: '葱烧海参',
     category: '鲁菜',
-    coverImage: '/covers/s018.jpg',
+    coverImage: '',
     description: '经典鲁菜，浓郁的葱香和软糯入味的海参，汤汁稠亮咸鲜回甜。',
     ingredients: [
       { name: '泡发好的海参', amount: '4个' },
@@ -547,7 +547,7 @@ export const recipes: Recipe[] = [
     id: 's019',
     name: '蒜蓉虾',
     category: '粤菜',
-    coverImage: '/covers/s019.jpg',
+    coverImage: '',
     description: '广东省地方传统名菜，色香味俱全，虾肉鲜嫩，蒜香浓郁。',
     ingredients: [
       { name: '海虾', amount: '8只' },
@@ -570,7 +570,7 @@ export const recipes: Recipe[] = [
     id: 's020',
     name: '蒜香黄油虾',
     category: '海鲜',
-    coverImage: '/covers/s020.jpg',
+    coverImage: '',
     description: '经典西式海鲜菜，虾肉鲜嫩弹牙，被浓郁的蒜香和黄油包裹，带有淡淡柠檬清香。',
     ingredients: [
       { name: '大虾', amount: '8-10只（约200g）' },
@@ -597,7 +597,7 @@ export const recipes: Recipe[] = [
     id: 's021',
     name: '蛏抱蛋',
     category: '海鲜',
-    coverImage: '/covers/s021.jpg',
+    coverImage: '',
     description: '福建福州传统家常菜，蛏肉裹着蛋液煎得外酥里嫩，带着洋葱和生抽的咸鲜香气。',
     ingredients: [
       { name: '蛏子', amount: '200g' },
@@ -625,7 +625,7 @@ export const recipes: Recipe[] = [
     id: 'b001',
     name: '太阳蛋',
     category: '早餐',
-    coverImage: '/covers/b001.jpg',
+    coverImage: '',
     description: '用微波炉快速制成的家常早餐，口感嫩滑，蛋黄微溏，零基础也能轻松上手。',
     ingredients: [
       { name: '鸡蛋', amount: '1个' },
@@ -647,7 +647,7 @@ export const recipes: Recipe[] = [
     id: 'b002',
     name: '完美水煮蛋',
     category: '早餐',
-    coverImage: '/covers/b002.jpg',
+    coverImage: '',
     description: '科学家研发的循环水煮法，可同时达到蛋黄绵密、蛋白均匀凝固且保留最多营养素的效果。',
     ingredients: [
       { name: '新鲜鸡蛋', amount: '1个（约60g）' },
@@ -672,7 +672,7 @@ export const recipes: Recipe[] = [
     id: 'b003',
     name: '微波炉蛋糕',
     category: '早餐',
-    coverImage: '/covers/b003.jpg',
+    coverImage: '',
     description: '微波炉版的快手蛋糕，口感松软香甜，是一道零基础也能轻松上手的家庭甜点。',
     ingredients: [
       { name: '黄油', amount: '半个鸡蛋大小' },
@@ -698,7 +698,7 @@ export const recipes: Recipe[] = [
     id: 'b004',
     name: '吐司果酱',
     category: '早餐',
-    coverImage: '/covers/b004.jpg',
+    coverImage: '',
     description: '极简快手早餐，烤至微脆的吐司夹入甜香果酱，外脆内软，方便随身携带。',
     ingredients: [
       { name: '新鲜吐司', amount: '两片' },
@@ -720,7 +720,7 @@ export const recipes: Recipe[] = [
     id: 'soup001',
     name: '奶油蘑菇汤',
     category: '汤',
-    coverImage: '/covers/soup001.jpg',
+    coverImage: '',
     description: '经典西式汤品，口感浓郁丝滑，奶香与蘑菇鲜味完美融合。',
     ingredients: [
       { name: '白蘑菇', amount: '200克' },
@@ -751,7 +751,7 @@ export const recipes: Recipe[] = [
     id: 'soup002',
     name: '小米粥',
     category: '汤',
-    coverImage: '/covers/soup002.jpg',
+    coverImage: '',
     description: '北方常见的家常粥品，口感绵滑，米香浓郁，熬出的米油尤其养胃。',
     ingredients: [
       { name: '小米', amount: '100克' },
@@ -772,7 +772,7 @@ export const recipes: Recipe[] = [
     id: 'soup003',
     name: '皮蛋瘦肉粥',
     category: '汤',
-    coverImage: '/covers/soup003.jpg',
+    coverImage: '',
     description: '广东经典家常粥品，粥底绵密顺滑，皮蛋的醇香与瘦肉的鲜嫩融合，口感温润鲜美。',
     ingredients: [
       { name: '皮蛋', amount: '2颗' },
@@ -797,7 +797,7 @@ export const recipes: Recipe[] = [
     id: 'soup004',
     name: '米粥',
     category: '汤',
-    coverImage: '/covers/soup004.jpg',
+    coverImage: '',
     description: '白粥清淡绵软，是家常必备的暖胃主食，米香纯粹，老少皆宜。',
     ingredients: [
       { name: '米', amount: '60-110ml' },
@@ -820,7 +820,7 @@ export const recipes: Recipe[] = [
     id: 'soup005',
     name: '紫菜蛋花汤',
     category: '汤',
-    coverImage: '/covers/soup005.jpg',
+    coverImage: '',
     description: '简单美味的汤品，口感清淡鲜美，适合搭配各种菜肴。',
     ingredients: [
       { name: '干紫菜', amount: '10g' },
@@ -842,7 +842,7 @@ export const recipes: Recipe[] = [
     id: 'soup006',
     name: '罗宋汤',
     category: '汤',
-    coverImage: '/covers/soup006.jpg',
+    coverImage: '',
     description: '源自俄罗斯甜菜汤的海派家常汤品，以番茄和牛肉为主调，口感酸甜浓郁、醇厚鲜美。',
     ingredients: [
       { name: '牛肉高汤', amount: '500ml' },
@@ -870,7 +870,7 @@ export const recipes: Recipe[] = [
     id: 'd001',
     name: '奶茶',
     category: '饮品',
-    coverImage: '/covers/d001.jpg',
+    coverImage: '',
     description: '用红茶和奶粉轻松调制的家常饮品，茶香与奶香交融，口感顺滑温暖。',
     ingredients: [
       { name: '袋泡红茶', amount: '2包（约4g）' },
@@ -892,7 +892,7 @@ export const recipes: Recipe[] = [
     id: 'd002',
     name: 'B52轰炸机',
     category: '饮品',
-    coverImage: '/covers/d002.jpg',
+    coverImage: '',
     description: '这款鸡尾酒口感层次分明，入口先是伏特加的烈，紧接着是咖啡奶油的回甘。',
     ingredients: [
       { name: '甘露咖啡酒', amount: '10ml' },
@@ -914,7 +914,7 @@ export const recipes: Recipe[] = [
     id: 'd003',
     name: 'Mojito莫吉托',
     category: '饮品',
-    coverImage: '/covers/d003.jpg',
+    coverImage: '',
     description: '经典夏季饮品，口感清爽酸甜，带有薄荷的清凉和朗姆酒的微醺。',
     ingredients: [
       { name: '青柠', amount: '一块（切成两个半块）' },
@@ -939,7 +939,7 @@ export const recipes: Recipe[] = [
     id: 'm001',
     name: '可乐鸡翅',
     category: '肉类',
-    coverImage: '/covers/m001.jpg',
+    coverImage: '',
     description: '经典家常菜，鸡翅鲜嫩多汁，甜咸适口，是大人小孩都爱的菜品。',
     ingredients: [
       { name: '鸡翅中', amount: '10-12只' },
@@ -970,7 +970,7 @@ export const recipes: Recipe[] = [
     id: 'm002',
     name: '咕噜肉',
     category: '粤菜',
-    coverImage: '/covers/m002.jpg',
+    coverImage: '',
     description: '经典粤式家常菜，酸甜开胃、外酥里嫩，菠萝的果香让肉块吃起来格外清爽解腻。',
     ingredients: [
       { name: '梅头猪肉', amount: '100g' },
@@ -999,7 +999,7 @@ export const recipes: Recipe[] = [
     id: 'm003',
     name: '冷吃兔',
     category: '川菜',
-    coverImage: '/covers/m003.jpg',
+    coverImage: '',
     description: '经典四川自贡盐帮菜，麻辣干香，兔肉紧实有嚼劲，入口先辣后鲜，回味悠长。',
     ingredients: [
       { name: '兔肉', amount: '适量' },
@@ -1024,7 +1024,7 @@ export const recipes: Recipe[] = [
     id: 'm004',
     name: '商芝肉',
     category: '家常菜',
-    coverImage: '/covers/m004.jpg',
+    coverImage: '',
     description: '此菜色泽红润，质地软嫩，肥而不腻，有浓郁的商芝香味，是陕西省商县特有的风味菜。',
     ingredients: [
       { name: '带皮猪五花肉', amount: '500克' },
@@ -1050,7 +1050,7 @@ export const recipes: Recipe[] = [
     id: 'm005',
     name: '乡村啤酒鸭',
     category: '家常菜',
-    coverImage: '/covers/m005.jpg',
+    coverImage: '',
     description: '鸭肉与啤酒同炖，汤汁浓郁，肉质鲜香软烂，还带有一股淡淡的啤酒清香。',
     ingredients: [
       { name: '鸭肉', amount: '半只,1kg' },
@@ -1076,7 +1076,7 @@ export const recipes: Recipe[] = [
     id: 'v001',
     name: '凉拌豆腐',
     category: '蔬菜',
-    coverImage: '/covers/v001.jpg',
+    coverImage: '',
     description: '清爽可口的凉菜，富含植物蛋白和钙质，低脂健康。',
     ingredients: [
       { name: '豆腐（推荐北豆腐或老豆腐）', amount: '250g（约1块）' },
@@ -1103,7 +1103,7 @@ export const recipes: Recipe[] = [
     id: 'v002',
     name: '凉拌金针菇',
     category: '蔬菜',
-    coverImage: '/covers/v002.jpg',
+    coverImage: '',
     description: '简单快捷的家常开胃凉菜，口感脆嫩爽滑，咸鲜微酸。',
     ingredients: [
       { name: '金针菇', amount: '150g（约1小包）' },
@@ -1130,7 +1130,7 @@ export const recipes: Recipe[] = [
     id: 'v003',
     name: '凉拌油麦菜',
     category: '蔬菜',
-    coverImage: '/covers/v003.jpg',
+    coverImage: '',
     description: '清爽解腻的家常凉菜，芝麻酱的醇厚包裹着油麦菜的脆嫩，酸甜咸香交织，非常开胃。',
     ingredients: [
       { name: '油麦菜', amount: '1颗（约200g）' },
@@ -1156,7 +1156,7 @@ export const recipes: Recipe[] = [
     id: 'dt001',
     name: '胡萝卜甜糕',
     category: '甜点',
-    coverImage: '/covers/dt001.jpg',
+    coverImage: '',
     description: '印度冬季甜品，胡萝卜丝与牛奶慢炖浓缩，融入酥油和坚果，口感绵密香甜、色泽金红。',
     ingredients: [
       { name: '胡萝卜', amount: '500g（约5-6根中等大小）' },
@@ -1186,7 +1186,7 @@ export const recipes: Recipe[] = [
     id: 'st001',
     name: '汤面',
     category: '主食',
-    coverImage: '/covers/st001.jpg',
+    coverImage: '',
     description: '自由搭配的家常主食，汤汁清爽，面条软滑，兼容各种荤素食材。',
     ingredients: [
       { name: '面食材料（手工面条、龙须面、泡面等）', amount: '70-230g' },
@@ -1212,7 +1212,7 @@ export const recipes: Recipe[] = [
     id: 'c001',
     name: '糖醋汁',
     category: '调料',
-    coverImage: '/covers/c001.jpg',
+    coverImage: '',
     description: '酸甜可口的调味汁，是中餐里糖醋菜肴的经典风味来源。',
     ingredients: [
       { name: '清水', amount: '50ml' },
@@ -1236,7 +1236,7 @@ export const recipes: Recipe[] = [
     id: 'c002',
     name: '葱油',
     category: '调料',
-    coverImage: '/covers/c002.jpg',
+    coverImage: '',
     description: '提香增鲜的调味油，带着浓郁的葱香和开洋的复合鲜味，用来拌馅、凉拌或热菜明油都很适合。',
     ingredients: [
       { name: '油', amount: '200g' },
@@ -1261,7 +1261,7 @@ export const recipes: Recipe[] = [
     id: 'h001',
     name: '番茄炒蛋',
     category: '家常菜',
-    coverImage: '/covers/h001.jpg',
+    coverImage: '',
     description: '最受欢迎的家常菜之一，简单易做，酸甜可口，营养丰富。',
     ingredients: [
       { name: '鸡蛋', amount: '3个' },
@@ -1286,7 +1286,7 @@ export const recipes: Recipe[] = [
     id: 'h002',
     name: '蒜蓉西兰花',
     category: '家常菜',
-    coverImage: '/covers/h002.jpg',
+    coverImage: '',
     description: '清淡健康的快手菜，西兰花翠绿爽口，蒜香浓郁。',
     ingredients: [
       { name: '西兰花', amount: '1颗' },
@@ -1310,7 +1310,7 @@ export const recipes: Recipe[] = [
     id: 'h003',
     name: '红烧肉',
     category: '家常菜',
-    coverImage: '/covers/h003.jpg',
+    coverImage: '',
     description: '经典中式家常菜，肥而不腻，入口即化，色泽红亮诱人。',
     ingredients: [
       { name: '五花肉', amount: '500g' },
@@ -1338,7 +1338,7 @@ export const recipes: Recipe[] = [
     id: 'h004',
     name: '柠檬蜂蜜水',
     category: '饮品',
-    coverImage: '/covers/h004.jpg',
+    coverImage: '',
     description: '清爽解腻的饮品，酸甜可口，富含维生素C，美白养颜。',
     ingredients: [
       { name: '柠檬', amount: '2个' },
@@ -1361,7 +1361,7 @@ export const recipes: Recipe[] = [
     id: 'h005',
     name: '提拉米苏',
     category: '甜点',
-    coverImage: '/covers/h005.jpg',
+    coverImage: '',
     description: '经典意大利甜点，咖啡香气浓郁，口感细腻顺滑，层层叠叠的美味。',
     ingredients: [
       { name: '马斯卡彭奶酪', amount: '250g' },
@@ -1390,7 +1390,7 @@ export const recipes: Recipe[] = [
     id: 's022',
     name: '微波葱姜黑鳕鱼',
     category: '粤菜',
-    coverImage: '/covers/s022.jpg',
+    coverImage: '',
     description: '改良粤式做法，黑鳕鱼富含优质蛋白和欧米伽-3脂肪酸，肉质细嫩、滋味咸鲜。',
     ingredients: [
       { name: '黑鳕鱼', amount: '450g（2片）' },
@@ -1419,7 +1419,7 @@ export const recipes: Recipe[] = [
     id: 'c001_52',
     name: '辣子鸡',
     category: '川菜',
-    coverImage: '/covers/c001.jpg',
+    coverImage: '',
     description: '经典川渝地区名菜，干辣椒与花椒的完美结合，鸡肉外酥里嫩，麻辣鲜香。',
     ingredients: [
       { name: '鸡腿肉', amount: '500g' },
@@ -1452,7 +1452,7 @@ export const recipes: Recipe[] = [
     id: 'c002_53',
     name: '宫保鸡丁',
     category: '川菜',
-    coverImage: '/covers/c002.jpg',
+    coverImage: '',
     description: '四川传统名菜，鸡丁嫩滑，花生酥脆，酸甜微辣，口感层次丰富。',
     ingredients: [
       { name: '鸡胸肉', amount: '300g' },
@@ -1487,7 +1487,7 @@ export const recipes: Recipe[] = [
     id: 'c003',
     name: '鱼香肉丝',
     category: '川菜',
-    coverImage: '/covers/c003.jpg',
+    coverImage: '',
     description: '经典川菜，色泽红亮，肉丝细嫩，酸甜咸辣鲜香兼备。',
     ingredients: [
       { name: '猪里脊', amount: '300g' },
@@ -1522,7 +1522,7 @@ export const recipes: Recipe[] = [
     id: 'c004',
     name: '麻婆豆腐',
     category: '川菜',
-    coverImage: '/covers/c004.jpg',
+    coverImage: '',
     description: '四川传统名菜，豆腐嫩滑入味，牛肉末香酥，麻辣鲜香烫。',
     ingredients: [
       { name: '嫩豆腐', amount: '400g' },
@@ -1556,7 +1556,7 @@ export const recipes: Recipe[] = [
     id: 'c005',
     name: '回锅肉',
     category: '川菜',
-    coverImage: '/covers/c005.jpg',
+    coverImage: '',
     description: '经典川菜，五花肉肥而不腻，蒜苗脆嫩，酱香浓郁。',
     ingredients: [
       { name: '五花肉', amount: '400g' },
@@ -1587,7 +1587,7 @@ export const recipes: Recipe[] = [
     id: 'c006',
     name: '毛血旺',
     category: '川菜',
-    coverImage: '/covers/c006.jpg',
+    coverImage: '',
     description: '重庆名菜，血旺嫩滑，毛肚脆爽，麻辣鲜香，热气腾腾。',
     ingredients: [
       { name: '鸭血', amount: '300g' },
@@ -1620,7 +1620,7 @@ export const recipes: Recipe[] = [
     id: 'c007',
     name: '口水鸡',
     category: '川菜',
-    coverImage: '/covers/c007.jpg',
+    coverImage: '',
     description: '四川传统凉菜，鸡肉嫩滑，麻辣鲜香，花生芝麻香脆。',
     ingredients: [
       { name: '三黄鸡', amount: '1只（约1000g）' },
@@ -1653,7 +1653,7 @@ export const recipes: Recipe[] = [
     id: 'x001',
     name: '剁椒鱼头',
     category: '湘菜',
-    coverImage: '/covers/x001.jpg',
+    coverImage: '',
     description: '湖南经典名菜，鱼头鲜嫩，剁椒香辣，蒸制入味。',
     ingredients: [
       { name: '鳙鱼头', amount: '1个（约750g）' },
@@ -1684,7 +1684,7 @@ export const recipes: Recipe[] = [
     id: 'x002',
     name: '外婆菜',
     category: '湘菜',
-    coverImage: '/covers/x002.jpg',
+    coverImage: '',
     description: '湖南家常菜，梅干菜香浓，配肉末和青红椒，开胃下饭。',
     ingredients: [
       { name: '梅干菜', amount: '100g' },
@@ -1715,7 +1715,7 @@ export const recipes: Recipe[] = [
     id: 'x003',
     name: '小炒肉',
     category: '湘菜',
-    coverImage: '/covers/x003.jpg',
+    coverImage: '',
     description: '湖南农家菜，五花肉香脆配青红椒，家常味道。',
     ingredients: [
       { name: '五花肉', amount: '300g' },
@@ -1746,7 +1746,7 @@ export const recipes: Recipe[] = [
     id: 'st002',
     name: '蛋炒饭',
     category: '主食',
-    coverImage: '/covers/st002.jpg',
+    coverImage: '',
     description: '经典家常主食，粒粒分明，蛋香浓郁，简单美味。',
     ingredients: [
       { name: '冷饭', amount: '500mL/份' },
@@ -1780,7 +1780,7 @@ export const recipes: Recipe[] = [
     id: 'st003',
     name: '扬州炒饭',
     category: '主食',
-    coverImage: '/covers/st003.jpg',
+    coverImage: '',
     description: '江苏名点，配料丰富，色彩鲜艳，米饭晶莹剔透。',
     ingredients: [
       { name: '冷饭', amount: '500g/份' },
@@ -1949,7 +1949,7 @@ export const recipes: Recipe[] = [
     id: 'u23',
     name: '五花肉炒豆芽',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '五花肉', amount: '200克' },
@@ -1976,7 +1976,7 @@ export const recipes: Recipe[] = [
     id: 'u24',
     name: '蒜香洋葱粒芥末煎猪排',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪排', amount: '2块（约300克）' },
@@ -2003,7 +2003,7 @@ export const recipes: Recipe[] = [
     id: 'u25',
     name: '叉烧',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '梅花肉', amount: '500克' },
@@ -2029,7 +2029,7 @@ export const recipes: Recipe[] = [
     id: 'u26',
     name: '烤圣农蝴蝶腿',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '圣农蝴蝶腿', amount: '2只（约400克）' },
@@ -2053,7 +2053,7 @@ export const recipes: Recipe[] = [
     id: 'u27',
     name: '煎蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡蛋', amount: '2个' },
@@ -2076,7 +2076,7 @@ export const recipes: Recipe[] = [
     id: 'u28',
     name: '烤肠',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '烤肠', amount: '4根（约300克）' },
@@ -2099,7 +2099,7 @@ export const recipes: Recipe[] = [
     id: 'u29',
     name: '油麦菜',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '油麦菜', amount: '300克' },
@@ -2122,7 +2122,7 @@ export const recipes: Recipe[] = [
     id: 'u30',
     name: '香菇香菜肉丸子',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪肉', amount: '300克' },
@@ -2149,7 +2149,7 @@ export const recipes: Recipe[] = [
     id: 'u31',
     name: '牛肉丸',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '牛肉丸', amount: '300克' },
@@ -2173,7 +2173,7 @@ export const recipes: Recipe[] = [
     id: 'u32',
     name: '番薯叶',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '番薯叶', amount: '400克' },
@@ -2196,7 +2196,7 @@ export const recipes: Recipe[] = [
     id: 'u33',
     name: '凉拌肉',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '熟猪肉（或牛肉、白肉）', amount: '300克' },
@@ -2225,7 +2225,7 @@ export const recipes: Recipe[] = [
     id: 'u34',
     name: '凉拌莲藕',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '莲藕', amount: '1节（约300克）' },
@@ -2253,7 +2253,7 @@ export const recipes: Recipe[] = [
     id: 'u35',
     name: '凉拌莴笋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '莴笋', amount: '1根（约300克）' },
@@ -2279,7 +2279,7 @@ export const recipes: Recipe[] = [
     id: 'u36',
     name: '豆芽肉丝',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪里脊肉', amount: '200克' },
@@ -2308,7 +2308,7 @@ export const recipes: Recipe[] = [
     id: 'u37',
     name: '卤鸡翅根',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡翅根', amount: '500克' },
@@ -2338,7 +2338,7 @@ export const recipes: Recipe[] = [
     id: 'u38',
     name: '生菜',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '生菜', amount: '300克' },
@@ -2363,7 +2363,7 @@ export const recipes: Recipe[] = [
     id: 'u40',
     name: '青椒炒肉丝',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪肉', amount: '200克' },
@@ -2392,7 +2392,7 @@ export const recipes: Recipe[] = [
     id: 'u42',
     name: '洋葱炒牛肉',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '牛肉', amount: '250克' },
@@ -2421,7 +2421,7 @@ export const recipes: Recipe[] = [
     id: 'u43',
     name: '番茄炒鸡蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡蛋', amount: '3个' },
@@ -2446,7 +2446,7 @@ export const recipes: Recipe[] = [
     id: 'u45',
     name: '尖椒炒鸡',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡腿', amount: '2个' },
@@ -2478,7 +2478,7 @@ export const recipes: Recipe[] = [
     id: 'u46',
     name: '香菇滑鸡',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡腿', amount: '2个' },
@@ -2509,7 +2509,7 @@ export const recipes: Recipe[] = [
     id: 'u47',
     name: '洋葱炒鸡蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡蛋', amount: '3个' },
@@ -2534,7 +2534,7 @@ export const recipes: Recipe[] = [
     id: 'u48',
     name: '红烧鱼块 + 日本豆腐',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鱼块', amount: '300克' },
@@ -2566,7 +2566,7 @@ export const recipes: Recipe[] = [
     id: 'u49',
     name: '酸菜鱼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鱼片', amount: '300克' },
@@ -2598,7 +2598,7 @@ export const recipes: Recipe[] = [
     id: 'u50',
     name: '酸辣土豆丝',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '土豆', amount: '2个' },
@@ -2627,7 +2627,7 @@ export const recipes: Recipe[] = [
     id: 'u51',
     name: '香菇蒸肉饼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪肉茸', amount: '300克' },
@@ -2656,7 +2656,7 @@ export const recipes: Recipe[] = [
     id: 'u52',
     name: '咸蛋黄蒸肉饼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪肉茸', amount: '300克' },
@@ -2683,7 +2683,7 @@ export const recipes: Recipe[] = [
     id: 'u53',
     name: '冬菜蒸肉饼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '冬菜', amount: '50克' },
@@ -2710,7 +2710,7 @@ export const recipes: Recipe[] = [
     id: 'u54',
     name: '梅菜蒸肉饼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '梅干菜', amount: '50克' },
@@ -2738,7 +2738,7 @@ export const recipes: Recipe[] = [
     id: 'u55',
     name: '香煎藕饼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '莲藕', amount: '200克' },
@@ -2767,7 +2767,7 @@ export const recipes: Recipe[] = [
     id: 'u56',
     name: '丝瓜炒鸡蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '丝瓜', amount: '2根（约300克）' },
@@ -2792,7 +2792,7 @@ export const recipes: Recipe[] = [
     id: 'u57',
     name: '西葫芦炒肉片',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '里脊肉', amount: '200克' },
@@ -2822,7 +2822,7 @@ export const recipes: Recipe[] = [
     id: 'u58',
     name: '豆豉蒸排骨',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '排骨', amount: '400克' },
@@ -2850,7 +2850,7 @@ export const recipes: Recipe[] = [
     id: 'u59',
     name: '肉末蒸日本豆腐',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '日本豆腐', amount: '2条' },
@@ -2877,7 +2877,7 @@ export const recipes: Recipe[] = [
     id: 'u60',
     name: '照烧鸡腿排',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '去骨鸡腿排', amount: '2块（约400克）' },
@@ -2904,7 +2904,7 @@ export const recipes: Recipe[] = [
     id: 'u61',
     name: '香煎孜然土豆片',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '土豆', amount: '2个（约300克）' },
@@ -2929,7 +2929,7 @@ export const recipes: Recipe[] = [
     id: 'u62',
     name: '青椒炒鸡蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '青椒', amount: '2个（约150克）' },
@@ -2955,7 +2955,7 @@ export const recipes: Recipe[] = [
     id: 'u63',
     name: '煎酿茄子（茄盒）',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '长茄子', amount: '2根' },
@@ -2983,7 +2983,7 @@ export const recipes: Recipe[] = [
     id: 'u64',
     name: '尖椒酿肉',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '青尖椒', amount: '6个' },
@@ -3011,7 +3011,7 @@ export const recipes: Recipe[] = [
     id: 'u65',
     name: '水煮肉片',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪里脊肉', amount: '300克' },
@@ -3043,7 +3043,7 @@ export const recipes: Recipe[] = [
     id: 'u66',
     name: '咸烧白',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '五花肉', amount: '500克' },
@@ -3069,7 +3069,7 @@ export const recipes: Recipe[] = [
     id: 'u67',
     name: '酸汤肥牛',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '金针菇', amount: '200克' },
@@ -3100,7 +3100,7 @@ export const recipes: Recipe[] = [
     id: 'u68',
     name: '虾仁滑蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '虾仁', amount: '150克' },
@@ -3127,7 +3127,7 @@ export const recipes: Recipe[] = [
     id: 'u69',
     name: '蒜泥白肉',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '五花肉', amount: '400克' },
@@ -3159,7 +3159,7 @@ export const recipes: Recipe[] = [
     id: 'u70',
     name: '葱油焖鸡',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '去骨鸡腿肉', amount: '400克' },
@@ -3188,7 +3188,7 @@ export const recipes: Recipe[] = [
     id: 'u71',
     name: '蒜香煎鸡翅',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡翅中', amount: '500克' },
@@ -3215,7 +3215,7 @@ export const recipes: Recipe[] = [
     id: 'u72',
     name: '凉拌手撕鸡',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡腿', amount: '2只（约400克）' },
@@ -3247,7 +3247,7 @@ export const recipes: Recipe[] = [
     id: 'u73',
     name: '泡椒牛肉/肉丝',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '牛肉（或里脊肉）', amount: '250克' },
@@ -3278,7 +3278,7 @@ export const recipes: Recipe[] = [
     id: 'u74',
     name: '泡椒皮蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '皮蛋', amount: '3个' },
@@ -3307,7 +3307,7 @@ export const recipes: Recipe[] = [
     id: 'u75',
     name: '泡椒爆鱿鱼圈',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鲜鱿鱼圈', amount: '300克' },
@@ -3337,7 +3337,7 @@ export const recipes: Recipe[] = [
     id: 'u76',
     name: '泡椒清蒸鱼片',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鱼片', amount: '250克' },
@@ -3366,7 +3366,7 @@ export const recipes: Recipe[] = [
     id: 'u77',
     name: '泡椒炒鸡蛋/烘蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡蛋', amount: '3个' },
@@ -3393,7 +3393,7 @@ export const recipes: Recipe[] = [
     id: 'u78',
     name: '葱花煎蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡蛋', amount: '3个' },
@@ -3418,7 +3418,7 @@ export const recipes: Recipe[] = [
     id: 'u79',
     name: '川味干煸牛肉丝',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '牛肉', amount: '300克' },
@@ -3446,7 +3446,7 @@ export const recipes: Recipe[] = [
     id: 'u80',
     name: '椒麻鸡',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡腿', amount: '2只（约400克）' },
@@ -3474,7 +3474,7 @@ export const recipes: Recipe[] = [
     id: 'u81',
     name: '蒜香椒盐排骨',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '排骨', amount: '400克' },
@@ -3503,7 +3503,7 @@ export const recipes: Recipe[] = [
     id: 'u82',
     name: '凉拌黄瓜牛肉',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '卤牛肉', amount: '200克' },
@@ -3531,7 +3531,7 @@ export const recipes: Recipe[] = [
     id: 'u83',
     name: '尖椒炒肉',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '猪肉', amount: '200克' },
@@ -3559,7 +3559,7 @@ export const recipes: Recipe[] = [
     id: 'u84',
     name: '凉拌白灼鱿鱼',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鲜鱿鱼', amount: '300克' },
@@ -3586,7 +3586,7 @@ export const recipes: Recipe[] = [
     id: 'u85',
     name: '锡纸肥牛金针菇',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '金针菇', amount: '200克' },
@@ -3615,7 +3615,7 @@ export const recipes: Recipe[] = [
     id: 'u86',
     name: '烤蒜香孜然皮蛋',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '皮蛋', amount: '3个' },
@@ -3642,7 +3642,7 @@ export const recipes: Recipe[] = [
     id: 'u87',
     name: '锡纸椒盐大虾',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鲜虾', amount: '300克' },
@@ -3669,7 +3669,7 @@ export const recipes: Recipe[] = [
     id: 'u88',
     name: '锡纸蜜汁蒜香排骨',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '排骨', amount: '500克' },
@@ -3698,7 +3698,7 @@ export const recipes: Recipe[] = [
     id: 'u89',
     name: '无油香酥鸡排',
     category: '家常菜',
-    coverImage: '/covers/default.svg',
+    coverImage: '',
     description: '',
         ingredients: [
       { name: '鸡胸肉', amount: '300克' },

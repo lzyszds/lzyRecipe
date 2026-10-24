@@ -1,9 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, StyleProp, ViewStyle, ImageStyle } from 'react-native';
 import { Image } from 'expo-image';
-import { getLocalCoverSource } from '../lib/coverAssets';
 import { Palette } from '../constants/theme';
-
 import { UtensilsCrossed } from 'lucide-react-native';
 
 interface RecipeImageProps {
@@ -25,22 +23,17 @@ function getMorandiBg(name: string) {
   return Palette.oat[100];
 }
 
-import { useSettingsStore } from '../store/settingsStore';
-
 export function resolveCoverUrl(coverImage?: string): string | null {
   if (!coverImage) return null;
+  const trimmed = coverImage.trim();
   if (
-    coverImage.startsWith('http://') ||
-    coverImage.startsWith('https://') ||
-    coverImage.startsWith('data:image/')
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('data:image/')
   ) {
-    return coverImage;
+    return trimmed;
   }
-  const endpoint = (
-    useSettingsStore.getState().sync?.endpoint?.trim() || 'https://sync.lzyszds.cn'
-  ).replace(/\/+$/, '');
-  const cleanPath = coverImage.startsWith('/') ? coverImage : `/${coverImage}`;
-  return `${endpoint}${cleanPath}`;
+  return null;
 }
 
 export const RecipeImage: React.FC<RecipeImageProps> = ({
@@ -50,19 +43,7 @@ export const RecipeImage: React.FC<RecipeImageProps> = ({
   style,
   containerStyle,
 }) => {
-  const localSource = coverImage ? getLocalCoverSource(coverImage) : null;
   const remoteUrl = resolveCoverUrl(coverImage);
-
-  if (localSource) {
-    return (
-      <Image
-        source={localSource}
-        style={[styles.image, style]}
-        contentFit="cover"
-        transition={200}
-      />
-    );
-  }
 
   if (remoteUrl) {
     return (

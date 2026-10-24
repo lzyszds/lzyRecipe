@@ -13,16 +13,14 @@ lzyRecipe/                       ← 仓库根 = workspace 根
 ├── bun.lock                     唯一的锁文件
 ├── scripts/                     封面生成 / 下载脚本（Node ESM）
 │   └── covers-common.mjs        路径与读写工具（recipes.ts 读写、封面目录同步）
-├── public/covers/               同步服务器的静态封面源（需上传到服务器 /data/covers/）
 ├── docs/                        补充文档（菜谱导入结构、图片托管、更新说明）
 └── mobile/                      ← Expo 应用本体
     ├── app.json                 应用配置（CNG：原生工程由 prebuild 生成，不入库）
     ├── tsconfig.json            TS 配置，@/* → ./src/*
     ├── metro.config.js          Metro 配置（含 Web 端调试用反向代理）
     ├── eslint.config.js         ESLint Flat Config（eslint-config-expo）
-    ├── assets/
-    │   ├── covers/              打包进 App 的本地兜底封面（jpg）
-    │   └── images/              图标与启动图
+    └── assets/
+        └── images/              图标与启动图
     └── src/
         ├── app/                 路由（expo-router 文件式路由）
         │   ├── _layout.tsx      根布局（Stack）
@@ -59,15 +57,9 @@ bun run covers         # 生成莫兰迪风格 SVG 占位封面到 public/covers
 bun run covers:photos  # 从百度图片搜索下载真实封面到 public/covers/（需联网）
 ```
 
-## 两条封面目录的关系
+## 封面说明
 
-| 目录 | 用途 |
-| --- | --- |
-| `public/covers/` | 同步服务器的静态托管源，需上传到服务器 `/data/covers/`，App 内通过 `https://<同步域名>/covers/xxx.jpg` 在线访问 |
-| `mobile/assets/covers/` | 打包进 App 的本地兜底封面，通过 `mobile/src/lib/coverAssets.ts` 的 `require` 映射离线渲染 |
-
-`bun run covers` / `bun run covers:photos` 会自动把 `public/covers/` 里的真实照片同步到
-`mobile/assets/covers/` 并重建 `coverAssets.ts` 映射，两个目录不会漂移。
+项目已全面移除随 App 打包的本地封面文件，避免膨胀安装包体积。菜谱封面统一采用在线 HTTP(S) 图片或优雅的莫兰迪色菜品占位图；支持在 App 内在线搜图更换与一键补全封面。
 
 ## 文档索引
 

@@ -10,7 +10,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { X } from 'lucide-react-native';
-import { getLocalCoverSource } from '../lib/coverAssets';
 import { resolveCoverUrl } from './RecipeImage';
 
 interface ImagePreviewModalProps {
@@ -30,9 +29,8 @@ export const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({
 }) => {
   if (!visible) return null;
 
-  const localSource = coverImage ? getLocalCoverSource(coverImage) : null;
   const remoteUrl = resolveCoverUrl(coverImage);
-  const source = localSource || (remoteUrl ? { uri: remoteUrl } : null);
+  const source = remoteUrl ? { uri: remoteUrl } : null;
 
   return (
     <Modal
