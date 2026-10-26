@@ -18,6 +18,8 @@ import { useBentoStore } from '../store/bentoStore';
 import { useAllRecipes } from '../lib/recipes';
 import { Palette, Radius } from '../constants/theme';
 import { toast } from '../store/feedbackStore';
+import { ensureAiIdle, runAiTask } from '../store/aiTaskStore';
+import { logActivity } from '../store/activityLogStore';
 
 interface SmartFillModalProps {
   visible: boolean;
@@ -53,18 +55,28 @@ export const SmartFillModal: React.FC<SmartFillModalProps> = ({
   const { bentoByDate, batchFillSlots } = useBentoStore();
 
   const handleStartFill = async () => {
+    // 有其他 AI 任务在跑时，拦截并提示
+    if (!ensureAiIdle()) return;
     setLoading(true);
     try {
-      const plan = await planBentoWithAi({
-        scope,
-        targetDate: selectedDate,
-        weekDates,
-        userPrompt: userPrompt.trim(),
-        allRecipes,
-        currentBentoByDate: bentoByDate,
-      });
+      const plan = await runAiTask('AI 智能配餐', () =>
+        planBentoWithAi({
+          scope,
+          targetDate: selectedDate,
+          weekDates,
+          userPrompt: userPrompt.trim(),
+          allRecipes,
+          currentBentoByDate: bentoByDate,
+        })
+      );
 
       const count = batchFillSlots(plan.slots);
+      logActivity({
+        type: 'ai',
+        action: 'AI 智能配餐',
+        detail: `为 ${scope === 'day' ? selectedDate : '本周'}填入 ${count} 道菜`,
+        meta: { 范围: scope === 'day' ? '单日' : '整周' },
+      });
       if (count > 0) {
         toast({
           type: 'success',

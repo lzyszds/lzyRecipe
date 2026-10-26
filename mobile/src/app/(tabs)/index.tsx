@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,74 +9,82 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
 import {
   Search,
-  Utensils,
-  Clock,
   Plus,
-  SlidersHorizontal,
   Sparkles,
   ChevronRight,
   Heart,
   ChefHat,
-  Flame,
   ArrowRight,
   History,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
-import { useRecentViewsStore } from '@/store/recentViewsStore';
+import { useRecentCookedStore } from '@/store/recentCookedStore';
+import { useFavoritesStore } from '@/store/favoritesStore';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImage } from '@/components/RecipeImage';
+import { HeroCarousel } from '@/components/HeroCarousel';
 import { getTodayString, getWeekdayName } from '@/lib/bentoDate';
 import { Recipe } from '@/types';
 import { Palette } from '@/constants/theme';
 
-const INGREDIENT_CHIPS = ['排骨', '五花肉', '冬瓜', '大虾', '番茄', '鸡蛋', '牛肉', '青椒'];
+/** 首页场景筛选（作用于精选菜谱流） */
+const SCENE_FILTERS = [
+  { id: 'all', name: '全部' },
+  { id: 'fast', name: '快手' },
+  { id: 'chuangxiang', name: '川湘' },
+  { id: 'seafood', name: '海鲜' },
+  { id: 'soup', name: '汤羹' },
+  { id: 'comfort', name: '家常' },
+];
 
-
-// 高清主厨推荐保底图
-const HERO_IMAGE_FALLBACK =
-  'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80';
-
-function getCookingMethodTag(dish: Recipe): string {
-  const t = dish.cookTime || 20;
-  const n = dish.name;
-  if (/红烧|酱烧/.test(n)) return `${t}分钟 · 红烧`;
-  if (/炖|煲|清炖|慢炖|老火|汤/.test(n)) return `${t}分钟 · 慢炖`;
-  if (/蒸|清蒸|粉蒸/.test(n)) return `${t}分钟 · 清蒸`;
-  if (/生炒|生煎/.test(n)) return `${t}分钟 · 生炒`;
-  if (/烤/.test(n)) return `${t}分钟 · 烘烤`;
-  if (/拌|凉/.test(n)) return `${t}分钟 · 凉拌`;
-  if (t <= 20) return `${t}分钟 · 小炒`;
-  return `${t}分钟 · 家常`;
+/** 稳定伪随机数（0~1）：同一 (seed, id) 恒定，跨天/跨菜变化 */
+function stableHash(seed: number, id: string): number {
+  let h = seed >>> 0;
+  for (let i = 0; i < id.length; i++) {
+    h = (Math.imul(h, 31) + id.charCodeAt(i)) >>> 0;
+  }
+  return (h % 1000) / 1000;
 }
 
-function getCoreIngredients(dish: Recipe): string {
-  if (dish.name.includes('排骨')) return '排骨 · 蒜末 · 柱侯酱';
-  if (dish.name.includes('回锅肉')) return '五花肉 · 青蒜苗 · 豆瓣酱';
-  if (dish.name.includes('红烧肉')) return '五花肉 · 冰糖 · 生抽';
-  const list = dish.ingredients
-    ?.map((i) => i.name.replace(/（.*）|\(.*\)/g, '').trim())
-    .filter(Boolean);
-  if (list && list.length > 0) {
-    return list.slice(0, 3).join(' · ');
-  }
-  return '鲜香下饭 · 烹饪方便';
+/** 当日种子：精选池按天轮换，同一天内保持稳定 */
+function daySeedNow(): number {
+  return Math.floor(Date.now() / 86400000);
+}
+
+/**
+ * 精选算法打分：
+ * 内容完整度（步骤/用料/封面/诀窍）+ 收藏加成 + 最近吃过降权（推新）+ 每日轮换扰动
+ */
+function scoreRecipe(
+  recipe: Recipe,
+  favoriteIds: Set<string>,
+  cookedIds: Set<string>,
+  daySeed: number
+): number {
+  let score = 0;
+  score += Math.min((recipe.steps?.length || 0) / 6, 2); // 步骤完整度 0~2
+  score += (recipe.ingredients?.length || 0) >= 4 ? 1 : 0; // 用料丰富
+  score += recipe.coverImage ? 1 : 0; // 有封面
+  score += recipe.tips ? 0.5 : 0; // 有诀窍
+  if (favoriteIds.has(recipe.id)) score += 2; // 收藏加成
+  if (cookedIds.has(recipe.id)) score -= 2.5; // 最近做过的降权，把位置让给新菜
+  score += stableHash(daySeed, recipe.id) * 3; // 每日轮换扰动 0~3
+  return score;
 }
 
 export default function HomeScreen() {
   const router = useRouter();
   const allRecipes = useAllRecipes();
   const openMealPlanSheet = useMealPlanSheetStore((s) => s.openSheet);
-  const recentViews = useRecentViewsStore((s) => s.recent);
-  const clearRecent = useRecentViewsStore((s) => s.clearRecent);
+  const recentCooked = useRecentCookedStore((s) => s.recent);
+  const clearRecent = useRecentCookedStore((s) => s.clearRecent);
+  const favorites = useFavoritesStore((s) => s.favorites);
   const { width: windowWidth } = useWindowDimensions();
 
-  const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
   const [activeScene, setActiveScene] = useState<string>('all');
-
   // 计算两列网格宽度
   const columnWidth = useMemo(() => {
     return Math.floor((windowWidth - 32 - 12) / 2);
@@ -92,107 +100,74 @@ export default function HomeScreen() {
     return `${weekdayName}${period}灵感 · 拒绝外卖`;
   }, [weekdayName]);
 
-  // 今日主厨推荐菜
-  const heroRecipe = useMemo(() => {
-    const found = allRecipes.find(
-      (r) => r.name.includes('生炒排骨') || r.name.includes('排骨')
-    );
-    return found || allRecipes[0];
-  }, [allRecipes]);
+  // 精选算法：全库按综合分排序（当天稳定、每天轮换、收藏加权、吃过降权）
+  const scoredRecipes = useMemo(() => {
+    const daySeed = daySeedNow();
+    const favoriteIds = new Set(favorites);
+    const cookedIds = new Set(recentCooked.map((c) => c.recipeId));
+    return allRecipes
+      .map((r) => ({ recipe: r, score: scoreRecipe(r, favoriteIds, cookedIds, daySeed) }))
+      .sort((a, b) => b.score - a.score)
+      .map((s) => s.recipe);
+  }, [allRecipes, favorites, recentCooked]);
 
-  // 冰箱清库存默认推荐
-  const defaultDishes = useMemo(() => {
-    const ribs =
-      allRecipes.find((r) => r.name.includes('生炒排骨') || r.name.includes('排骨')) ||
-      allRecipes[0];
-    const pork =
-      allRecipes.find((r) => r.name === '回锅肉' || r.name.includes('回锅肉')) ||
-      allRecipes.find((r) => r.name.includes('红烧肉')) ||
-      allRecipes[1];
-    return [ribs, pork].filter(Boolean) as Recipe[];
-  }, [allRecipes]);
+  // 今日主厨推荐轮播数据（组件内部自管动画与手势，memo 隔离避免整页重渲染）
+  const heroSlides = useMemo(() => scoredRecipes.slice(0, 5), [scoredRecipes]);
 
-  // 最近点开的菜（按浏览时间倒序，自动过滤已删除菜谱）
+  // 最近点过的菜：仅统计便当盒里打卡「已吃掉」（完成）的菜谱，按完成时间倒序，自动过滤已删除菜谱
   const recentRecipes = useMemo(() => {
     const recipeMap = new Map(allRecipes.map((recipe) => [recipe.id, recipe]));
-    return recentViews
+    return recentCooked
       .map((item) => recipeMap.get(item.recipeId))
       .filter((recipe): recipe is Recipe => Boolean(recipe))
       .slice(0, 10);
-  }, [recentViews, allRecipes]);
+  }, [recentCooked, allRecipes]);
 
-  // 根据选中的食材实时匹配菜品
-  const matchedRecipes = useMemo(() => {
-    if (!selectedIngredient) {
-      return defaultDishes;
-    }
-    const filtered = allRecipes.filter((r) =>
-      r.ingredients.some(
-        (ing) =>
-          ing.name.includes(selectedIngredient) ||
-          r.name.includes(selectedIngredient) ||
-          r.description?.includes(selectedIngredient)
-      )
-    );
-    return filtered.length > 0 ? filtered.slice(0, 4) : defaultDishes;
-  }, [selectedIngredient, allRecipes, defaultDishes]);
-
-  // 场景/分类过滤后的双列菜谱流
+  // 场景/分类过滤后的双列菜谱流（场景筛选基于新标签体系，按精选算法排序）
   const feedRecipes = useMemo(() => {
+    const rank = new Map(scoredRecipes.map((r, i) => [r.id, i]));
+    const top = (list: Recipe[], n: number) =>
+      [...list]
+        .sort(
+          (a, b) =>
+            (rank.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+            (rank.get(b.id) ?? Number.MAX_SAFE_INTEGER)
+        )
+        .slice(0, n);
+
     if (activeScene === 'fast') {
-      return allRecipes.filter((r) => (r.cookTime || 30) <= 25).slice(0, 10);
+      return top(
+        allRecipes.filter((r) => r.tags?.includes('快手菜') || (r.cookTime || 30) <= 20),
+        10
+      );
     }
     if (activeScene === 'chuangxiang') {
-      return allRecipes
-        .filter((r) => r.category === '川菜' || r.category === '湘菜')
-        .slice(0, 10);
+      return top(allRecipes.filter((r) => r.category === '川菜' || r.category === '湘菜'), 10);
     }
     if (activeScene === 'seafood') {
-      return allRecipes
-        .filter(
-          (r) =>
-            r.category === '海鲜' ||
-            r.name.includes('虾') ||
-            r.name.includes('蟹') ||
-            r.name.includes('鱼')
-        )
-        .slice(0, 10);
+      return top(allRecipes.filter((r) => r.tags?.includes('海鲜')), 10);
     }
     if (activeScene === 'soup') {
-      return allRecipes
-        .filter(
-          (r) =>
-            r.category === '汤' ||
-            r.name.includes('汤') ||
-            r.name.includes('煲') ||
-            r.name.includes('炖')
-        )
-        .slice(0, 10);
+      return top(allRecipes.filter((r) => r.category === '汤羹'), 10);
     }
     if (activeScene === 'comfort') {
-      return allRecipes
-        .filter((r) => r.category === '家常菜' || r.category === '肉类')
-        .slice(0, 10);
+      return top(allRecipes.filter((r) => r.category === '家常菜'), 10);
     }
-    // all: 精选前 12 道高分菜谱
-    return allRecipes.slice(0, 12);
-  }, [activeScene, allRecipes]);
+    // all: 精选算法综合分前 12 道（每天轮换一批）
+    return scoredRecipes.slice(0, 12);
+  }, [activeScene, allRecipes, scoredRecipes]);
 
-  const handleToggleIngredient = (ing: string) => {
-    setSelectedIngredient((prev) => (prev === ing ? null : ing));
-  };
-
-  const handleOpenRecipe = (recipe: Recipe) => {
+  const handleOpenRecipe = useCallback((recipe: Recipe) => {
     router.push({
       pathname: '/recipe/[id]',
       params: { id: recipe.id },
     });
-  };
+  }, [router]);
 
-  const handleAddToPlan = (e: any, recipe: Recipe) => {
+  const handleAddToPlan = useCallback((e: any, recipe: Recipe) => {
     e?.stopPropagation?.();
     openMealPlanSheet(recipe);
-  };
+  }, [openMealPlanSheet]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -252,64 +227,10 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
 
-        {/* 今日主厨推荐 Banner 卡片 */}
-        {heroRecipe && (
-          <TouchableOpacity
-            style={styles.heroCard}
-            onPress={() => handleOpenRecipe(heroRecipe)}
-            activeOpacity={0.92}
-          >
-            <Image
-              source={{ uri: heroRecipe.coverImage || HERO_IMAGE_FALLBACK }}
-              style={styles.heroImage}
-              contentFit="cover"
-              transition={200}
-            />
-            {/* 渐变遮罩 */}
-            <View style={styles.heroOverlay} />
+        {/* 今日主厨推荐：折叠卡片堆叠轮播（独立组件，换页不重渲染首页） */}
+        <HeroCarousel slides={heroSlides} onOpen={handleOpenRecipe} onAddToPlan={handleAddToPlan} />
 
-            {/* 顶部标签 */}
-            <View style={styles.heroTopRow}>
-              <View style={styles.chefBadge}>
-                <Utensils size={12} color="#FFFFFF" />
-                <Text style={styles.chefBadgeText}>今日主厨精选</Text>
-              </View>
-              <View style={styles.heroMetaPill}>
-                <Clock size={12} color="#FFFFFF" />
-                <Text style={styles.heroMetaText}>
-                  {heroRecipe.cookTime || 25}分钟 · 鲜香免油炸
-                </Text>
-              </View>
-            </View>
-
-            {/* 底部信息与加餐盘 */}
-            <View style={styles.heroBottomRow}>
-              <View style={styles.heroInfoCol}>
-                <Text style={styles.heroDishName} numberOfLines={1}>
-                  {heroRecipe.name.includes('生炒排骨')
-                    ? '焦香蒜香生炒排骨'
-                    : heroRecipe.name}
-                </Text>
-                <Text style={styles.heroIngredients} numberOfLines={1}>
-                  {heroRecipe.ingredients.length > 0
-                    ? heroRecipe.ingredients.map((i) => i.name).slice(0, 4).join(' · ')
-                    : '排骨 · 独头蒜 · 柱侯酱 · 小米辣'}
-                </Text>
-              </View>
-
-              <TouchableOpacity
-                style={styles.heroAddBtn}
-                onPress={(e) => handleAddToPlan(e, heroRecipe)}
-                activeOpacity={0.85}
-              >
-                <Plus size={14} color="#1C1917" strokeWidth={2.5} />
-                <Text style={styles.heroAddBtnText}>加餐盘</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        )}
-
-        {/* 最近点过：一键回到常看的菜 */}
+        {/* 最近点过：便当盒里打卡「已吃掉」的菜谱，一键回看 */}
         {recentRecipes.length > 0 && (
           <View style={styles.recentSection}>
             <View style={styles.recentHeader}>
@@ -368,95 +289,31 @@ export default function HomeScreen() {
           </View>
         )}
 
-        {/* 冰箱清库存 · 点食材配菜 卡片 */}
-        <View style={styles.inventoryCard}>
-          {/* 卡片头部 */}
-          <View style={styles.inventoryHeader}>
-            <View style={styles.inventoryTitleRow}>
-              <View style={styles.inventoryIconBadge}>
-                <SlidersHorizontal size={14} color="#EA580C" />
-              </View>
-              <Text style={styles.inventoryTitle}>冰箱清库存 · 点食材配菜</Text>
-            </View>
-            <Text style={styles.inventorySubCount}>
-              {selectedIngredient ? `已匹配 ${matchedRecipes.length} 道` : '默认推荐 2 道'}
-            </Text>
-          </View>
-
-          {/* 食材选择 Chips */}
-          <View style={styles.chipsWrap}>
-            {INGREDIENT_CHIPS.map((ing) => {
-              const active = selectedIngredient === ing;
-              return (
-                <TouchableOpacity
-                  key={ing}
-                  style={[styles.chipPill, active && styles.chipPillActive]}
-                  onPress={() => handleToggleIngredient(ing)}
-                  activeOpacity={0.75}
-                >
-                  <Text style={[styles.chipText, active && styles.chipTextActive]}>
-                    {ing}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* 匹配菜谱列表 */}
-          <View style={styles.matchedList}>
-            {matchedRecipes.map((dish, idx) => {
-              const coreIngredients = getCoreIngredients(dish);
-
-              const displayName =
-                dish.name.includes('生炒排骨')
-                  ? '焦香蒜香生炒排骨'
-                  : dish.name.includes('回锅肉')
-                  ? '川味青蒜苗回锅肉'
-                  : dish.name;
-
-              const methodTag = getCookingMethodTag(dish);
-
-              return (
-                <TouchableOpacity
-                  key={`${dish.id}-${idx}`}
-                  style={styles.matchedRow}
-                  onPress={() => handleOpenRecipe(dish)}
-                  activeOpacity={0.8}
-                >
-                  <RecipeImage
-                    coverImage={dish.coverImage}
-                    name={dish.name}
-                    category={dish.category}
-                    style={styles.dishThumb}
-                    containerStyle={styles.dishThumbWrap}
-                  />
-
-                  <View style={styles.dishInfo}>
-                    <Text style={styles.dishName} numberOfLines={1}>
-                      {displayName}
-                    </Text>
-                    <Text style={styles.dishCore} numberOfLines={1}>
-                      核心: {coreIngredients}
-                    </Text>
-                    <View style={styles.dishTagWrap}>
-                      <View style={styles.methodTagPill}>
-                        <Text style={styles.methodTagText}>{methodTag}</Text>
-                      </View>
-                    </View>
-                  </View>
-
-                  <TouchableOpacity
-                    style={styles.rowAddBtn}
-                    onPress={(e) => handleAddToPlan(e, dish)}
-                    activeOpacity={0.75}
-                  >
-                    <Plus size={18} color="#1C1917" strokeWidth={2.2} />
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
+        {/* 场景筛选：作用于下方精选菜谱流 */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.scenesScroll}
+          contentContainerStyle={styles.scenesScrollContainer}
+        >
+          {SCENE_FILTERS.map((s) => (
+            <TouchableOpacity
+              key={s.id}
+              style={[styles.scenePill, activeScene === s.id && styles.scenePillActive]}
+              onPress={() => setActiveScene(s.id)}
+              activeOpacity={0.75}
+            >
+              <Text
+                style={[
+                  styles.scenePillText,
+                  activeScene === s.id && styles.scenePillTextActive,
+                ]}
+              >
+                {s.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
         {/* 灵感菜谱流区域：纯正双列原生瀑布卡片 */}
         <View style={styles.sectionHeaderRow}>
@@ -638,98 +495,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
   },
-  // 主厨推荐 Hero 卡片
-  heroCard: {
-    height: 220,
-    borderRadius: 20,
-    overflow: 'hidden',
-    position: 'relative',
-    justifyContent: 'space-between',
-    padding: 16,
-    backgroundColor: '#26211E',
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
-  },
-  heroImage: {
-    ...StyleSheet.absoluteFill,
-  },
-  heroOverlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: 'rgba(28, 25, 23, 0.45)',
-  },
-  heroTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    zIndex: 2,
-  },
-  chefBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Palette.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-    gap: 5,
-  },
-  chefBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  heroMetaPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,
-    gap: 5,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-  },
-  heroMetaText: {
-    color: '#FFFFFF',
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  heroBottomRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    zIndex: 2,
-  },
-  heroInfoCol: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  heroDishName: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '800',
-    marginBottom: 4,
-    letterSpacing: 0.2,
-  },
-  heroIngredients: {
-    color: '#E7E5E4',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  heroAddBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 13,
-    paddingVertical: 8,
-    borderRadius: 16,
-    gap: 4,
-  },
-  heroAddBtnText: {
-    color: '#1C1917',
-    fontSize: 12,
-    fontWeight: '800',
-  },
+  // 主厨推荐 Hero 卡片
   // 最近点过的菜
   recentSection: {
     marginBottom: 20,
@@ -782,58 +548,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: Palette.cocoa[400],
   },
-  // 冰箱清库存卡片
-  inventoryCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: Palette.dockBorder,
-    marginBottom: 20,
-  },
-  inventoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  inventoryTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  inventoryIconBadge: {
-    width: 26,
-    height: 26,
-    borderRadius: 8,
-    backgroundColor: '#FEF3C7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inventoryTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: Palette.cocoa[900],
-  },
-  inventorySubCount: {
-    fontSize: 11,
-    color: Palette.cocoa[400],
-  },
-  chipsWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 7,
-    marginBottom: 12,
-  },
-  chipPill: {
-    paddingHorizontal: 11,
-    paddingVertical: 6,
-    borderRadius: 12,
-    backgroundColor: '#F3EFEA',
-  },
-  chipPillActive: {
-    backgroundColor: Palette.cocoa[900],
-  },
+  // 冰箱清库存卡片
   chipText: {
     fontSize: 12,
     fontWeight: '600',
@@ -842,71 +557,7 @@ const styles = StyleSheet.create({
   chipTextActive: {
     color: '#FFFFFF',
     fontWeight: '700',
-  },
-  matchedList: {
-    gap: 8,
-  },
-  matchedRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FAF8F5',
-    borderRadius: 14,
-    padding: 9,
-    borderWidth: 1,
-    borderColor: '#EFEAE2',
-  },
-  dishThumbWrap: {
-    width: 58,
-    height: 58,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  dishThumb: {
-    width: 58,
-    height: 58,
-    borderRadius: 10,
-  },
-  dishInfo: {
-    flex: 1,
-    marginLeft: 10,
-    marginRight: 6,
-  },
-  dishName: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: Palette.cocoa[900],
-    marginBottom: 2,
-  },
-  dishCore: {
-    fontSize: 11,
-    color: Palette.inkMuted,
-    marginBottom: 3,
-  },
-  dishTagWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  methodTagPill: {
-    backgroundColor: '#EFECE6',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  methodTagText: {
-    fontSize: 10,
-    color: Palette.cocoa[700],
-    fontWeight: '600',
-  },
-  rowAddBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Palette.dockBorder,
-  },
+  },
   // 灵感推荐双列流区域
   sectionHeaderRow: {
     flexDirection: 'row',

@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { ensureAiIdle, runAiTask } from '@/store/aiTaskStore';
+import { logActivity } from '@/store/activityLogStore';
 import {
   ArrowLeft,
   Sparkles,
@@ -153,12 +155,20 @@ export default function AiCompareScreen() {
         state: { status: 'loading', error: undefined },
       }));
       try {
-        const result = await generateRecipeWithAi({
-          field: 'all',
-          recipeName: name,
-          categoryOptions: RECIPE_CATEGORIES,
-          extraPrompt: prompt || undefined,
-          aiSettings: config,
+        const result = await runAiTask('AI 试菜对比', () =>
+          generateRecipeWithAi({
+            field: 'all',
+            recipeName: name,
+            categoryOptions: RECIPE_CATEGORIES,
+            extraPrompt: prompt || undefined,
+            aiSettings: config,
+          })
+        );
+        logActivity({
+          type: 'ai',
+          action: 'AI 试菜对比',
+          detail: `${name}（${config.model}）`,
+          meta: { 渠道: config.providerId || '—', 模型: config.model || '—', 耗时: `${((Date.now() - startedAt) / 1000).toFixed(1)}s` },
         });
         setter((prev) => ({
           ...prev,
@@ -183,6 +193,8 @@ export default function AiCompareScreen() {
   );
 
   const handleStart = () => {
+    // 有其他 AI 任务在跑时，拦截并提示
+    if (!ensureAiIdle()) return;
     if (!dishName.trim()) {
       toast({ type: 'warning', message: '请先输入要对比生成的菜名' });
       return;

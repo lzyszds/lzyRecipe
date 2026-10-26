@@ -30,8 +30,12 @@ import {
   ImagePlus,
 } from 'lucide-react-native';
 import { Recipe } from '@/types';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettingsStore, isAiConfigured } from '@/store/settingsStore';
 import { useImportedRecipesStore } from '@/store/importedRecipesStore';
+import { ensureAiIdle, runAiTask } from '@/store/aiTaskStore';
+import { logActivity } from '@/store/activityLogStore';
+import { requestAiGenerateConfirm } from './AiGenerateConfirmSheet';
 import { useAllRecipes } from '@/lib/recipes';
 import { toast, alert } from '@/store/feedbackStore';
 import { Palette } from '@/constants/theme';
@@ -95,6 +99,7 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
   const { addImportedRecipes, saveOrUpdateRecipe } = useImportedRecipesStore();
 
   const [activeTab, setActiveTab] = useState<'ai' | 'json'>('ai');
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState<'input' | 'preview'>('input');
 
   // 输入态
@@ -205,7 +210,7 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
     setStep('preview');
   };
 
-  // AI 解析提交
+  // AI 解析提交（二次确认：渠道商切换 + 补充要求 + 忙碌守卫）
   const handleAiParse = async () => {
     if (!aiText.trim()) {
       toast({ type: 'warning', message: '请先输入或粘贴菜谱文本' });
@@ -224,12 +229,36 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
       });
       return;
     }
+    if (!ensureAiIdle()) return;
+
+    const confirmed = await requestAiGenerateConfirm({
+      title: 'AI 智能解析菜谱文本',
+      description: '将把输入文本交给所选渠道，提取整理为标准菜谱结构。',
+      inputLabel: '补充解析要求（可选）',
+      inputPlaceholder: '如：忽略广告段落、只要前两道菜',
+      estimated: '约需 10-30 秒',
+      confirmText: '开始解析',
+    });
+    if (!confirmed?.confirmed) return;
+
+    // 补充要求附加到解析文本末尾，与原文一并交给 AI
+    const textForAi = confirmed.input
+      ? `${aiText.trim()}\n\n补充要求：${confirmed.input}`
+      : aiText.trim();
 
     setLoading(true);
     setLoadingMsg('AI 厨师正在智能解析食材与烹饪步骤…');
     try {
-      const recipes = await parseRecipesWithAi(aiText, ai);
+      const recipes = await runAiTask('AI 智能解析', () =>
+        parseRecipesWithAi(textForAi, confirmed.config)
+      );
       toast({ type: 'success', message: `成功识别出 ${recipes.length} 道菜谱` });
+      logActivity({
+        type: 'ai',
+        action: 'AI 智能解析',
+        detail: `解析出 ${recipes.length} 道菜谱`,
+        meta: { 渠道: confirmed.config.providerId || '—', 模型: confirmed.config.model || '—' },
+      });
       processParsedRecipes(recipes);
     } catch (err: any) {
       toast({ type: 'error', message: err.message || 'AI 解析失败，请重试' });
@@ -322,6 +351,12 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
           filledCovers > 0 ? `，已补全 ${filledCovers} 张封面` : ''
         }！`,
       });
+      logActivity({
+        type: 'recipe',
+        action: '导入菜谱',
+        detail: `${recipesToSave.length} 道${filledCovers > 0 ? `，自动补封面 ${filledCovers} 张` : ''}`,
+        meta: { 方式: 'AI 解析导入', 策略: strategy },
+      });
       handleClose();
     } catch (err: any) {
       toast({ type: 'error', message: err.message || '导入失败' });
@@ -339,7 +374,7 @@ export const RecipeImportModal: React.FC<RecipeImportModalProps> = ({
       onRequestClose={handleClose}
     >
       <View style={styles.modalBackdrop}>
-        <View style={styles.modalSheet}>
+        <View style={[styles.modalSheet, { paddingBottom: Math.max(insets.bottom, 16) + 12 }]}>
           {/* 弹窗头部 */}
           <View style={styles.header}>
             <View style={styles.headerTitleWrap}>

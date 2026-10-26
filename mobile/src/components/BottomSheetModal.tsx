@@ -13,6 +13,7 @@ import {
   Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface BottomSheetModalProps {
   visible: boolean;
@@ -38,6 +39,8 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
 }) => {
   const translateY = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
   const [isRendered, setIsRendered] = useState(visible);
+  // 底部安全区边距：手势条/小白条不该贴住弹层内容
+  const insets = useSafeAreaInsets();
 
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const keyboardHeightAnim = useRef(new Animated.Value(0)).current;
@@ -210,6 +213,7 @@ export const BottomSheetModal: React.FC<BottomSheetModalProps> = ({
           style={[
             styles.sheet,
             sheetStyle,
+            { paddingBottom: Math.max(insets.bottom, 16) + 8 },
             keyboardHeight > 0 && {
               maxHeight: Math.max(
                 280,

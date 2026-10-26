@@ -22,6 +22,7 @@ import {
   FileUp,
   ImagePlus,
   FlaskConical,
+  History,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
@@ -310,6 +311,18 @@ export default function ProfileScreen() {
             </View>
             <Text style={styles.menuTitle}>每周餐盘智能管家</Text>
             <Text style={styles.menuValue}>自动排餐</Text>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/activity-log')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#E8F0E9' }]}>
+              <History size={18} color="#2E7D6B" />
+            </View>
+            <Text style={styles.menuTitle}>操作历史</Text>
+            <Text style={styles.menuValue}>带饭 · AI · 全记录</Text>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
         </View>

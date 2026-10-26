@@ -1,4 +1,10 @@
-import { Cloud, Gpu, SlidersHorizontal, Waves } from 'lucide-react-native';
+import type { ComponentType } from 'react';
+import {
+  DeepseekChannelIcon,
+  NvidiaChannelIcon,
+  OpenaiChannelIcon,
+  SiliconflowChannelIcon,
+} from '@/components/AiChannelIcons';
 
 /**
  * AI 渠道元数据（渠道商图标、名称、默认地址与默认模型）
@@ -7,7 +13,7 @@ import { Cloud, Gpu, SlidersHorizontal, Waves } from 'lucide-react-native';
 export interface AiChannelMeta {
   id: 'nvidia' | 'siliconflow' | 'deepseek' | 'custom';
   name: string;
-  icon: typeof Gpu;
+  icon: ComponentType<{ size?: number; color?: string }>;
   iconColor: string;
   baseUrl: string;
   model: string;
@@ -19,18 +25,18 @@ export const AI_CHANNELS: AiChannelMeta[] = [
   {
     id: 'nvidia',
     name: 'NVIDIA NIM',
-    icon: Gpu,
+    icon: NvidiaChannelIcon,
     iconColor: '#76B900',
     baseUrl: 'https://integrate.api.nvidia.com/v1',
-    model: 'meta/llama-3.1-70b-instruct',
+    model: 'minimaxai/minimax-m3.1-flash',
     placeholderKey: 'nvapi-xxxxxxxxxxxx',
-    desc: '英伟达云端高性能微服务，支持 Llama 3.1、Nemotron 等，含免费体验额度',
+    desc: '英伟达云端推理服务，实测 MiniMax M3.1 Flash 秒级出谱，模型以「自动拉取模型」列表为准',
   },
   {
     id: 'siliconflow',
     name: '硅基流动',
-    icon: Cloud,
-    iconColor: '#7C9AFE',
+    icon: SiliconflowChannelIcon,
+    iconColor: '#6E29F5',
     baseUrl: 'https://api.siliconflow.cn/v1',
     model: 'deepseek-ai/DeepSeek-V3.2',
     placeholderKey: 'sk-xxxxxxxxxxxx',
@@ -39,7 +45,7 @@ export const AI_CHANNELS: AiChannelMeta[] = [
   {
     id: 'deepseek',
     name: 'DeepSeek 官方',
-    icon: Waves,
+    icon: DeepseekChannelIcon,
     iconColor: '#4D6BFE',
     baseUrl: 'https://api.deepseek.com/v1',
     model: 'deepseek-flash',
@@ -49,7 +55,7 @@ export const AI_CHANNELS: AiChannelMeta[] = [
   {
     id: 'custom',
     name: '自定义接口 (OpenAI 规范)',
-    icon: SlidersHorizontal,
+    icon: OpenaiChannelIcon,
     iconColor: '#857C74',
     baseUrl: '',
     model: '',

@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { safeAsyncStorage } from '@/lib/safeStorage';
 
 import { triggerAutoSync } from '@/lib/syncTrigger';
+import { logActivity } from './activityLogStore';
 
 interface FavoritesState {
   favorites: string[];
@@ -25,6 +26,7 @@ export const useFavoritesStore = create<FavoritesState>()(
             : [...state.favorites, recipeId],
           favoritesUpdatedAt: Date.now(),
         }));
+        logActivity({ type: 'favorite', action: '收藏菜谱', detail: recipeId });
         triggerAutoSync(800);
       },
       removeFavorite: (recipeId: string) => {
@@ -32,6 +34,7 @@ export const useFavoritesStore = create<FavoritesState>()(
           favorites: state.favorites.filter((id) => id !== recipeId),
           favoritesUpdatedAt: Date.now(),
         }));
+        logActivity({ type: 'favorite', action: '取消收藏', detail: recipeId });
         triggerAutoSync(800);
       },
       isFavorite: (recipeId: string) => get().favorites.includes(recipeId),

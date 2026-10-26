@@ -114,6 +114,81 @@ export interface CoverFillProgress {
   name?: string;
 }
 
+export interface BrokenCoverProgress {
+  done: number;
+  total: number;
+  name?: string;
+}
+
+/** base64 或非 http 的非法封面直接判失效（不发起网络请求） */
+function isCoverStructurallyBroken(coverImage?: string): boolean {
+  const v = String(coverImage || '').trim();
+  return v.length > 0 && !v.startsWith('http://') && !v.startsWith('https://');
+}
+
+/** 单个封面 URL 存活检测：HEAD 优先，服务器不支持时退化 GET Range */
+async function isCoverUrlAlive(url: string): Promise<boolean> {
+  try {
+    const res = await fetch(url, { method: 'HEAD' });
+    if (res.ok) return true;
+    if (res.status === 405 || res.status === 501) {
+      const g = await fetch(url, { headers: { Range: 'bytes=0-64' } });
+      return g.ok;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * 检测失效封面（base64 / 死链），返回失效菜谱列表：
+ * - base64 等非法值直接判失效；
+ * - http 链接并发 HEAD 测活（超时视为失效）。
+ */
+export async function findBrokenCoverRecipes(
+  recipes: Recipe[],
+  onProgress?: (p: BrokenCoverProgress) => void,
+  options?: { concurrency?: number; timeoutMs?: number }
+): Promise<Recipe[]> {
+  const withCover = recipes.filter((r) => String(r.coverImage || '').trim().length > 0);
+  const total = withCover.length;
+  if (total === 0) return [];
+
+  const broken: Recipe[] = [];
+  let cursor = 0;
+  let done = 0;
+  const concurrency = Math.max(1, Math.min(options?.concurrency ?? 6, 10));
+  const timeoutMs = options?.timeoutMs ?? 8000;
+
+  const worker = async () => {
+    while (cursor < withCover.length) {
+      const recipe = withCover[cursor];
+      cursor += 1;
+      const url = recipe.coverImage.trim();
+      let alive = true;
+      if (isCoverStructurallyBroken(url)) {
+        alive = false;
+      } else {
+        try {
+          alive = await Promise.race([
+            isCoverUrlAlive(url),
+            new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
+          ]);
+        } catch {
+          alive = false;
+        }
+      }
+      if (!alive) broken.push(recipe);
+      done += 1;
+      onProgress?.({ done, total, name: recipe.name });
+    }
+  };
+
+  await Promise.all(Array.from({ length: Math.min(concurrency, withCover.length) }, worker));
+  return broken;
+}
+
 /**
  * 为单道菜谱寻找可用封面：优先百度美食实拍图，失败时用 AI 生图兜底
  */

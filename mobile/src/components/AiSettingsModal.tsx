@@ -43,6 +43,8 @@ import {
 } from '@/lib/ai';
 import { pushToCloud } from '@/lib/cloudSync';
 import { toast } from '@/store/feedbackStore';
+import { ensureAiIdle, runAiTask } from '@/store/aiTaskStore';
+import { logActivity } from '@/store/activityLogStore';
 import { Palette } from '@/constants/theme';
 import { AI_CHANNELS } from '@/constants/aiChannels';
 
@@ -77,7 +79,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
   });
 
   const [channelModels, setChannelModels] = useState<Record<string, string>>({
-    nvidia: 'meta/llama-3.1-70b-instruct',
+    nvidia: 'minimaxai/minimax-m3.1-flash',
     siliconflow: 'deepseek-ai/DeepSeek-V3.2',
     deepseek: 'deepseek-flash',
     custom: '',
@@ -130,7 +132,7 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
       setChannelKeys(keys);
 
       const models: Record<string, string> = {
-        nvidia: 'meta/llama-3.1-70b-instruct',
+        nvidia: 'minimaxai/minimax-m3.1-flash',
         siliconflow: 'deepseek-ai/DeepSeek-V3.2',
         deepseek: 'deepseek-flash',
         custom: '',
@@ -316,16 +318,25 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
       return;
     }
 
+    // 有其他 AI 任务在跑时，拦截并提示
+    if (!ensureAiIdle()) return;
+
     setTesting(true);
     setTestResult(null);
     try {
-      const res = await testAiConnection(tempConfig);
+      const res = await runAiTask('AI 连接测试', () => testAiConnection(tempConfig));
       setTestResult({
         ok: true,
         latencyMs: res.latencyMs,
         msg: `连接成功 (耗时 ${res.latencyMs}ms)\nAI 回复:「${res.reply}」`,
       });
       toast({ type: 'success', message: `连接成功 (耗时 ${res.latencyMs}ms)` });
+      logActivity({
+        type: 'ai',
+        action: 'AI 连接测试',
+        detail: `连接成功（${res.latencyMs}ms）`,
+        meta: { 渠道: tempConfig.providerId || '—', 模型: tempConfig.model || '—' },
+      });
     } catch (err: any) {
       setTestResult({
         ok: false,

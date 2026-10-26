@@ -13,6 +13,8 @@ export interface Recipe {
   id: string;
   name: string;
   category: string;
+  /** 特性标签（多选）：荤菜/素菜/海鲜/快手菜/减脂餐/下饭菜/宴客菜/夜宵 */
+  tags?: string[];
   coverImage: string;
   description: string;
   ingredients: Ingredient[];

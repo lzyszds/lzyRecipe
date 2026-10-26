@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -25,7 +25,6 @@ import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useImportedRecipesStore } from '@/store/importedRecipesStore';
-import { useRecentViewsStore } from '@/store/recentViewsStore';
 import { toast } from '@/store/feedbackStore';
 import { RecipeImage } from '@/components/RecipeImage';
 import { RecipeCoverModal } from '@/components/RecipeCoverModal';
@@ -53,14 +52,6 @@ export default function RecipeDetailScreen() {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [previewImageVisible, setPreviewImageVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
-  const recordView = useRecentViewsStore((s) => s.recordView);
-
-  // 记录最近浏览，供首页“最近点过”快速回到常看的菜
-  useEffect(() => {
-    if (recipe?.id) {
-      recordView(recipe.id);
-    }
-  }, [recipe?.id, recordView]);
 
   if (!recipe) {
     return (
@@ -525,11 +516,14 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   ingLeft: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginRight: 10,
   },
   ingName: {
+    flexShrink: 1,
     fontSize: 13,
     fontWeight: '600',
     color: Palette.cocoa[900],
@@ -539,6 +533,7 @@ const styles = StyleSheet.create({
     color: Palette.cocoa[400],
   },
   ingAmount: {
+    flexShrink: 0,
     fontSize: 12,
     fontWeight: '500',
     color: Palette.cocoa[700],

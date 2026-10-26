@@ -31,10 +31,11 @@ export async function chatWithAi(
 
   const endpoint = wrapCorsProxy(chatEndpoint(config.baseUrl));
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), options.timeoutMs ?? 60000);
+  const timeoutMs = options.timeoutMs ?? 60000;
+  let timer = setTimeout(() => controller.abort(), timeoutMs);
 
-  try {
-    const res = await fetch(endpoint, {
+  const requestAi = (useJsonFormat: boolean) =>
+    fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -44,10 +45,23 @@ export async function chatWithAi(
         model: config.model.trim(),
         temperature: options.temperature ?? 0.7,
         messages,
-        ...(options.json ? { response_format: { type: 'json_object' } } : {}),
+        ...(options.json && useJsonFormat
+          ? { response_format: { type: 'json_object' } }
+          : {}),
       }),
       signal: controller.signal,
     });
+
+  try {
+    let res = await requestAi(true);
+
+    // 部分模型(如 NVIDIA NIM 的 VL/推理系列)不支持 response_format=json_object,会直接
+    // 返回 400/500/503;此时去掉该参数重试一次,JSON 由 parseJsonReply 兜底解析
+    if (!res.ok && options.json && [400, 500, 502, 503].includes(res.status)) {
+      clearTimeout(timer);
+      timer = setTimeout(() => controller.abort(), timeoutMs);
+      res = await requestAi(false);
+    }
 
     if (!res.ok) {
       const errText = await res.text().catch(() => '');
@@ -58,6 +72,10 @@ export async function chatWithAi(
           errMsg = errJson.error.message;
         }
       } catch {}
+      // 模型不存在(404)或已下架(410),给出可操作的提示
+      if (res.status === 404 || res.status === 410) {
+        throw new AiError(`该模型不存在或已下线(HTTP ${res.status}),请点「自动拉取模型」从在售列表中选择`);
+      }
       throw new AiError(errMsg);
     }
 
@@ -68,8 +86,13 @@ export async function chatWithAi(
     }
     return content;
   } catch (err: any) {
-    if (err.name === 'AbortError') {
-      throw new AiError('请求超时（超过 60 秒），请检查网络或更换更快的模型');
+    // React Native 里 abort 的报错名不一定是 AbortError（如「fetch request has been canceled」），按消息兜底
+    const aborted =
+      err?.name === 'AbortError' || /canceled|cancelled|aborted/i.test(String(err?.message || ''));
+    if (aborted) {
+      throw new AiError(
+        `请求超时（超过 ${Math.round(timeoutMs / 1000)} 秒），请检查网络或更换更快的模型`
+      );
     }
     if (err instanceof AiError) throw err;
     throw new AiError(err.message || '网络请求失败，请检查接口地址');
@@ -268,7 +291,7 @@ export async function fetchRemoteModels(
         { id: 'gpt-3.5-turbo', owned_by: 'openai' },
       ], base);
     }
-    if (err.name === 'AbortError') {
+    if (err?.name === 'AbortError' || /canceled|cancelled|aborted/i.test(String(err?.message || ''))) {
       throw new AiError('拉取模型超时，请检查接口网络是否通畅');
     }
     if (err instanceof AiError) throw err;

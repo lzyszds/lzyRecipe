@@ -108,6 +108,20 @@ export const useImportedRecipesStore = create<ImportedRecipesState>()(
     {
       name: 'imported-recipes-storage',
       storage: createJSONStorage(() => safeAsyncStorage),
+      // 迁移：历史数据里的 base64 封面统一清空（体积大、拖慢加载与云同步），缺图走补全流程
+      onRehydrateStorage: () => (state) => {
+        if (state?.importedRecipes?.some((r) => String(r.coverImage || '').startsWith('data:'))) {
+          setTimeout(() => {
+            useImportedRecipesStore.setState({
+              importedRecipes: useImportedRecipesStore
+                .getState()
+                .importedRecipes.map((r) =>
+                  String(r.coverImage || '').startsWith('data:') ? { ...r, coverImage: '' } : r
+                ),
+            });
+          }, 0);
+        }
+      },
     }
   )
 );

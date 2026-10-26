@@ -3,24 +3,16 @@ import * as Clipboard from 'expo-clipboard';
 import { Recipe, Ingredient, Step, DifficultyLevel } from '@/types';
 import { AiSettings } from '@/store/settingsStore';
 import { chatWithAi, parseJsonReply, AiError } from './ai';
+import {
+  RECIPE_CATEGORIES,
+  RECIPE_TAGS,
+  MAX_RECIPE_TAGS,
+  normalizeCategoryInput,
+  inferRecipeTags,
+} from '@/constants/recipeCategories';
 
-export const VALID_CATEGORIES = [
-  '川菜',
-  '粤菜',
-  '湘菜',
-  '鲁菜',
-  '西餐',
-  '甜点',
-  '饮品',
-  '家常菜',
-  '海鲜',
-  '早餐',
-  '汤',
-  '肉类',
-  '蔬菜',
-  '主食',
-  '调料',
-];
+/** 合法主分类（与编辑器、AI 生成共用同一套） */
+export const VALID_CATEGORIES = RECIPE_CATEGORIES;
 
 export type DeduplicationStrategy = 'skip' | 'overwrite' | 'rename';
 
@@ -125,19 +117,7 @@ export function normalizeRecipe(raw: any, index = 0): Recipe {
   const rawName = typeof raw.name === 'string' ? raw.name.trim() : `未命名菜谱_${index + 1}`;
   const cleanName = rawName.replace(/^(\d+[.、\s]+|[【[](.*?)[】\]])/, '').trim() || rawName;
 
-  let category = typeof raw.category === 'string' ? raw.category.trim() : '家常菜';
-  if (!VALID_CATEGORIES.includes(category)) {
-    if (category.includes('川')) category = '川菜';
-    else if (category.includes('粤') || category.includes('广')) category = '粤菜';
-    else if (category.includes('湘') || category.includes('辣')) category = '湘菜';
-    else if (category.includes('海鲜') || category.includes('鱼') || category.includes('虾')) category = '海鲜';
-    else if (category.includes('汤') || category.includes('煲')) category = '汤';
-    else if (category.includes('肉')) category = '肉类';
-    else if (category.includes('菜') || category.includes('素')) category = '蔬菜';
-    else if (category.includes('甜') || category.includes('点心')) category = '甜点';
-    else if (category.includes('面') || category.includes('饭') || category.includes('主食')) category = '主食';
-    else category = '家常菜';
-  }
+  let category = normalizeCategoryInput(typeof raw.category === 'string' ? raw.category.trim() : '');
 
   let cookTime = Number(raw.cookTime);
   if (isNaN(cookTime) || cookTime <= 0) {
@@ -253,10 +233,22 @@ export function normalizeRecipe(raw: any, index = 0): Recipe {
       ? raw.id.trim()
       : `imp_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
 
+  // 特性标签：AI 显式给出的优先（过滤合法性），再自动推断补齐
+  const aiTags: string[] = Array.isArray(raw.tags)
+    ? raw.tags.filter((t: any) => typeof t === 'string' && (RECIPE_TAGS as readonly string[]).includes(t))
+    : [];
+  const tags = Array.from(
+    new Set([
+      ...aiTags,
+      ...inferRecipeTags({ name: cleanName, description: raw.description, cookTime, ingredients, category }),
+    ])
+  ).slice(0, MAX_RECIPE_TAGS);
+
   return {
     id,
     name: cleanName,
     category,
+    tags,
     coverImage:
       typeof raw.coverImage === 'string' &&
       (raw.coverImage.startsWith('http://') ||
@@ -341,7 +333,8 @@ export async function parseRecipesWithAi(
 每个菜谱对象结构必须包含以下字段：
 {
   "name": "菜品名称（必须是纯净菜名，勿带序号或符号）",
-  "category": "必须严格是以下分类之一：川菜、粤菜、湘菜、鲁菜、西餐、甜点、饮品、家常菜、海鲜、早餐、汤、肉类、蔬菜、主食、调料",
+  "category": "必须严格是以下主分类之一：家常菜、川菜、湘菜、粤菜、鲁菜、西餐、汤羹、主食、甜点、饮品、早餐",
+  "tags": "从以下特性标签中选 0~3 个最贴切的（数组）：荤菜、素菜、海鲜、快手菜、减脂餐、下饭菜、宴客菜、夜宵",
   "description": "25字左右的一句话风味或特色简介",
   "cookTime": 烹饪耗时（分钟纯数字，如 20）,
   "difficulty": "只能是 easy、medium 或 hard 之一",

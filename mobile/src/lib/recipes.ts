@@ -1,18 +1,20 @@
 import { recipes, categories } from '../data/recipes';
 import { generatedRecipes } from '../data/generatedRecipes';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
+import { migrateRecipeTaxonomy } from '../constants/recipeCategories';
 import { Category, Recipe } from '../types';
 
 export function getAllRecipes(importedRecipes: Recipe[] = []): Recipe[] {
   const map = new Map<string, Recipe>();
   for (const r of recipes) {
-    map.set(r.id, r);
+    map.set(r.id, migrateRecipeTaxonomy(r));
   }
   for (const r of generatedRecipes) {
-    map.set(r.id, r);
+    map.set(r.id, migrateRecipeTaxonomy(r));
   }
   for (const r of importedRecipes) {
-    map.set(r.id, r);
+    // 用户导入的菜谱可能还是旧分类体系（海鲜/汤/调料等），读取时自动归一并补标签
+    map.set(r.id, migrateRecipeTaxonomy(r));
   }
   return Array.from(map.values());
 }

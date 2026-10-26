@@ -39,7 +39,9 @@
           "cameraPermission": "萌厨食光需要使用相机来拍摄菜谱封面或步骤配图。",
           "microphonePermission": false
         }
-      ]
+      ],
+      "expo-font",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -54,6 +56,12 @@
       "eas": {
         "projectId": "3d935fe6-c25d-40ea-a8fd-12503cc2c09b"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/3d935fe6-c25d-40ea-a8fd-12503cc2c09b"
     }
   }
 }

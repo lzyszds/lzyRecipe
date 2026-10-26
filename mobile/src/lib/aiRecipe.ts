@@ -96,7 +96,7 @@ export async function planBentoWithAi(
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userMessage },
         ],
-        { json: true, temperature: 0.6, timeoutMs: 25000 }
+        { json: true, temperature: 0.6, timeoutMs: 60000 }
       );
 
       const parsed = parseJsonReply<{
@@ -221,7 +221,7 @@ export interface AiRecipeGenRequest {
   recipeName: string;
   category?: string;
   /** 可选：应用内支持的分类列表，用于约束第 1 段产出的 category */
-  categoryOptions?: string[];
+  categoryOptions?: readonly string[];
   cookTime?: string;
   difficulty?: DifficultyLevel;
   currentIngredients?: Ingredient[];
@@ -278,7 +278,7 @@ ${steps.map((s, i) => `${i + 1}. ${s.description}`).join('\n')}
 未出现在任何步骤中的食材（必须处理）：${missing.join('、')}`,
       },
     ],
-    { json: true, temperature: 0.3, timeoutMs: 40000 }
+    { json: true, temperature: 0.3, timeoutMs: 90000 }
   );
 
   const parsed = parseJsonReply<{ steps?: Step[] }>(reply);
@@ -346,7 +346,7 @@ async function requestStepsWithAi(
   const reply = await chatWithAi(
     aiSettings,
     buildStepsMessages(params.recipeName, params.ingredients, params.extraPrompt),
-    { json: true, temperature: 0.45, timeoutMs: 35000 }
+    { json: true, temperature: 0.45, timeoutMs: 90000 }
   );
   return normalizeParsedSteps(parseJsonReply<{ steps?: Step[] }>(reply));
 }
@@ -391,7 +391,7 @@ async function generateFullRecipeWithAi(
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ],
-    { json: true, temperature: 0.4, timeoutMs: 35000 }
+    { json: true, temperature: 0.4, timeoutMs: 90000 }
   );
 
   let meta: AiRecipeGenResult;
@@ -499,7 +499,7 @@ export async function generateRecipeWithAi(
       json: field !== 'description' && field !== 'tips',
       // 结构化生成降低随机性，减少食材与步骤“两张皮”
       temperature: field === 'steps' ? 0.45 : 0.6,
-      timeoutMs: 35000,
+      timeoutMs: 90000,
     }
   );
 

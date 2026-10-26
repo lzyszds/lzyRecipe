@@ -3,6 +3,14 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { safeAsyncStorage } from '@/lib/safeStorage';
 import { getTodayString, getWeekDates, getMondayOf } from '@/lib/bentoDate';
 import type { Recipe } from '@/types';
+import { useRecentCookedStore } from './recentCookedStore';
+import { logActivity } from './activityLogStore';
+
+const MEAL_LABELS: Record<MealType, string> = {
+  breakfast: '早餐',
+  lunch: '午餐',
+  dinner: '晚餐',
+};
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner';
 
@@ -114,47 +122,61 @@ export const useBentoStore = create<BentoState>()(
         return state.bentoByDate[date] || createEmptyDayBento(date);
       },
 
-      addDishesToMeal: (date, mealType, recipeIds) =>
-        set((state) => {
-          const currentDay = state.bentoByDate[date] || createEmptyDayBento(date);
-          const currentSlot = currentDay[mealType] || [];
-          const existingIds = new Set(currentSlot.map((item) => item.recipeId));
+      addDishesToMeal: (date, mealType, recipeIds) => {
+        const state = get();
+        const currentDay = state.bentoByDate[date] || createEmptyDayBento(date);
+        const currentSlot = currentDay[mealType] || [];
+        const existingIds = new Set(currentSlot.map((item) => item.recipeId));
 
-          const newItems: MealSlotItem[] = [];
-          for (const id of recipeIds) {
-            if (!existingIds.has(id)) {
-              newItems.push({ recipeId: id, eatenAt: null });
-            }
+        const newItems: MealSlotItem[] = [];
+        for (const id of recipeIds) {
+          if (!existingIds.has(id)) {
+            newItems.push({ recipeId: id, eatenAt: null });
           }
+        }
 
-          if (newItems.length === 0) return state;
+        if (newItems.length === 0) return;
 
-          return {
-            bentoByDate: {
-              ...state.bentoByDate,
-              [date]: {
-                ...currentDay,
-                [mealType]: [...currentSlot, ...newItems],
-              },
+        set({
+          bentoByDate: {
+            ...state.bentoByDate,
+            [date]: {
+              ...currentDay,
+              [mealType]: [...currentSlot, ...newItems],
             },
-          };
-        }),
+          },
+        });
 
-      removeDishFromMeal: (date, mealType, recipeId) =>
-        set((state) => {
-          const currentDay = state.bentoByDate[date];
-          if (!currentDay) return state;
+        logActivity({
+          type: 'bento',
+          action: '便当加入菜品',
+          detail: `${date} ${MEAL_LABELS[mealType]} · ${newItems.length} 道`,
+          meta: { 日期: date, 餐位: MEAL_LABELS[mealType] },
+        });
+      },
 
-          return {
-            bentoByDate: {
-              ...state.bentoByDate,
-              [date]: {
-                ...currentDay,
-                [mealType]: currentDay[mealType].filter((item) => item.recipeId !== recipeId),
-              },
+      removeDishFromMeal: (date, mealType, recipeId) => {
+        const state = get();
+        const currentDay = state.bentoByDate[date];
+        if (!currentDay) return;
+
+        set({
+          bentoByDate: {
+            ...state.bentoByDate,
+            [date]: {
+              ...currentDay,
+              [mealType]: currentDay[mealType].filter((item) => item.recipeId !== recipeId),
             },
-          };
-        }),
+          },
+        });
+
+        logActivity({
+          type: 'bento',
+          action: '便当移除菜品',
+          detail: `${date} ${MEAL_LABELS[mealType]} · 菜谱 ${recipeId}`,
+          meta: { 日期: date, 餐位: MEAL_LABELS[mealType] },
+        });
+      },
 
       clearMeal: (date, mealType) =>
         set((state) => {
@@ -228,32 +250,54 @@ export const useBentoStore = create<BentoState>()(
           }
           return { bentoByDate: nextBento };
         });
+        logActivity({
+          type: 'bento',
+          action: 'AI 智能配餐',
+          detail: `填入 ${addedCount} 道菜`,
+        });
         return addedCount;
       },
 
-      toggleEaten: (date, mealType, recipeId) =>
-        set((state) => {
-          const currentDay = state.bentoByDate[date];
-          if (!currentDay) return state;
+      toggleEaten: (date, mealType, recipeId) => {
+        const currentDay = get().bentoByDate[date];
+        if (!currentDay) return;
 
-          const updated = currentDay[mealType].map((item) => {
-            if (item.recipeId !== recipeId) return item;
-            return {
-              ...item,
-              eatenAt: item.eatenAt ? null : new Date().toISOString(),
-            };
-          });
+        const wasEaten = currentDay[mealType].some(
+          (item) => item.recipeId === recipeId && item.eatenAt
+        );
 
+        const updated = currentDay[mealType].map((item) => {
+          if (item.recipeId !== recipeId) return item;
           return {
-            bentoByDate: {
-              ...state.bentoByDate,
-              [date]: {
-                ...currentDay,
-                [mealType]: updated,
-              },
-            },
+            ...item,
+            eatenAt: item.eatenAt ? null : new Date().toISOString(),
           };
-        }),
+        });
+
+        set({
+          bentoByDate: {
+            ...get().bentoByDate,
+            [date]: {
+              ...currentDay,
+              [mealType]: updated,
+            },
+          },
+        });
+
+        // 打卡「已吃掉」（视为完成）→ 记入首页「最近点过」；取消打卡 → 同步移除
+        if (wasEaten) {
+          useRecentCookedStore.getState().removeCooked(recipeId);
+        } else {
+          useRecentCookedStore.getState().recordCooked(recipeId);
+        }
+
+        logActivity({
+          type: 'bento',
+          action: wasEaten ? '便当取消打卡' : '便当打卡·已吃掉',
+          detail: `${date} ${MEAL_LABELS[mealType]} · 菜谱 ${recipeId}`,
+          meta: { 日期: date, 餐位: MEAL_LABELS[mealType] },
+        });
+      },
 
       applyLunchBentoToWorkdays: (mondayStr, recipeId) =>
         set((state) => {

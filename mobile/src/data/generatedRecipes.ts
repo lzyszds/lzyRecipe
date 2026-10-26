@@ -7,7 +7,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0001',
     name: '土豆烧牛腩',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '牛腩软烂入味，土豆吸饱汤汁，浓郁下饭的经典炖菜。',
     ingredients: [
@@ -42,7 +42,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0002',
     name: '干煸四季豆',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '四季豆干香微皱，配肉末和干辣椒，咸香下饭的川味小炒。',
     ingredients: [
@@ -74,7 +74,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0003',
     name: '鱼香茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '茄子软糯吸汁，酸甜微辣的鱼香汁包裹，拌米饭一绝。',
     ingredients: [
@@ -107,7 +107,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0004',
     name: '豆角焖面',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '面条吸足豆角和五花肉的汤汁，一锅出，咸香筋道。',
     ingredients: [
@@ -139,7 +139,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0005',
     name: '糖醋里脊',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外酥里嫩的里脊裹上酸甜糖醋汁，孩子大人都抢着吃。',
     ingredients: [
@@ -172,7 +172,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0006',
     name: '农家小炒肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '五花肉焦香微辣，青椒爽脆，非常下饭的一道湘味家常菜。',
     ingredients: [
@@ -203,7 +203,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0007',
     name: '土豆回锅肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '土豆片吸满肉香和豆瓣酱味，咸香微辣，配米饭一绝。',
     ingredients: [
@@ -233,7 +233,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0008',
     name: '酱爆茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '茄子软糯入味，酱香浓郁，少油做法也能吃出饭店味。',
     ingredients: [
@@ -264,7 +264,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0009',
     name: '虎皮青椒',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '青椒表皮起皱焦香，裹上酸甜咸鲜的酱汁，简单又下饭。',
     ingredients: [
@@ -293,7 +293,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0010',
     name: '干锅花菜',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜', '宴客菜'],
     coverImage: '',
     description: '花菜干香爽脆，五花肉和辣椒提味，咸辣开胃的下饭硬菜。',
     ingredients: [
@@ -323,7 +323,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0011',
     name: '榨菜肉丝',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '榨菜咸脆、肉丝滑嫩，几分钟出锅的经典下饭小炒。',
     ingredients: [
@@ -353,7 +353,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0012',
     name: '胡萝卜炒肉片',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '胡萝卜清甜、肉片嫩滑，颜色鲜亮，营养均衡的家常小炒。',
     ingredients: [
@@ -384,7 +384,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0013',
     name: '雪菜肉末豆腐',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '雪菜咸鲜、豆腐嫩滑，汤汁拌饭特别香的家常下饭菜。',
     ingredients: [
@@ -415,7 +415,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0014',
     name: '醋溜白菜',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '白菜脆嫩、酸香开胃，大火快炒几分钟就能上桌。',
     ingredients: [
@@ -445,7 +445,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0015',
     name: '香菇肉片',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '香菇鲜香、肉片滑嫩，蚝油提鲜，清淡又不失滋味。',
     ingredients: [
@@ -476,7 +476,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0016',
     name: '土豆烧排骨',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '排骨软烂脱骨，土豆吸饱汤汁绵密入味，咸香下饭的经典搭配。',
     ingredients: [
@@ -510,7 +510,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0017',
     name: '蒜苔炒腊肠',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '腊肠咸甜油润，蒜苔清脆微辣，五分钟出锅的快手下饭菜。',
     ingredients: [
@@ -538,7 +538,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0018',
     name: '西红柿炖牛腩',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '汤汁浓郁酸甜，牛腩软烂，浇在米饭上酸甜开胃。',
     ingredients: [
@@ -570,7 +570,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0019',
     name: '冬瓜丸子汤',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '汤清味鲜，丸子嫩滑弹牙，冬瓜软糯解腻，配饭刚刚好。',
     ingredients: [
@@ -601,7 +601,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0020',
     name: '孜然羊肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '孜然香气扑鼻，羊肉滑嫩不膻，洋葱微甜，配米饭很过瘾。',
     ingredients: [
@@ -633,7 +633,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0021',
     name: '腐竹烧肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '腐竹吸满肉汁软韧入味，五花肉肥而不腻，浓香下饭。',
     ingredients: [
@@ -665,7 +665,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0022',
     name: '蒜苔炒肉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蒜苔脆嫩、肉丝干香，咸鲜下饭，十分钟搞定的家常快手菜。',
     ingredients: [
@@ -695,7 +695,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0023',
     name: '蚂蚁上树',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '粉丝吸饱肉汁，肉末粒粒挂条，麻辣鲜香，口感滑弹。',
     ingredients: [
@@ -725,7 +725,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0024',
     name: '酸辣粉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '红薯粉爽滑，酸辣汤底带花椒麻香，酥花生与榨菜提脆，街头风味。',
     ingredients: [
@@ -755,7 +755,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0025',
     name: '干煸肥肠',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '肥肠外酥里糯，干辣椒与花椒香辣扑鼻，越嚼越香的下酒菜。',
     ingredients: [
@@ -788,7 +788,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0026',
     name: '麻辣香锅',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '一锅汇聚荤素，麻辣干香不油腻，配菜自选，聚餐下饭皆宜。',
     ingredients: [
@@ -821,7 +821,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0027',
     name: '干烧带鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '外皮焦香微脆，酱汁咸鲜微辣，下饭下酒都很合适。',
     ingredients: [
@@ -853,7 +853,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0028',
     name: '酸菜鱼片',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鱼片滑嫩，酸菜开胃，汤酸辣鲜香，适合寒冷天气暖身。',
     ingredients: [
@@ -887,7 +887,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0029',
     name: '红烧黄花鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '酱香浓郁、鱼肉细嫩，汤汁拌饭一绝，适合家庭晚餐。',
     ingredients: [
@@ -919,7 +919,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0030',
     name: '豆豉蒸鲳鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '豆豉咸香与鱼肉鲜甜融合，蒸制少油，适合清淡饮食。',
     ingredients: [
@@ -949,7 +949,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0031',
     name: '椒盐龙利鱼柳',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '外层酥脆椒香，内里雪白嫩滑，无刺适合孩子食用。',
     ingredients: [
@@ -979,7 +979,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0032',
     name: '番茄龙利鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '番茄汤汁酸甜浓郁，鱼片嫩滑，汤汁拌饭很受欢迎。',
     ingredients: [
@@ -1010,7 +1010,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0033',
     name: '香煎三文鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '外皮焦脆、内里粉嫩多汁，配柠檬清新解腻，适合轻食。',
     ingredients: [
@@ -1039,7 +1039,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0034',
     name: '蒜蓉粉丝蒸扇贝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '宴客菜'],
     coverImage: '',
     description: '扇贝鲜甜，粉丝吸满蒜香汁水，宴客家常两相宜。',
     ingredients: [
@@ -1070,7 +1070,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0035',
     name: '清蒸鳕鱼',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '肉质细嫩无刺、味道清鲜，几乎没有腥味，特别适合给小朋友吃。',
     ingredients: [
@@ -1099,7 +1099,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0036',
     name: '西兰花炒虾仁',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '虾仁弹嫩、西兰花脆爽，清淡少油，营养均衡又好看。',
     ingredients: [
@@ -1128,7 +1128,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0037',
     name: '土豆炖鸡块',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '土豆软糯吸满汤汁，鸡肉鲜香入味，一锅端上桌很下饭。',
     ingredients: [
@@ -1160,7 +1160,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0038',
     name: '肉末蒸蛋',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '蛋羹滑嫩如布丁，肉末咸香，拌饭一绝，老人小孩都合适。',
     ingredients: [
@@ -1188,7 +1188,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0039',
     name: '黄瓜炒鸡蛋',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '清爽脆嫩、蛋香浓郁，5分钟快手菜，夏天没胃口时最合适。',
     ingredients: [
@@ -1214,7 +1214,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0040',
     name: '玉米胡萝卜排骨汤',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '汤色清甜、玉米香浓，排骨软烂，是孩子爱喝的清润家常汤。',
     ingredients: [
@@ -1242,7 +1242,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0041',
     name: '香菇油菜',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '香菇鲜香、油菜翠绿，芡汁明亮，清淡不寡淡的经典配菜。',
     ingredients: [
@@ -1271,7 +1271,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0042',
     name: '五香酱牛肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱香浓郁、切片不散的经典冷盘，卤好冷藏后切薄片最入味，适合待客或做面浇头。',
     ingredients: [
@@ -1306,7 +1306,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0043',
     name: '冰糖酱鸭腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '酱色油亮、甜咸适口，鸭腿肉厚而不柴，收汁后裹满浓酱，下饭极佳。',
     ingredients: [
@@ -1339,7 +1339,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0044',
     name: '卤猪耳朵',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '胶质弹牙、越嚼越香的家常卤味，切丝拌辣椒油或直接蘸蒜泥都好吃。',
     ingredients: [
@@ -1373,7 +1373,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0045',
     name: '酱肘花',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '皮糯肉烂、酱香入骨的硬菜，卷紧冷藏后切片成花，宴客有面子。',
     ingredients: [
@@ -1408,7 +1408,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0046',
     name: '腐乳红烧肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '腐乳提鲜解腻，五花肉红亮软糯，咸甜中带发酵香气，比普通红烧肉更有层次。',
     ingredients: [
@@ -1441,7 +1441,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0047',
     name: '卤鸭胗',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '口感脆韧、卤香透骨，切片当下酒菜或拌面浇头都合适，越嚼越有味。',
     ingredients: [
@@ -1475,7 +1475,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0048',
     name: '香卤鸡爪',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '皮糯脱骨、胶质满满，卤香中带微辣，追剧零嘴或下酒都停不下来。',
     ingredients: [
@@ -1509,7 +1509,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0049',
     name: '南乳猪手',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '南乳香气独特，猪手软糯粘唇、色泽红润，是粤式家常的经典做法。',
     ingredients: [
@@ -1541,7 +1541,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0050',
     name: '酱汁肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '苏式风味，五花肉在红曲酱汁中焖至酥烂，甜中带咸、入口即化。',
     ingredients: [
@@ -1575,7 +1575,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0051',
     name: '酱爆猪肝',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱香浓、肝片嫩滑不柴，配米饭一绝，关键在旺火快炒。',
     ingredients: [
@@ -1607,7 +1607,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0052',
     name: '蒜蓉菠菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '蒜香浓郁、菠菜翠绿爽口，几分钟出锅的快手家常素菜。',
     ingredients: [
@@ -1634,7 +1634,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0053',
     name: '清炒油麦菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '油麦菜清脆微甜，大火快炒保留爽脆口感，配粥配饭都合适。',
     ingredients: [
@@ -1660,7 +1660,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0054',
     name: '白灼菜心',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '粤式经典做法，菜心清甜爽脆，淋上豉油蒜香，清淡解腻。',
     ingredients: [
@@ -1689,7 +1689,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0055',
     name: '蒜蓉空心菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '梗脆叶嫩、蒜香扑鼻，加一点腐乳提味，是夏天最下饭的绿叶菜。',
     ingredients: [
@@ -1716,7 +1716,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0056',
     name: '芥蓝炒腊肠',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '芥蓝微苦回甘，与腊肠的咸甜油脂相融，粤式家常风味十足。',
     ingredients: [
@@ -1745,7 +1745,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0057',
     name: '上汤娃娃菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '娃娃菜软嫩清甜，咸蛋黄与皮蛋熬出奶白上汤，鲜味浓郁。',
     ingredients: [
@@ -1774,7 +1774,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0058',
     name: '韭菜炒鸡蛋',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '韭菜辛香鲜嫩、鸡蛋蓬松软嫩，十分钟搞定的经典家常搭配。',
     ingredients: [
@@ -1800,7 +1800,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0059',
     name: '蚝油生菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '生菜焯水后淋上浓郁蚝油汁，脆嫩清甜，是零失败的快手菜。',
     ingredients: [
@@ -1829,7 +1829,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0060',
     name: '虾皮炒小白菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '虾皮提鲜补钙，小白菜清甜多汁，简单快炒也鲜味十足。',
     ingredients: [
@@ -1856,7 +1856,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0061',
     name: '卤水牛腱',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '卤香浓郁、切片不散，筋肉相间有嚼劲，冷切下酒或夹馍都合适。',
     ingredients: [
@@ -1890,7 +1890,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0062',
     name: '五香卤猪耳',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '脆骨爽口、卤香透骨，切丝拌辣椒油是经典下酒凉菜。',
     ingredients: [
@@ -1924,7 +1924,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0063',
     name: '酱牛肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱色红亮、咸香回甜，肉质紧实不柴，切片配蒜泥醋汁最佳。',
     ingredients: [
@@ -1958,7 +1958,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0064',
     name: '卤鸡腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '卤汁入骨、皮滑肉嫩，一锅卤好可冷吃可加热，家常快手硬菜。',
     ingredients: [
@@ -1990,7 +1990,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0065',
     name: '酱鸭腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '酱香浓郁、鸭肉紧实不腥，收汁后油亮诱人，配米饭很下饭。',
     ingredients: [
@@ -2023,7 +2023,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0066',
     name: '卤蛋卤豆干',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '素菜'],
     coverImage: '',
     description: '卤汁醇厚的经典搭配，蛋香入味、豆干弹韧，一锅出两份小菜。',
     ingredients: [
@@ -2055,7 +2055,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0067',
     name: '酱香猪蹄',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱红油亮、软糯脱骨，胶质满满，趁热吃黏嘴又不腻。',
     ingredients: [
@@ -2088,7 +2088,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0068',
     name: '糟卤毛豆鸭胗',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '糟香清爽、鸭胗脆嫩，冷藏后风味更佳，适合夏天佐酒。',
     ingredients: [
@@ -2118,7 +2118,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0069',
     name: '家常豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '外焦里嫩的家常豆腐，咸香下饭，配青椒木耳色彩丰富，适合工作日晚餐。',
     ingredients: [
@@ -2150,7 +2150,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0070',
     name: '小葱拌豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '清爽嫩滑的凉拌豆腐，葱香扑鼻，几分钟上桌，适合夏天配粥或解腻。',
     ingredients: [
@@ -2177,7 +2177,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0071',
     name: '香煎豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '外皮金黄酥脆、内里嫩滑的香煎豆腐，蘸蒜蓉酱油汁，简单又解馋。',
     ingredients: [
@@ -2207,7 +2207,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0072',
     name: '皮蛋豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '冰凉嫩滑的皮蛋豆腐，浇上蒜香酱汁，咸鲜微辣，是夏日快手凉菜。',
     ingredients: [
@@ -2237,7 +2237,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0073',
     name: '香菇烧豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '香菇的鲜香渗入豆腐，酱汁浓郁，素菜也能吃出满足感，适合配米饭。',
     ingredients: [
@@ -2269,7 +2269,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0074',
     name: '家常炒豆干',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '豆干配芹菜红椒快炒，咸香入味有嚼劲，是下饭又下酒的家常小炒。',
     ingredients: [
@@ -2300,7 +2300,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0075',
     name: '红烧冻豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '下饭菜'],
     coverImage: '',
     description: '冻豆腐吸饱红烧汤汁，咬开爆汁，搭配青椒香菇，冬天暖身又下饭。',
     ingredients: [
@@ -2333,7 +2333,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0076',
     name: '豆芽炒豆腐皮',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '豆芽脆爽、豆腐皮柔韧，快火翻炒咸鲜清爽，低脂又饱腹的家常素炒。',
     ingredients: [
@@ -2363,7 +2363,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0077',
     name: '白菜炖冻豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '白菜清甜、冻豆腐吸汁，汤鲜味浓的冬日炖菜，一锅热乎又暖胃。',
     ingredients: [
@@ -2395,7 +2395,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0078',
     name: '豉汁蒸排骨',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '豆豉蒜香浓郁，排骨嫩滑多汁，是粤式早茶和家常蒸菜的经典。',
     ingredients: [
@@ -2428,7 +2428,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0079',
     name: '腊肠蒸滑鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '腊肠油香渗入鸡肉，咸甜交融，秋冬暖身下饭好菜。',
     ingredients: [
@@ -2459,7 +2459,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0080',
     name: '虾仁蒸水蛋',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蛋羹嫩滑如布丁，虾仁鲜甜，老少皆宜的粤式家常蒸蛋。',
     ingredients: [
@@ -2488,7 +2488,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0081',
     name: '豉汁蒸凤爪',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '凤爪软糯脱骨，豉香浓郁微辣，是早茶必点的经典点心。',
     ingredients: [
@@ -2520,7 +2520,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0082',
     name: '瑶柱蒸萝卜',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '萝卜清甜吸满瑶柱鲜味，清淡鲜美，适合秋冬润燥。',
     ingredients: [
@@ -2551,7 +2551,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0083',
     name: '咸鱼蒸肉饼',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咸鱼咸香与肉饼鲜甜交融，是广东人念念不忘的家常味。',
     ingredients: [
@@ -2581,7 +2581,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0084',
     name: '蒜蓉蒸丝瓜',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '丝瓜清甜多汁，蒜蓉提鲜，夏日清爽快手蒸菜。',
     ingredients: [
@@ -2610,7 +2610,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0085',
     name: '客家酿豆腐',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '客家家常代表菜，豆腐嫩滑、肉馅鲜香，煎后焖煮入味，配饭很合适。',
     ingredients: [
@@ -2644,7 +2644,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0086',
     name: '梅菜扣肉',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '客家宴客硬菜，五花肉软糯、梅菜咸香，蒸足时间后肥而不腻。',
     ingredients: [
@@ -2677,7 +2677,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0087',
     name: '客家盐焗鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '客家经典做法，咸香入骨、皮爽肉嫩，用电饭锅也能做出好味道。',
     ingredients: [
@@ -2706,7 +2706,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0088',
     name: '猪肚包鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '客家滋补汤菜，胡椒暖胃、汤色奶白，猪肚爽脆鸡肉鲜嫩。',
     ingredients: [
@@ -2736,7 +2736,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0089',
     name: '客家萝卜丸',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '客家传统蒸菜，萝卜清甜、肉香浓郁，口感软嫩，老少皆宜。',
     ingredients: [
@@ -2768,7 +2768,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0090',
     name: '客家黄酒鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '客家月子菜，黄酒香浓、鸡肉嫩滑，汤汁微甜带酒香，暖身滋补。',
     ingredients: [
@@ -2797,7 +2797,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0091',
     name: '客家酿苦瓜',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '苦瓜清苦回甘，肉馅鲜香多汁，煎焖后苦味柔和，夏日下饭。',
     ingredients: [
@@ -2829,7 +2829,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0092',
     name: '客家咸菜炒猪肠',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '客家下饭小炒，猪肠爽脆、咸菜酸香，镬气足，配粥配饭都好。',
     ingredients: [
@@ -2860,7 +2860,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0093',
     name: '客家算盘子',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '客家特色主食，芋圆软糯弹牙，配肉末香菇炒香，咸香可口。',
     ingredients: [
@@ -2893,7 +2893,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0094',
     name: '客家娘酒煮鸡蛋',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '客家传统甜汤，酒香醇厚、蛋花嫩滑，适合早餐或冬日暖身。',
     ingredients: [
@@ -2920,7 +2920,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0095',
     name: '凯撒沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['快手菜', '减脂餐'],
     coverImage: '',
     description: '罗马生菜配酥脆面包丁与帕玛森芝士，经典油醋汁清爽开胃。',
     ingredients: [
@@ -2952,7 +2952,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0096',
     name: '希腊乡村沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '番茄黄瓜洋葱配菲达奶酪与橄榄，橄榄油柠檬调味，夏季清爽。',
     ingredients: [
@@ -2983,7 +2983,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0097',
     name: '尼斯沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '金枪鱼、水煮蛋与四季豆组合，法式尼斯风味，营养饱腹。',
     ingredients: [
@@ -3016,7 +3016,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0098',
     name: '华尔道夫沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['快手菜', '减脂餐'],
     coverImage: '',
     description: '苹果芹菜核桃配蛋黄酱酸奶汁，酸甜清脆，经典美式沙拉。',
     ingredients: [
@@ -3047,7 +3047,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0099',
     name: '烤南瓜藜麦沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '烤南瓜与藜麦搭配芝麻菜，淋蜂蜜芥末汁，温热吃更香。',
     ingredients: [
@@ -3078,7 +3078,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0100',
     name: '鸡胸肉牛油果沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '煎鸡胸配牛油果与混合生菜，高蛋白低负担，适合健身餐。',
     ingredients: [
@@ -3108,7 +3108,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0101',
     name: '烟熏三文鱼沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '烟熏三文鱼配奶油芝士与水萝卜，咸鲜柔滑，五分钟上桌。',
     ingredients: [
@@ -3137,7 +3137,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0102',
     name: '凯撒烤鸡沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '烤鸡腿肉配罗马生菜和蒜香面包丁，酱汁浓郁，当主食足够。',
     ingredients: [
@@ -3169,7 +3169,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0103',
     name: '意式番茄马苏里拉沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['素菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '番茄与马苏里拉交错摆放，罗勒橄榄油调味，清新经典。',
     ingredients: [
@@ -3197,7 +3197,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0104',
     name: '烤甜菜山羊奶酪沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '烤甜菜配山羊奶酪与核桃，酸甜奶香交织，秋冬应季沙拉。',
     ingredients: [
@@ -3228,7 +3228,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0105',
     name: '葱花鸡蛋煎饼',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '外酥内软的经典中式早餐饼，葱香蛋香浓郁，十分钟出锅。',
     ingredients: [
@@ -3257,7 +3257,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0106',
     name: '韭菜盒子',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '烫面薄皮包韭菜鸡蛋馅，煎至两面焦香，饱腹又鲜香。',
     ingredients: [
@@ -3288,7 +3288,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0107',
     name: '玉米面发面饼',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '粗粮细做的松软小饼，玉米香浓带微甜，适合配粥或牛奶。',
     ingredients: [
@@ -3317,7 +3317,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0108',
     name: '老北京糊塌子',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '西葫芦擦丝拌面糊煎成，软嫩清香，蘸蒜醋汁最地道。',
     ingredients: [
@@ -3348,7 +3348,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0109',
     name: '南瓜发面软饼',
-    category: '早餐',
+    category: '早餐', tags: ['素菜'],
     coverImage: '',
     description: '南瓜泥和面，金黄柔软微甜，放凉也不硬，适合孩子早餐。',
     ingredients: [
@@ -3376,7 +3376,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0110',
     name: '土豆丝煎饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '土豆丝混面糊煎成脆边小饼，咸香管饱，剩土豆也能做。',
     ingredients: [
@@ -3405,7 +3405,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0111',
     name: '虾仁蔬菜鸡蛋饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '虾仁配胡萝卜丝和蛋液煎成，高蛋白低负担，鲜嫩爽口。',
     ingredients: [
@@ -3435,7 +3435,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0112',
     name: '香煎馒头片',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '剩馒头裹蛋液煎至金黄，外脆内软，五分钟搞定的快手早餐。',
     ingredients: [
@@ -3463,7 +3463,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0113',
     name: '鸡蛋灌饼',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '半烫面饼皮鼓起后灌入蛋液，外酥内嫩，街头早餐在家复刻。',
     ingredients: [
@@ -3495,7 +3495,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0114',
     name: '红糖芝麻发面饼',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '红糖芝麻夹心，烙后外皮微脆、内里甜软，热吃糖心流香。',
     ingredients: [
@@ -3524,7 +3524,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0115',
     name: '清蒸大闸蟹',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '原味清蒸保留蟹膏蟹黄鲜香，配姜醋汁驱寒提鲜，秋季必吃。',
     ingredients: [
@@ -3553,7 +3553,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0116',
     name: '豉汁蒸带子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '豆豉咸香衬托带子鲜甜，蒸制锁住汁水，下饭又快手。',
     ingredients: [
@@ -3583,7 +3583,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0117',
     name: '清蒸石斑鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '石斑鱼肉质紧实弹牙，清蒸后淋豉油，鲜味纯粹不腥。',
     ingredients: [
@@ -3612,7 +3612,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0118',
     name: '剁椒蒸蛏子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '剁椒的鲜辣配上蛏子的清甜，蒸出来的汤汁拌饭一绝。',
     ingredients: [
@@ -3641,7 +3641,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0119',
     name: '清蒸多宝鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '多宝鱼肉厚刺少、胶质丰富，清蒸后滑嫩鲜香，适合老人孩子。',
     ingredients: [
@@ -3670,7 +3670,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0120',
     name: '蒜蓉蒸鲍鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲍鱼肉厚弹牙，蒜蓉酱汁咸鲜入味，家常也能做出酒楼风味。',
     ingredients: [
@@ -3700,7 +3700,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0121',
     name: '清蒸海鲈鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '海鲈鱼肥美少刺，清蒸后鱼肉雪白细嫩，原汁原味鲜甜。',
     ingredients: [
@@ -3729,7 +3729,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0122',
     name: '海味蒸水蛋',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '滑嫩蒸蛋中埋入鲜虾与瑶柱，一勺入口满嘴海味，适合全家。',
     ingredients: [
@@ -3759,7 +3759,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0123',
     name: '红烧带鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '咸鲜微甜、酱香浓郁的家常烧鱼，配米饭最下饭。',
     ingredients: [
@@ -3792,7 +3792,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0124',
     name: '糖醋鱼块',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '宴客菜'],
     coverImage: '',
     description: '外酥里嫩、酸甜挂汁的经典做法，宴客家常两相宜。',
     ingredients: [
@@ -3825,7 +3825,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0125',
     name: '豆豉蒸鳗鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '豉香浓郁、鱼肉肥糯，蒸制省事又下饭。',
     ingredients: [
@@ -3857,7 +3857,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0126',
     name: '蒜香黄油煎虾',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蒜香奶香交织、虾肉弹嫩，快手西式做法。',
     ingredients: [
@@ -3888,7 +3888,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0127',
     name: '香煎秋刀鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '皮脆肉香、挤柠檬解腻，日式家常风味。',
     ingredients: [
@@ -3917,7 +3917,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0128',
     name: '糟溜鱼片',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '糟香清雅、鱼片洁白滑嫩，江浙风味的清爽菜。',
     ingredients: [
@@ -3949,7 +3949,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0129',
     name: '干烧鲳鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咸香微辣、酱汁裹满鱼身，川式家常烧鱼。',
     ingredients: [
@@ -3982,7 +3982,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0130',
     name: '剁椒蒸鱼块',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '咸辣鲜香、蒸制少油，鱼块嫩滑又入味。',
     ingredients: [
@@ -4013,7 +4013,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0131',
     name: '鲜榨橙汁',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '酸甜清爽，果香浓郁，早餐或下午茶搭配都合适',
     ingredients: [
@@ -4038,7 +4038,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0132',
     name: '金桔柠檬茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '果香酸甜带微涩，冷热皆宜，秋冬润喉很舒服',
     ingredients: [
@@ -4064,7 +4064,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0133',
     name: '百香果柠檬饮',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '香气浓郁、酸甜开胃，加冰后是夏日解暑首选',
     ingredients: [
@@ -4090,7 +4090,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0134',
     name: '西瓜薄荷汁',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '清甜多汁带薄荷凉意，夏天消暑解渴的清爽饮品',
     ingredients: [
@@ -4116,7 +4116,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0135',
     name: '芒果椰奶昔',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '果香浓稠、椰香顺滑，当作下午茶甜品饮品很满足',
     ingredients: [
@@ -4142,7 +4142,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0136',
     name: '草莓香蕉奶昔',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '粉嫩浓稠、自然清甜，适合早餐快速补充能量',
     ingredients: [
@@ -4168,7 +4168,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0137',
     name: '冰糖雪梨饮',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '清甜温润、润喉去燥，适合秋冬干燥季节饮用',
     ingredients: [
@@ -4194,7 +4194,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0138',
     name: '桂花酸梅汤',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '酸甜生津、桂花飘香，冰镇后是解腻消暑的经典饮品',
     ingredients: [
@@ -4223,7 +4223,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0139',
     name: '港式冻柠茶',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '茶味浓、柠檬香足，冰爽微涩，配油腻餐食很解腻',
     ingredients: [
@@ -4250,7 +4250,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0140',
     name: '腊味合蒸',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '腊肉腊鱼腊肠同蒸，咸香浓郁，油脂交融，是湘菜腊味经典。',
     ingredients: [
@@ -4283,7 +4283,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0141',
     name: '蒜苗炒腊肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '湘西家常下饭菜，腊肉煸出油香，蒜苗脆嫩微辣，咸鲜回甘。',
     ingredients: [
@@ -4313,7 +4313,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0142',
     name: '腊味萝卜干',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '腊肉与萝卜干同炒，干香咸鲜、越嚼越香，配米饭一绝。',
     ingredients: [
@@ -4344,7 +4344,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0143',
     name: '腊肉炒蕨菜',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '湘西春季风味，蕨菜脆嫩微苦，吸收腊肉油香，咸鲜爽口。',
     ingredients: [
@@ -4374,7 +4374,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0144',
     name: '腊肉蒸香干',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '腊肉油脂渗入香干，豆香与腊香交融，咸鲜下饭的蒸菜。',
     ingredients: [
@@ -4406,7 +4406,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0145',
     name: '腊肠炒荷兰豆',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '腊肠甜咸油润，荷兰豆清脆碧绿，快炒出锅的家常小炒。',
     ingredients: [
@@ -4435,7 +4435,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0146',
     name: '腊肉炒干豆角',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '干豆角吸饱腊肉油香，柔韧有嚼劲，湘西农家风味十足。',
     ingredients: [
@@ -4466,7 +4466,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0147',
     name: '腊味蒸芋头',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '芋头粉糯吸油，腊味咸香渗入，蒸制原汁原味的湘式家常菜。',
     ingredients: [
@@ -4497,7 +4497,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0148',
     name: '腊肉炒冬笋',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '冬笋鲜脆清甜，腊肉咸香油润，冬季湘菜馆的经典搭配。',
     ingredients: [
@@ -4528,7 +4528,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0149',
     name: '腊味煲仔饭',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '腊肉腊肠铺在米饭上焖出焦香锅巴，淋豉油拌食，湘式腊味主食。',
     ingredients: [
@@ -4562,7 +4562,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0150',
     name: '南瓜糙米饭',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '南瓜绵甜融进糙米，口感有嚼劲，粗细搭配适合日常控糖主食。',
     ingredients: [
@@ -4589,7 +4589,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0151',
     name: '玉米面窝窝头',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '粗粮细做的经典主食，玉米香浓、松软微甜，配菜配汤都合适。',
     ingredients: [
@@ -4617,7 +4617,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0152',
     name: '燕麦红薯粥',
-    category: '主食',
+    category: '主食', tags: ['减脂餐'],
     coverImage: '',
     description: '燕麦软糯、红薯绵甜，膳食纤维丰富，适合早餐或晚餐轻食。',
     ingredients: [
@@ -4643,7 +4643,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0153',
     name: '荞麦凉面',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '荞麦面筋道爽滑，浇上酸香酱汁，夏天开胃又饱腹。',
     ingredients: [
@@ -4673,7 +4673,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0154',
     name: '红豆薏米粥',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '红豆沙糯、薏米清香，祛湿养胃的家常杂粮粥。',
     ingredients: [
@@ -4699,7 +4699,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0155',
     name: '小米南瓜发糕',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '小米面与南瓜蒸出的松软发糕，金黄香甜，粗粮也能当点心。',
     ingredients: [
@@ -4728,7 +4728,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0156',
     name: '藜麦蔬菜饭团',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '藜麦弹牙、蔬菜清爽，捏成饭团方便携带，适合做便当主食。',
     ingredients: [
@@ -4756,7 +4756,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0157',
     name: '黑米红枣饭',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '黑米糯香、红枣甘甜，颜色乌亮，补铁又饱腹的杂粮饭。',
     ingredients: [
@@ -4782,7 +4782,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0158',
     name: '全麦蔬菜鸡蛋饼',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '全麦面糊裹着蔬菜和蛋香，低油快手，适合早餐主食。',
     ingredients: [
@@ -4811,7 +4811,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0159',
     name: '土豆杂粮焖饭',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '土豆绵软、杂粮喷香，一锅焖出咸香入味的主食。',
     ingredients: [
@@ -4841,7 +4841,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0160',
     name: '三杯鸡',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '一杯酱油一杯酒一杯麻油，酱香浓郁带九层塔清香，台式经典。',
     ingredients: [
@@ -4872,7 +4872,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0161',
     name: '黄焖鸡',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '鸡肉酥烂、汤汁浓稠，配香菇青椒，拌饭一绝。',
     ingredients: [
@@ -4906,7 +4906,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0162',
     name: '大盘鸡',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '鸡肉土豆炖得入味，汤汁浓郁带微辣，配宽面最过瘾。',
     ingredients: [
@@ -4941,7 +4941,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0163',
     name: '豉油鸡',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '豉油香浓、皮色油亮，咸甜平衡，粤式家常做法。',
     ingredients: [
@@ -4974,7 +4974,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0164',
     name: '啤酒鸭',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '啤酒去腥增香，鸭肉软烂入味，微辣下饭。',
     ingredients: [
@@ -5008,7 +5008,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0165',
     name: '扒鸡腿',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '鲁式扒菜家常做法，鸡腿先煎后扒，酱汁浓稠，肉质嫩滑，配米饭很下饭。',
     ingredients: [
@@ -5041,7 +5041,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0166',
     name: '扒肘子',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '鲁式宴席大菜，肘子先煮后蒸再扒，皮糯肉烂，酱香浓厚，适合节日团聚。',
     ingredients: [
@@ -5075,7 +5075,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0167',
     name: '扒鱼肚',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲁菜传统扒菜，鱼肚软糯吸汁，汤汁乳白鲜浓，口感清雅不腻。',
     ingredients: [
@@ -5107,7 +5107,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0168',
     name: '扒香菇油菜',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲁式素扒菜，油菜翠绿香菇滑嫩，芡汁清亮，清淡解腻适合搭配荤菜。',
     ingredients: [
@@ -5138,7 +5138,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0169',
     name: '扒口蘑豆腐',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲁式家常扒菜，豆腐外韧内嫩，口蘑鲜香，汤汁咸鲜适口，老少皆宜。',
     ingredients: [
@@ -5170,7 +5170,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0170',
     name: '扒白菜卷',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '鲁式蒸扒菜，白菜叶卷入肉馅，蒸后浇芡，清鲜软嫩，造型整齐。',
     ingredients: [
@@ -5203,7 +5203,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0171',
     name: '扒牛肉条',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '鲁式扒菜，牛肉条先炖后扒，酱汁浓厚，肉香扎实，适合秋冬进补。',
     ingredients: [
@@ -5236,7 +5236,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0172',
     name: '扒芦笋',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '鲁式清扒时蔬，芦笋脆嫩碧绿，芡汁清淡鲜香，做法简单适合日常。',
     ingredients: [
@@ -5265,7 +5265,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0173',
     name: '扒猴头菇',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲁菜山珍扒菜，猴头菇吸饱高汤，口感似肉，鲜香醇厚，素食也能很隆重。',
     ingredients: [
@@ -5297,7 +5297,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0174',
     name: '火腿芝士三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '外脆内软，芝士融化拉丝，火腿咸香，10分钟搞定的经典快手早餐。',
     ingredients: [
@@ -5326,7 +5326,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0175',
     name: '金枪鱼沙拉三明治',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '金枪鱼拌蛋黄酱清爽绵密，夹入吐司即食，适合没时间开火的早晨。',
     ingredients: [
@@ -5356,7 +5356,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0176',
     name: '鸡蛋沙拉三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '水煮蛋压碎拌蛋黄酱，绵滑咸香，配软吐司口感温和，孩子也爱吃。',
     ingredients: [
@@ -5385,7 +5385,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0177',
     name: '培根生菜番茄三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '经典BLT变体，培根焦脆、番茄多汁，咸鲜清爽，5分钟组装完成。',
     ingredients: [
@@ -5413,7 +5413,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0178',
     name: '牛油果鸡蛋三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '牛油果绵密配流心煎蛋，口感顺滑，营养扎实，适合健身早餐。',
     ingredients: [
@@ -5442,7 +5442,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0179',
     name: '热压火腿芝士三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '三明治机压出焦脆格纹，芝士流淌火腿咸香，趁热吃最满足。',
     ingredients: [
@@ -5470,7 +5470,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0180',
     name: '鸡蛋火腿卷饼三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '用卷饼代替吐司，卷入蛋皮火腿和蔬菜，一卷即食，方便带走。',
     ingredients: [
@@ -5500,7 +5500,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0181',
     name: '花生酱香蕉三明治',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '甜口快手款，花生酱浓郁配香蕉清甜，3分钟组装，适合甜食党。',
     ingredients: [
@@ -5528,7 +5528,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0182',
     name: '照烧鸡腿三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '鸡腿肉裹照烧汁煎香，甜咸多汁，夹入吐司饱腹感强，适合周末早午餐。',
     ingredients: [
@@ -5561,7 +5561,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0183',
     name: '烟熏三文鱼奶油芝士贝果',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '贝果有嚼劲，奶油芝士配烟熏三文鱼咸鲜清爽，10分钟完成的高颜值早餐。',
     ingredients: [
@@ -5591,7 +5591,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0184',
     name: '奶香刀切馒头',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '奶香浓郁、组织松软的基础馒头，一次发酵省时，适合周末批量做好冷冻当早餐。',
     ingredients: [
@@ -5620,7 +5620,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0185',
     name: '南瓜馒头',
-    category: '早餐',
+    category: '早餐', tags: ['素菜'],
     coverImage: '',
     description: '用南瓜泥和面，金黄暄软带自然甜味，颜色讨喜，孩子也爱吃。',
     ingredients: [
@@ -5648,7 +5648,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0186',
     name: '红糖开花馒头',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '顶部自然开裂的红糖馒头，香甜带焦糖味，蒸好即食或切片煎香都好吃。',
     ingredients: [
@@ -5676,7 +5676,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0187',
     name: '葱花卷',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '层层卷着葱油与盐香的花卷，暄软咸香，配豆浆或粥就是经典中式早餐。',
     ingredients: [
@@ -5705,7 +5705,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0188',
     name: '猪肉白菜包子',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '皮薄馅大、汁水饱满的家常肉包，白菜清甜解腻，一次多做可冷冻复蒸。',
     ingredients: [
@@ -5739,7 +5739,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0189',
     name: '香菇青菜包',
-    category: '早餐',
+    category: '早餐', tags: ['素菜'],
     coverImage: '',
     description: '素馅包子，香菇鲜香配青菜清甜，不油腻，适合清淡口味的早餐。',
     ingredients: [
@@ -5771,7 +5771,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0190',
     name: '豆沙包',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '绵密红豆沙裹在松软面皮里，甜而不腻，是经典甜口早餐包。',
     ingredients: [
@@ -5798,7 +5798,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0191',
     name: '玉米面发糕',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '粗粮细做的发糕，玉米香浓、口感松软带微甜，切块蒸热即食，适合搭配牛奶。',
     ingredients: [
@@ -5828,7 +5828,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0192',
     name: '生煎包',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '底部金黄焦脆、上层松软多汁的猪肉生煎，撒芝麻葱花，早餐吃很满足。',
     ingredients: [
@@ -5863,7 +5863,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0193',
     name: '奶黄包',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '奶香浓郁的流沙奶黄馅配松软包子皮，甜度适中，是广式早茶风早餐。',
     ingredients: [
@@ -5893,7 +5893,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0194',
     name: '柠檬蜂蜜红茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '红茶醇厚搭配柠檬清香，酸甜润口，冷热皆宜的日常茶饮。',
     ingredients: [
@@ -5919,7 +5919,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0195',
     name: '红枣桂圆枸杞茶',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '红枣桂圆慢煮出甜香，暖身补气，适合秋冬下午饮用。',
     ingredients: [
@@ -5946,7 +5946,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0196',
     name: '桂花乌龙冷泡茶',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '乌龙茶冷泡清冽回甘，桂花香气淡雅，夏日消暑首选。',
     ingredients: [
@@ -5972,7 +5972,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0197',
     name: '生姜红糖茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '姜辣微辛配红糖甜润，驱寒暖胃，适合受凉或经期饮用。',
     ingredients: [
@@ -5997,7 +5997,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0198',
     name: '菊花枸杞茶',
-    category: '饮品',
+    category: '饮品', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '菊花清香配枸杞微甜，清肝明目，适合用眼过度时饮用。',
     ingredients: [
@@ -6022,7 +6022,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0199',
     name: '冬瓜茶',
-    category: '饮品',
+    category: '饮品', tags: ['素菜'],
     coverImage: '',
     description: '冬瓜慢熬成茶，清甜微香，消暑解腻的台式古早饮品。',
     ingredients: [
@@ -6048,7 +6048,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0200',
     name: '茉莉绿茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '茉莉花香清幽，绿茶鲜爽回甘，冷热泡皆宜的经典花茶。',
     ingredients: [
@@ -6073,7 +6073,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0201',
     name: '山楂陈皮茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '山楂酸香配陈皮回甘，开胃消食，适合饭后饮用。',
     ingredients: [
@@ -6098,7 +6098,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0202',
     name: '薄荷柠檬绿茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '薄荷清凉配柠檬酸爽，提神解腻，夏日冰饮清爽宜人。',
     ingredients: [
@@ -6125,7 +6125,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0203',
     name: '巴斯克芝士蛋糕',
-    category: '甜点',
+    category: '甜点', tags: ['宴客菜'],
     coverImage: '',
     description: '表面焦香微苦，内里流心绵密，适合下午茶或生日聚会。',
     ingredients: [
@@ -6154,7 +6154,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0204',
     name: '经典黄油曲奇',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '奶香浓郁、入口酥松，挤花造型讨喜，适合节日送礼。',
     ingredients: [
@@ -6183,7 +6183,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0205',
     name: '法式焦糖布丁',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '表面脆焦糖配嫩滑蛋奶，敲开有脆响，适合晚餐收尾。',
     ingredients: [
@@ -6212,7 +6212,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0206',
     name: '柠檬磅蛋糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '柠檬香气清爽，组织湿润扎实，适合搭配红茶享用。',
     ingredients: [
@@ -6242,7 +6242,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0207',
     name: '巧克力熔岩蛋糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '切开流出热巧克力酱，浓郁微苦，适合情侣晚餐甜点。',
     ingredients: [
@@ -6271,7 +6271,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0208',
     name: '葡式蛋挞',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '酥皮层层分明，蛋奶馅嫩滑带焦斑，适合早餐或下午茶。',
     ingredients: [
@@ -6301,7 +6301,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0209',
     name: '舒芙蕾松饼',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '厚实蓬松、蛋香轻盈，淋蜂蜜或奶油，适合周末早午餐。',
     ingredients: [
@@ -6331,7 +6331,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0210',
     name: '抹茶红豆司康',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '抹茶微苦配蜜红豆清甜，外酥内软，适合配茶。',
     ingredients: [
@@ -6362,7 +6362,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0211',
     name: '免烤芒果芝士杯',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '层次分明、芒果清爽，无需烤箱，适合夏日快手甜点。',
     ingredients: [
@@ -6392,7 +6392,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0212',
     name: '辣炒花蛤',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '花蛤鲜嫩多汁，辣香浓郁，夜市风味十足，下酒配饭都合适。',
     ingredients: [
@@ -6425,7 +6425,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0213',
     name: '葱姜炒蛏子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蛏子肉质肥美，葱姜去腥提鲜，清爽不油腻的快手小炒。',
     ingredients: [
@@ -6454,7 +6454,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0214',
     name: '豉汁炒青口贝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '豆豉咸香配青口贝的鲜甜，酱香浓郁，粤式家常下饭好菜。',
     ingredients: [
@@ -6486,7 +6486,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0215',
     name: '爆炒海瓜子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '海瓜子小巧鲜甜，酱汁浓郁微辣，一碟就能下两碗饭。',
     ingredients: [
@@ -6517,7 +6517,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0216',
     name: '花蛤豆腐汤',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '汤色乳白鲜甜，花蛤配嫩豆腐清淡不腻，适合配饭或解腻。',
     ingredients: [
@@ -6546,7 +6546,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0217',
     name: '蒜蓉烤生蚝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '夜宵'],
     coverImage: '',
     description: '生蚝肥美多汁，蒜蓉焦香，烤箱版在家也能做出烧烤摊味道。',
     ingredients: [
@@ -6576,7 +6576,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0218',
     name: '韭菜炒蛤蜊肉',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蛤蜊肉鲜嫩搭配韭菜辛香，颜色清爽，春季家常小炒。',
     ingredients: [
@@ -6604,7 +6604,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0219',
     name: '辣炒海螺丝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '海螺丝肉质紧实有嚼劲，麻辣鲜香，是夏夜配啤酒的经典小菜。',
     ingredients: [
@@ -6636,7 +6636,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0220',
     name: '酒蒸蛤蜊',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '清酒与蛤蜊同蒸，汤汁清鲜带酒香，低脂清爽的日式做法。',
     ingredients: [
@@ -6665,7 +6665,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0221',
     name: '清炖鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤色清亮、鸡肉鲜嫩，适合家常滋补或病后调理。',
     ingredients: [
@@ -6694,7 +6694,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0222',
     name: '萝卜排骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清甜不腻，排骨软烂、萝卜透亮，秋冬家常暖汤。',
     ingredients: [
@@ -6724,7 +6724,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0223',
     name: '番茄牛腩汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '酸甜浓郁、牛腩酥烂，汤汁拌饭很下饭。',
     ingredients: [
@@ -6757,7 +6757,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0224',
     name: '山药乌鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤色清润、山药绵软，滋补温和适合换季饮用。',
     ingredients: [
@@ -6786,7 +6786,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0225',
     name: '莲藕花生排骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤味甘香、莲藕粉糯，是南方家常清润汤水。',
     ingredients: [
@@ -6815,7 +6815,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0226',
     name: '鲫鱼豆腐汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤色奶白、鱼肉细嫩，鲜香不腥的家常鱼汤。',
     ingredients: [
@@ -6846,7 +6846,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0227',
     name: '菌菇豆腐汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜', '减脂餐'],
     coverImage: '',
     description: '鲜味十足、低脂清爽，十分钟能上桌的快手清汤。',
     ingredients: [
@@ -6878,7 +6878,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0228',
     name: '清炖羊肉汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味鲜、羊肉软烂，配白萝卜解腻又暖身。',
     ingredients: [
@@ -6911,7 +6911,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0229',
     name: '红烧狮子头',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '肉丸松软多汁，汤汁浓香，适合家宴硬菜。',
     ingredients: [
@@ -6944,7 +6944,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0230',
     name: '粉蒸肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '米粉吸足肉香，软糯咸鲜，蒸出来的家常味。',
     ingredients: [
@@ -6975,7 +6975,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0231',
     name: '土豆炖排骨',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '排骨酥烂、土豆绵软，汤汁拌饭一绝。',
     ingredients: [
@@ -7007,7 +7007,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0232',
     name: '京酱肉丝',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱香浓郁，肉丝滑嫩，用豆腐皮卷着吃最香。',
     ingredients: [
@@ -7038,7 +7038,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0233',
     name: '珍珠丸子',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '糯米晶莹，肉丸鲜嫩，蒸制清淡又讨喜。',
     ingredients: [
@@ -7070,7 +7070,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0234',
     name: '银耳莲子羹',
-    category: '甜点',
+    category: '甜点', tags: ['素菜'],
     coverImage: '',
     description: '胶质浓稠、清甜润口，秋冬润燥或饭后甜汤都合适。',
     ingredients: [
@@ -7098,7 +7098,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0235',
     name: '红豆沙小汤圆',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '软糯汤圆配绵密红豆沙，热吃暖胃，是经典的广式糖水。',
     ingredients: [
@@ -7125,7 +7125,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0236',
     name: '桂花酒酿圆子',
-    category: '甜点',
+    category: '甜点', tags: ['快手菜', '夜宵'],
     coverImage: '',
     description: '酒香清甜、桂花芬芳，圆子软糯，适合早餐或夜宵。',
     ingredients: [
@@ -7152,7 +7152,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0237',
     name: '芒果椰汁西米露',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '椰香浓郁、西米弹牙，搭配香甜芒果，夏日冰镇甜品首选。',
     ingredients: [
@@ -7180,7 +7180,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0238',
     name: '黑芝麻糊',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '细腻浓香、芝麻味醇厚，热饮顺滑，适合当早餐或冬日暖品。',
     ingredients: [
@@ -7206,7 +7206,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0239',
     name: '冰糖炖雪梨',
-    category: '甜点',
+    category: '甜点', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '梨肉软润、汤汁清甜，润喉止咳，适合干燥季节食用。',
     ingredients: [
@@ -7233,7 +7233,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0240',
     name: '绿豆沙',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '沙糯清甜、豆香十足，冰镇后消暑解腻，是夏日经典糖水。',
     ingredients: [
@@ -7259,7 +7259,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0241',
     name: '紫薯芋圆糖水',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '芋圆Q弹、紫薯香甜，配椰奶汤底色彩好看，冷热皆宜。',
     ingredients: [
@@ -7287,7 +7287,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0242',
     name: '麻辣水煮肉片',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜', '减脂餐', '宴客菜'],
     coverImage: '',
     description: '肉片滑嫩，汤底麻辣鲜香，配米饭能连吃两碗的川味硬菜。',
     ingredients: [
@@ -7321,7 +7321,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0243',
     name: '泡椒鸡杂',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '酸辣脆爽，泡椒香气突出，是一道开胃下饭的江湖爆炒菜。',
     ingredients: [
@@ -7354,7 +7354,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0244',
     name: '辣子鸡丁',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡丁外酥里嫩，辣椒堆里找鸡肉，麻辣干香越嚼越有味。',
     ingredients: [
@@ -7388,7 +7388,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0245',
     name: '麻辣香锅虾',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '虾壳酥香麻辣入味，配菜吸饱汤汁，一锅端上桌热闹过瘾。',
     ingredients: [
@@ -7421,7 +7421,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0246',
     name: '火爆腰花',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '腰花脆嫩无腥，泡椒豆瓣爆香，火候到位才有的江湖爆炒味。',
     ingredients: [
@@ -7455,7 +7455,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0247',
     name: '豆瓣烧豆腐',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '豆腐嫩滑，豆瓣酱香浓微辣，汤汁拌饭一绝的家常川味。',
     ingredients: [
@@ -7488,7 +7488,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0248',
     name: '剁椒蒸芋头',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '粉糯芋头吸足剁椒鲜辣，咸香软糯，是湘味蒸菜里的下饭担当。',
     ingredients: [
@@ -7519,7 +7519,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0249',
     name: '剁椒蒸豆腐',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '嫩豆腐滑嫩入味，剁椒鲜辣微酸，蒸制少油，适合家常快手晚餐。',
     ingredients: [
@@ -7551,7 +7551,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0250',
     name: '剁椒蒸鸡腿',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '鸡腿肉嫩滑多汁，剁椒咸辣鲜香，蒸出的汤汁拌饭一绝。',
     ingredients: [
@@ -7584,7 +7584,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0251',
     name: '剁椒蒸金针菇',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '金针菇吸满剁椒蒜香，爽滑鲜辣，十分钟上桌的低脂蒸菜。',
     ingredients: [
@@ -7613,7 +7613,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0252',
     name: '剁椒蒸排骨',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '排骨蒸得软嫩脱骨，剁椒咸辣入味，湘味蒸肉里的经典做法。',
     ingredients: [
@@ -7646,7 +7646,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0253',
     name: '剁椒蒸茄子',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '茄子软糯吸味，剁椒鲜辣带蒜香，少油做法也能吃得过瘾。',
     ingredients: [
@@ -7676,7 +7676,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0254',
     name: '剁椒蒸鱼头',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '鱼头鲜嫩不腥，剁椒咸辣铺满，湘菜馆招牌蒸菜的在家版。',
     ingredients: [
@@ -7708,7 +7708,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0255',
     name: '剁椒蒸娃娃菜',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '娃娃菜清甜软嫩，剁椒蒜蓉鲜辣开胃，蒸出的汤汁清鲜不腻。',
     ingredients: [
@@ -7737,7 +7737,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0256',
     name: '剁椒蒸鸡蛋羹',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蛋羹嫩滑如布丁，剁椒与蒜末带来鲜辣层次，简单又下饭。',
     ingredients: [
@@ -7767,7 +7767,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0257',
     name: '剁椒蒸腊鱼',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '腊鱼咸香紧实，剁椒与豆豉双重发酵香，湘味浓重的下饭蒸菜。',
     ingredients: [
@@ -7799,7 +7799,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0258',
     name: '皮蛋拌豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '清凉滑嫩，咸鲜微辣，夏天开胃的凉拌豆制品。',
     ingredients: [
@@ -7828,7 +7828,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0259',
     name: '豆角焖豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '下饭菜'],
     coverImage: '',
     description: '豆角软糯豆腐入味，一锅焖出的家常素菜，咸香下饭。',
     ingredients: [
@@ -7858,7 +7858,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0260',
     name: '芹菜炒香干',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '芹菜脆嫩、香干有嚼劲，清淡少油的家常小炒。',
     ingredients: [
@@ -7887,7 +7887,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0261',
     name: '番茄烧豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '酸甜番茄裹着嫩豆腐，汤汁浓郁，老人小孩都爱吃。',
     ingredients: [
@@ -7917,7 +7917,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0262',
     name: '椒盐豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '外壳酥脆、内里软嫩，椒盐香气十足，适合当小零食。',
     ingredients: [
@@ -7945,7 +7945,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0263',
     name: '白菜炖豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '汤鲜味浓，白菜清甜豆腐嫩滑，冬日暖身家常炖菜。',
     ingredients: [
@@ -7976,7 +7976,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0264',
     name: '豆腐皮炒青椒',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '豆香浓郁、青椒爽脆，五分钟出锅的快手素炒。',
     ingredients: [
@@ -8004,7 +8004,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0265',
     name: '啫啫鸡煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '砂锅高温啫出的鸡肉滑嫩焦香，酱汁浓郁，是粤式煲仔菜的经典代表。',
     ingredients: [
@@ -8039,7 +8039,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0266',
     name: '支竹羊腩煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '羊腩软烂、腐竹吸饱汤汁，酱香浓郁带南乳风味，适合秋冬暖身。',
     ingredients: [
@@ -8074,7 +8074,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0267',
     name: '豆豉鸡煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '豆豉咸香与鸡肉鲜甜交融，砂锅焖出的家常粤味下饭菜。',
     ingredients: [
@@ -8109,7 +8109,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0268',
     name: '咸鱼茄子煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咸鱼粒与茄子同焖，咸鲜软糯，是粤式煲仔菜的经典素菜。',
     ingredients: [
@@ -8143,7 +8143,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0269',
     name: '萝卜牛腩煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '牛腩酥烂、白萝卜清甜吸汁，汤浓味厚的广式街头经典。',
     ingredients: [
@@ -8178,7 +8178,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0270',
     name: '砂锅焗鱼头',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鱼头在砂锅中干焗，肉质滑嫩、姜葱香浓，鲜味十足。',
     ingredients: [
@@ -8213,7 +8213,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0271',
     name: '梅菜扣肉煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '五花肉软糯、梅菜咸香，砂锅煲出的客家粤味，肥而不腻。',
     ingredients: [
@@ -8247,7 +8247,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0272',
     name: '栗子焖鸡煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '栗子粉糯、鸡块嫩滑，酱汁微甜浓香，秋季家常砂锅菜。',
     ingredients: [
@@ -8282,7 +8282,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0273',
     name: '蒜子焖塘虱煲',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '整颗蒜子与塘虱同焖，蒜香浓郁、鱼肉嫩滑，粤式家常煲仔菜。',
     ingredients: [
@@ -8317,7 +8317,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0274',
     name: '番茄鸡蛋盖饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜番茄配嫩滑鸡蛋，浇在热米饭上，一人食的经典快手晚餐。',
     ingredients: [
@@ -8347,7 +8347,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0275',
     name: '青椒肉丝面',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '咸香微辣的青椒肉丝浇头配清汤面，一碗解决一餐，暖胃又满足。',
     ingredients: [
@@ -8378,7 +8378,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0276',
     name: '香菇鸡肉焖饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '一锅焖出的咸香米饭，鸡肉嫩滑香菇浓郁，省事又饱腹的一人食。',
     ingredients: [
@@ -8410,7 +8410,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0277',
     name: '酸辣土豆丝盖饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '爽脆酸辣的土豆丝配白米饭，成本低、下饭快，适合工作日晚餐。',
     ingredients: [
@@ -8440,7 +8440,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0278',
     name: '西红柿疙瘩汤',
-    category: '家常菜',
+    category: '家常菜', tags: ['夜宵'],
     coverImage: '',
     description: '面疙瘩筋道、汤汁酸甜浓稠，一碗下去暖胃舒服，适合早餐或夜宵。',
     ingredients: [
@@ -8472,7 +8472,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0279',
     name: '蒜香煎鸡腿配西兰花',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外皮焦香内里多汁的鸡腿排配清炒西兰花，一人食也有仪式感。',
     ingredients: [
@@ -8502,7 +8502,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0280',
     name: '榨菜肉末拌面',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '咸鲜微辣的肉末榨菜酱拌面，十分钟出锅，一人食的省心之选。',
     ingredients: [
@@ -8534,7 +8534,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0281',
     name: '冬瓜虾皮汤',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '清淡鲜美的快手汤，冬瓜软嫩虾皮提鲜，配主食就是简单一餐。',
     ingredients: [
@@ -8564,7 +8564,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0282',
     name: '咖喱鸡肉土豆饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '浓郁咖喱裹着鸡肉和土豆，一锅炖好浇饭，一人食的治愈系料理。',
     ingredients: [
@@ -8595,7 +8595,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0283',
     name: '黄瓜拌鸡丝',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '清爽低脂的凉拌菜，鸡丝嫩滑黄瓜脆爽，适合夏天一人食。',
     ingredients: [
@@ -8627,7 +8627,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0284',
     name: '虾仁滑蛋吐司',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '滑嫩鸡蛋配弹牙虾仁，铺在烤吐司上，咸香饱腹，适合赶时间的早晨。',
     ingredients: [
@@ -8659,7 +8659,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0285',
     name: '花生酱香蕉燕麦杯',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '免煮隔夜燕麦，香蕉花生酱带来香甜绵密口感，适合前一晚备好。',
     ingredients: [
@@ -8689,7 +8689,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0286',
     name: '玉米火腿芝士卷饼',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '软饼卷玉米火腿芝士，煎到外皮微脆、内里拉丝，孩子也爱吃。',
     ingredients: [
@@ -8720,7 +8720,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0287',
     name: '豆腐虾皮鸡蛋羹',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '嫩滑蛋羹加入豆腐与虾皮，鲜香补钙，清淡易消化，适合老人小孩。',
     ingredients: [
@@ -8751,7 +8751,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0288',
     name: '蔬菜鸡胸肉三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '全麦面包夹煎鸡胸与生菜番茄，蛋白质充足，适合健身人群的早餐。',
     ingredients: [
@@ -8784,7 +8784,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0289',
     name: '紫薯牛奶燕麦糊',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '紫薯与燕麦打成浓稠米糊，天然香甜、颜色漂亮，暖胃又饱腹。',
     ingredients: [
@@ -8813,7 +8813,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0290',
     name: '西葫芦鸡蛋饼',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '西葫芦擦丝混入蛋液面糊，煎得外脆内软，蔬菜量足、清爽不腻。',
     ingredients: [
@@ -8843,7 +8843,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0291',
     name: '香菇鸡肉粥',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '大米熬至开花，加入香菇鸡丝，咸鲜绵滑，暖胃好消化。',
     ingredients: [
@@ -8875,7 +8875,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0292',
     name: '金枪鱼鸡蛋沙拉贝果',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '贝果夹金枪鱼鸡蛋沙拉，咸鲜浓郁有嚼劲，5分钟组装即可带走。',
     ingredients: [
@@ -8906,7 +8906,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0293',
     name: '番茄鸡蛋疙瘩汤',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '面疙瘩筋道，番茄汤底酸甜开胃，一碗热汤下肚，适合秋冬清晨。',
     ingredients: [
@@ -8939,7 +8939,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0294',
     name: '红烧茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '下饭菜'],
     coverImage: '',
     description: '茄子软糯吸汁，酱香浓郁微甜，经典下饭的家常烧法。',
     ingredients: [
@@ -8969,7 +8969,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0295',
     name: '手撕包菜',
-    category: '家常菜',
+    category: '家常菜', tags: ['快手菜', '下饭菜'],
     coverImage: '',
     description: '包菜脆嫩带焦边，干辣椒蒜香扑鼻，五分钟快手下饭菜。',
     ingredients: [
@@ -8998,7 +8998,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0296',
     name: '蒜蓉粉丝蒸娃娃菜',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '娃娃菜清甜，粉丝吸满蒜香豉油，清淡又下饭。',
     ingredients: [
@@ -9028,7 +9028,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0297',
     name: '青椒土豆丝',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '土豆丝爽脆酸香，青椒清香，最常见的下饭快手菜。',
     ingredients: [
@@ -9057,7 +9057,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0298',
     name: '豆角烧茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '豆角软嫩茄子入味，酱汁浓郁，一锅端的下饭家常菜。',
     ingredients: [
@@ -9088,7 +9088,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0299',
     name: '希腊沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '番茄黄瓜洋葱配菲达奶酪和黑橄榄，橄榄油柠檬汁调味，地中海风味清爽。',
     ingredients: [
@@ -9119,7 +9119,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0300',
     name: '金枪鱼尼斯沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '金枪鱼、水煮蛋、小土豆与四季豆组合，柠檬油醋汁拌匀，可作轻食正餐。',
     ingredients: [
@@ -9153,7 +9153,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0301',
     name: '鸡胸肉凯撒沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '煎香鸡胸切片配罗马生菜和面包丁，蛋白质充足，适合健身轻食晚餐。',
     ingredients: [
@@ -9185,7 +9185,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0302',
     name: '烟熏三文鱼牛油果沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '烟熏三文鱼配牛油果与芝麻菜，柠檬油醋调味，咸鲜柔滑，适合早午餐。',
     ingredients: [
@@ -9216,7 +9216,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0303',
     name: '经典土豆沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '小土豆配酸黄瓜和洋葱，蛋黄酱芥末调味，绵密微酸，适合搭配烤肉。',
     ingredients: [
@@ -9247,7 +9247,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0304',
     name: '鲜虾牛油果沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '煎虾仁配牛油果、生菜和圣女果，青柠香菜汁调味，清新微酸口感弹嫩。',
     ingredients: [
@@ -9279,7 +9279,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0305',
     name: '烤甜菜根山羊奶酪沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '烤甜菜根甜润配山羊奶酪与核桃，蜂蜜油醋汁调和，风味浓郁有层次。',
     ingredients: [
@@ -9310,7 +9310,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0306',
     name: '意式卡布里沙拉',
-    category: '西餐',
+    category: '西餐', tags: ['素菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '番茄与马苏里拉奶酪交替摆放，罗勒叶点缀，橄榄油黑醋调味，简单经典。',
     ingredients: [
@@ -9338,7 +9338,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0307',
     name: '蒜蓉炒丝瓜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '丝瓜软嫩清甜，蒜香突出，夏天吃清爽又下饭。',
     ingredients: [
@@ -9364,7 +9364,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0308',
     name: '醋溜藕片',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '藕片洁白脆爽，酸香开胃，微辣带甜十分解腻。',
     ingredients: [
@@ -9392,7 +9392,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0309',
     name: '清炒芦笋',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '芦笋翠绿脆嫩，清淡少油，保留原味的清爽素菜。',
     ingredients: [
@@ -9418,7 +9418,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0310',
     name: '清炒荷兰豆',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '荷兰豆翠绿脆甜，配胡萝卜点缀，清淡爽口的快手小炒。',
     ingredients: [
@@ -9444,7 +9444,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0311',
     name: '番茄炒菜花',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '番茄酸甜裹着菜花，色泽红亮，开胃又下饭。',
     ingredients: [
@@ -9472,7 +9472,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0312',
     name: '香酥小油条',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '外皮酥脆、内里蓬松，配现磨豆浆就是最经典的中式早餐组合。',
     ingredients: [
@@ -9503,7 +9503,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0313',
     name: '豆浆油条套餐',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '一杯热豆浆配两根刚出锅的油条，咸甜自选，是地道的市井早餐。',
     ingredients: [
@@ -9529,7 +9529,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0314',
     name: '咸豆浆',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '豆浆冲入醋汁凝出豆花，配油条虾皮榨菜，咸鲜暖胃。',
     ingredients: [
@@ -9558,7 +9558,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0315',
     name: '豆浆燕麦粥',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '豆浆煮燕麦，绵滑饱腹，加香蕉和坚果碎，适合减脂早餐。',
     ingredients: [
@@ -9584,7 +9584,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0316',
     name: '油条虾仁肠粉',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '米浆蒸出薄滑肠粉，卷入油条和虾仁，淋豉油，广式早茶风味。',
     ingredients: [
@@ -9616,7 +9616,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0317',
     name: '鸡蛋豆浆布丁',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '豆浆代替牛奶做布丁，豆香清甜、口感嫩滑，冷藏后当早餐甜点。',
     ingredients: [
@@ -9642,7 +9642,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0318',
     name: '油条蔬菜卷饼',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '薄饼卷入油条、生菜和鸡蛋，刷甜面酱，边走边吃的快手早餐。',
     ingredients: [
@@ -9670,7 +9670,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0319',
     name: '豆浆馒头',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '用豆浆和面蒸出的馒头，豆香柔和、口感松软，配小菜很合适。',
     ingredients: [
@@ -9697,7 +9697,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0320',
     name: '油条鸡蛋煎饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '面糊摊成薄饼，打蛋刷酱卷入油条，外软内脆的街头味道。',
     ingredients: [
@@ -9726,7 +9726,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0321',
     name: '铁板鱿鱼须',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鱿鱼须焦香弹牙，孜然辣香扑鼻，在家用平底锅也能做出夜市风味。',
     ingredients: [
@@ -9760,7 +9760,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0322',
     name: '白灼八爪鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '八爪鱼脆嫩爽口，蘸姜醋汁吃原汁原味，适合夏日快手海鲜小菜。',
     ingredients: [
@@ -9790,7 +9790,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0323',
     name: '酱爆鱿鱼卷',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '鱿鱼打花刀爆炒成卷，酱香浓郁，配米饭下酒都合适。',
     ingredients: [
@@ -9823,7 +9823,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0324',
     name: '韭菜炒鱿鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '韭菜清香配鱿鱼鲜嫩，十几分钟出锅的家常快手小炒。',
     ingredients: [
@@ -9852,7 +9852,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0325',
     name: '蒜香章鱼小丸子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '外皮微脆内里软糯，章鱼块弹牙，撒上木鱼花和酱汁就是街头味。',
     ingredients: [
@@ -9885,7 +9885,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0326',
     name: '辣炒花枝片',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '花枝片脆嫩，小米辣和蒜香交织，鲜辣开胃的下饭海鲜。',
     ingredients: [
@@ -9917,7 +9917,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0327',
     name: '香烤章鱼足',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '整只章鱼足烤出焦香，外皮微脆内里多汁，适合周末西式海鲜主菜。',
     ingredients: [
@@ -9947,7 +9947,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0328',
     name: '鱿鱼圈天妇罗',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '面衣轻薄酥脆，鱿鱼圈鲜甜弹牙，蘸天汁吃日式风味十足。',
     ingredients: [
@@ -9979,7 +9979,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0329',
     name: '番茄章鱼炖锅',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '章鱼在番茄和红酒里慢炖至软烂，汤汁浓郁，配面包蘸食很满足。',
     ingredients: [
@@ -10012,7 +10012,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0330',
     name: '椒盐鱿鱼',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '外酥里嫩的椒盐鱿鱼，蒜香椒盐裹满每一块，下酒追剧都合适。',
     ingredients: [
@@ -10043,7 +10043,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0331',
     name: '水煮牛肉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '麻辣滚烫，牛肉滑嫩，汤汁红亮，适合重口味聚餐。',
     ingredients: [
@@ -10078,7 +10078,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0332',
     name: '豆瓣鲫鱼',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜', '宴客菜'],
     coverImage: '',
     description: '豆瓣酱香浓郁，鱼肉鲜嫩，微辣带甜，家常宴客皆宜。',
     ingredients: [
@@ -10112,7 +10112,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0333',
     name: '干煸牛肉丝',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '牛肉干香有嚼劲，麻辣回甜，配芹菜解腻，下酒下饭。',
     ingredients: [
@@ -10144,7 +10144,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0334',
     name: '豉汁炒蛏子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '豆豉蒜香浓郁，蛏子鲜嫩多汁，是下饭下酒的快手表菜。',
     ingredients: [
@@ -10176,7 +10176,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0335',
     name: '蒜蓉蒸扇贝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蒜蓉粉丝铺底，扇贝鲜甜嫩滑，蒸制简单又上档次。',
     ingredients: [
@@ -10207,7 +10207,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0336',
     name: '葱姜炒花蟹',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '姜葱香气扑鼻，蟹肉紧实鲜甜，粤式家常做法简单不出错。',
     ingredients: [
@@ -10239,7 +10239,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0337',
     name: '香辣炒海瓜子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '小海瓜子鲜辣入味，一口一个，最适合配啤酒的夏日小炒。',
     ingredients: [
@@ -10272,7 +10272,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0338',
     name: '粉丝蒸生蚝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蒜蓉粉丝垫底，生蚝肥美多汁，蒸出的汤汁拌粉丝特别鲜。',
     ingredients: [
@@ -10303,7 +10303,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0339',
     name: '酱爆海螺片',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '海螺片脆嫩弹牙，甜面酱包裹出浓郁酱香，是鲁菜风味的家常版。',
     ingredients: [
@@ -10335,7 +10335,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0340',
     name: '蒜香烤青口',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '青口肉烤后鲜嫩，蒜香黄油渗入壳中，适合家庭聚餐的烤箱菜。',
     ingredients: [
@@ -10366,7 +10366,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0341',
     name: '蛤蜊蒸蛋',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蛤蜊汤汁融入蛋液，蒸出的蛋羹嫩滑鲜美，老少皆宜。',
     ingredients: [
@@ -10397,7 +10397,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0342',
     name: '韭菜炒海肠',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '海肠脆嫩鲜甜，韭菜辛香提味，胶东沿海的经典快手菜。',
     ingredients: [
@@ -10428,7 +10428,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0343',
     name: '桂花糖藕',
-    category: '甜点',
+    category: '甜点', tags: ['素菜'],
     coverImage: '',
     description: '软糯莲藕吸满桂花糖汁，切片后甜香清雅，适合秋日待客或节日冷盘。',
     ingredients: [
@@ -10457,7 +10457,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0344',
     name: '驴打滚',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '黄豆面裹着软糯糯米卷与红豆沙，入口豆香浓郁，是老北京经典小吃。',
     ingredients: [
@@ -10485,7 +10485,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0345',
     name: '双皮奶',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '奶皮厚实、口感嫩滑如布丁，奶香与蛋香交融，是顺德经典甜品。',
     ingredients: [
@@ -10511,7 +10511,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0346',
     name: '红糖糍粑',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '外脆内糯的糍粑裹上浓稠红糖汁与黄豆粉，甜香软糯，是川渝人气小吃。',
     ingredients: [
@@ -10538,7 +10538,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0347',
     name: '绿豆糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '入口即化的细腻绿豆糕，清甜不腻，冷藏后风味更佳，适合夏日茶点。',
     ingredients: [
@@ -10565,7 +10565,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0348',
     name: '酒酿圆子',
-    category: '甜点',
+    category: '甜点', tags: ['快手菜'],
     coverImage: '',
     description: '小圆子软糯，酒酿香甜微醺，蛋花轻盈，是暖胃又暖心的江南甜汤。',
     ingredients: [
@@ -10593,7 +10593,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0349',
     name: '南瓜饼',
-    category: '甜点',
+    category: '甜点', tags: ['素菜'],
     coverImage: '',
     description: '南瓜与糯米粉制成的小饼，外酥内软、色泽金黄，自带自然甜味。',
     ingredients: [
@@ -10619,7 +10619,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0350',
     name: '糖不甩',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '糯米圆子裹上浓红糖姜汁，再撒花生碎，软糯香甜，是广东传统甜品。',
     ingredients: [
@@ -10647,7 +10647,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0351',
     name: '芝麻糊',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '黑芝麻与糯米炒香磨糊，口感浓滑细腻，乌发养颜，是经典粤式糖水。',
     ingredients: [
@@ -10672,7 +10672,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0352',
     name: '红豆沙糯米糍',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '软糯椰香的糯米皮包裹细腻红豆沙，一口一个，冷藏后更清爽。',
     ingredients: [
@@ -10701,7 +10701,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0353',
     name: '葱油饼',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '外皮酥脆、内里柔软，葱香浓郁，适合早餐或加餐。',
     ingredients: [
@@ -10728,7 +10728,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0354',
     name: '家常烙饼',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '层次分明、麦香十足，可卷菜或直接食用。',
     ingredients: [
@@ -10753,7 +10753,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0355',
     name: '鸡蛋煎饼',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '蛋香浓郁、口感软嫩，是快手早餐主食。',
     ingredients: [
@@ -10780,7 +10780,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0356',
     name: '玉米面贴饼子',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '粗粮香气浓、底部焦脆，配炖菜吃很合适。',
     ingredients: [
@@ -10807,7 +10807,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0357',
     name: '全麦发面饼',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '麦香浓郁、松软有嚼劲，适合搭配汤菜。',
     ingredients: [
@@ -10834,7 +10834,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0358',
     name: '萝卜丝饼',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '萝卜清甜、外皮酥香，适合秋冬当主食。',
     ingredients: [
@@ -10862,7 +10862,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0359',
     name: '番茄土豆炖牛腩',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '汤汁浓郁酸甜，牛腩软烂，土豆绵密，适合孩子拌饭。',
     ingredients: [
@@ -10896,7 +10896,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0360',
     name: '西蓝花炒虾仁',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '颜色清爽，虾仁弹嫩，西蓝花脆甜，孩子容易接受。',
     ingredients: [
@@ -10926,7 +10926,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0361',
     name: '南瓜蒸排骨',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '南瓜香甜软糯，排骨咸鲜，蒸制少油，适合全家。',
     ingredients: [
@@ -10958,7 +10958,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0362',
     name: '玉米胡萝卜炒鸡丁',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '色彩丰富，鸡丁嫩滑，玉米清甜，适合儿童下饭。',
     ingredients: [
@@ -10989,7 +10989,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0363',
     name: '番茄豆腐煲',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '酸甜开胃，豆腐嫩滑，汤汁浓郁，适合拌饭。',
     ingredients: [
@@ -11022,7 +11022,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0364',
     name: '香菇肉末蒸蛋',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '蛋羹滑嫩，肉末香菇鲜香，营养好入口。',
     ingredients: [
@@ -11054,7 +11054,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0365',
     name: '土豆胡萝卜饼',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '外脆内软，带蔬菜清甜，适合当早餐或儿童加餐。',
     ingredients: [
@@ -11083,7 +11083,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0366',
     name: '清蒸鲈鱼片',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '鱼肉细嫩无刺，清淡鲜美，适合孩子和老人。',
     ingredients: [
@@ -11112,7 +11112,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0367',
     name: '茄汁黄豆焖鸡翅',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜咸香，鸡翅软嫩，黄豆绵软，汤汁适合拌饭。',
     ingredients: [
@@ -11146,7 +11146,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0368',
     name: '腊肠杂粮焖饭',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '腊肠油脂渗入糙米与小米，粒粒分明带焦香，适合秋冬暖身一锅出。',
     ingredients: [
@@ -11177,7 +11177,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0369',
     name: '玉米面菜团子',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '粗粮外皮裹满萝卜缨与豆干，蒸后清香扎实，低油饱腹的北方家常主食。',
     ingredients: [
@@ -11209,7 +11209,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0370',
     name: '荞麦冷面',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '冰镇荞麦面配酸辣汤汁与黄瓜丝，清爽解腻，夏日快手主食。',
     ingredients: [
@@ -11241,7 +11241,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0371',
     name: '燕麦南瓜粥',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '燕麦与南瓜同煮至绵密微甜，膳食纤维丰富，适合早餐或晚餐轻食。',
     ingredients: [
@@ -11269,7 +11269,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0372',
     name: '藜麦蔬菜炒饭',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '三色藜麦代替部分米饭，配彩椒玉米粒快炒，颗粒分明、高蛋白低负担。',
     ingredients: [
@@ -11300,7 +11300,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0373',
     name: '红薯全麦馒头',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '红薯泥和面，蒸出金黄松软的粗粮馒头，自带甜味，可冷冻备餐。',
     ingredients: [
@@ -11328,7 +11328,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0374',
     name: '燕麦鸡蛋饼',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '燕麦片泡软拌蛋液煎成薄饼，边缘微脆，5分钟搞定的高纤早餐。',
     ingredients: [
@@ -11357,7 +11357,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0375',
     name: '豌豆杂粮焖面',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '荞麦面吸饱豆香与酱汁，豌豆软糯，一锅焖出的北方风味主食。',
     ingredients: [
@@ -11388,7 +11388,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0376',
     name: '豉汁蒸盘龙鳝',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '整条白鳝盘成龙形蒸制，豉汁咸鲜微辣，肉质肥嫩，是粤式蒸菜代表。',
     ingredients: [
@@ -11420,7 +11420,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0377',
     name: '滑蛋蒸虾仁',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '虾仁与蛋液同蒸，口感如布丁般嫩滑，清鲜不腻，适合老人小孩。',
     ingredients: [
@@ -11449,7 +11449,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0378',
     name: '香菇滑鸡蒸饭',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鸡肉香菇铺在米饭上同蒸，饭吸鸡汁，一锅到底，咸香暖胃。',
     ingredients: [
@@ -11482,7 +11482,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0379',
     name: '虾酱蒸五花肉',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '虾酱咸鲜浓郁，蒸五花肉肥而不腻，是粤式下饭老菜。',
     ingredients: [
@@ -11512,7 +11512,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0380',
     name: '清蒸排骨',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '排骨原味清蒸，肉嫩脱骨、汤清味鲜，突出食材本味。',
     ingredients: [
@@ -11542,7 +11542,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0381',
     name: '蚝油蒸鲜菇',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '多种鲜菇蒸后淋蚝油汁，菌香浓郁、低脂清爽，素食友好。',
     ingredients: [
@@ -11573,7 +11573,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0382',
     name: '荷叶蒸田鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '田鸡用荷叶包裹蒸制，荷香渗入肉中，肉质细嫩清鲜，夏日风味。',
     ingredients: [
@@ -11606,7 +11606,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0383',
     name: '卤猪蹄',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '卤汁香浓、软糯脱骨，胶质丰富，适合周末做一锅慢慢啃。',
     ingredients: [
@@ -11639,7 +11639,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0384',
     name: '玫瑰豉油鸡',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '豉油香里带玫瑰露甜香，鸡皮油亮、肉嫩多汁，宴客有面子。',
     ingredients: [
@@ -11670,7 +11670,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0385',
     name: '南乳焖五花肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '南乳咸香带甜，五花肉肥而不腻，汤汁浓稠特别下饭。',
     ingredients: [
@@ -11702,7 +11702,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0386',
     name: '酱香牛腱拼盘',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '卤牛腱与卤蛋豆干同盘，酱香层次丰富，冷切上桌方便。',
     ingredients: [
@@ -11735,7 +11735,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0387',
     name: '酱汁鸭腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱色红亮、鸭肉酥烂不腥，甜咸平衡，配米饭很过瘾。',
     ingredients: [
@@ -11766,7 +11766,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0388',
     name: '酱肉蒸豆腐',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '酱肉油脂渗入嫩豆腐，咸鲜滑嫩，蒸一蒸就是快手硬菜。',
     ingredients: [
@@ -11795,7 +11795,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0389',
     name: '卤水鸭翅',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '卤香入味、皮糯肉嫩，追剧下酒都合适，冷吃热吃皆可。',
     ingredients: [
@@ -11827,7 +11827,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0390',
     name: '香草蒜香烤鸡腿',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '外皮金黄酥脆、内里多汁，香草蒜香浓郁，适合家庭烤箱晚餐。',
     ingredients: [
@@ -11858,7 +11858,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0391',
     name: '奶油焗土豆片',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '层层土豆裹满奶油与芝士，奶香浓郁，是烤箱菜的经典配菜。',
     ingredients: [
@@ -11890,7 +11890,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0392',
     name: '烤三文鱼配芦笋',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '三文鱼鲜嫩多汁，芦笋清甜，一烤盘完成的高蛋白轻食。',
     ingredients: [
@@ -11920,7 +11920,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0393',
     name: '烤蔬菜拼盘',
-    category: '西餐',
+    category: '西餐', tags: ['下饭菜'],
     coverImage: '',
     description: '彩椒、西葫芦与洋葱烤出焦甜味，简单调味就很下饭。',
     ingredients: [
@@ -11951,7 +11951,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0394',
     name: '芝士焗肉酱意面',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '番茄肉酱与芝士在烤箱中融合，拉丝浓郁，适合周末晚餐。',
     ingredients: [
@@ -11984,7 +11984,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0395',
     name: '香烤鸡翅中',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '蜂蜜芥末腌制的烤翅，甜咸微酸，外焦里嫩，聚会小食首选。',
     ingredients: [
@@ -12015,7 +12015,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0396',
     name: '烤南瓜浓汤',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '南瓜与洋葱烤后再打成汤，甜味浓缩，口感顺滑温暖。',
     ingredients: [
@@ -12045,7 +12045,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0397',
     name: '烤羊排配迷迭香',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '外层焦香、内里粉嫩，迷迭香与蒜香衬托羊肉鲜味。',
     ingredients: [
@@ -12075,7 +12075,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0398',
     name: '烤茄子芝士盅',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '茄子烤软后填入番茄肉酱与芝士，一勺挖下浓郁拉丝。',
     ingredients: [
@@ -12106,7 +12106,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0399',
     name: '烤鳕鱼配柠檬黄油',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鳕鱼用柠檬黄油包裹烤制，肉质雪白细嫩，清爽不腻。',
     ingredients: [
@@ -12136,7 +12136,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0400',
     name: '油爆海螺',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['快手菜'],
     coverImage: '',
     description: '胶东家常海鲜，海螺片脆嫩弹牙，咸鲜带一点醋香。',
     ingredients: [
@@ -12169,7 +12169,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0401',
     name: '清蒸加吉鱼',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜', '宴客菜'],
     coverImage: '',
     description: '胶东宴席名菜，鱼肉细嫩清甜，原汁原味，寓意吉祥。',
     ingredients: [
@@ -12198,7 +12198,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0402',
     name: '炸蛎黄',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['快手菜'],
     coverImage: '',
     description: '胶东传统小吃，牡蛎外酥里嫩，鲜味十足，蘸椒盐更香。',
     ingredients: [
@@ -12229,7 +12229,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0403',
     name: '酸辣鱼丸汤',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '胶东家常汤菜，鱼丸滑嫩弹牙，汤头酸辣开胃。',
     ingredients: [
@@ -12261,7 +12261,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0404',
     name: '酱爆鱿鱼',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '胶东下饭菜，鱿鱼脆嫩，酱香浓郁微甜，快手下饭。',
     ingredients: [
@@ -12292,7 +12292,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0405',
     name: '清蒸海蛎子',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '胶东原味吃法，牡蛎鲜嫩多汁，蘸姜醋汁最地道。',
     ingredients: [
@@ -12318,7 +12318,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0406',
     name: '冬瓜排骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清甜不腻的家常清炖汤，排骨酥软冬瓜透亮，适合春夏家庭餐桌。',
     ingredients: [
@@ -12347,7 +12347,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0407',
     name: '莲藕花生猪骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤色微粉、莲藕粉糯，花生香浓，适合秋冬润燥的家常清炖汤。',
     ingredients: [
@@ -12376,7 +12376,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0408',
     name: '山药玉米鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味甜，鸡肉嫩滑山药绵软，老人孩子都适合的滋补清汤。',
     ingredients: [
@@ -12405,7 +12405,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0409',
     name: '白萝卜牛腩汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '萝卜吸饱牛肉香，汤头清鲜微甜，是冬日暖身的清炖汤品。',
     ingredients: [
@@ -12435,7 +12435,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0410',
     name: '番茄土豆牛尾汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '番茄微酸开胃，牛尾胶质浓郁，汤色红亮，适合周末慢炖。',
     ingredients: [
@@ -12467,7 +12467,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0411',
     name: '菌菇老鸭汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '鸭肉清润不腥，菌菇鲜香扑鼻，汤色清亮，适合秋季清补。',
     ingredients: [
@@ -12496,7 +12496,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0412',
     name: '海带豆腐味噌汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '日式家常清汤，海带鲜、豆腐嫩，10分钟就能上桌。',
     ingredients: [
@@ -12524,7 +12524,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0413',
     name: '蛤蜊冬瓜汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蛤蜊鲜味十足，冬瓜清爽，汤清见底，夏天喝最舒服。',
     ingredients: [
@@ -12553,7 +12553,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0414',
     name: '玉米胡萝卜马蹄汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清甜素汤，玉米马蹄爽脆，胡萝卜回甘，无需肉也鲜甜。',
     ingredients: [
@@ -12582,7 +12582,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0415',
     name: '奶油南瓜浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '香甜绵密的西式浓汤，南瓜与奶油交融，适合秋冬暖身或配面包。',
     ingredients: [
@@ -12611,7 +12611,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0416',
     name: '经典罗宋汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜浓郁的牛肉蔬菜浓汤，番茄与牛肉炖出醇厚滋味，饱腹又暖胃。',
     ingredients: [
@@ -12644,7 +12644,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0417',
     name: '西兰花奶酪浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜', '减脂餐'],
     coverImage: '',
     description: '奶酪香气浓郁的绿色浓汤，口感顺滑，适合孩子和轻食晚餐。',
     ingredients: [
@@ -12675,7 +12675,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0418',
     name: '蘑菇奶油浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '蘑菇香与奶油香层层叠加的经典西式浓汤，顺滑醇厚，配吐司更佳。',
     ingredients: [
@@ -12705,7 +12705,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0419',
     name: '意式番茄蔬菜汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜', '减脂餐'],
     coverImage: '',
     description: '番茄酸甜打底的意式家常汤，蔬菜丰富清爽开胃，适合减脂餐。',
     ingredients: [
@@ -12737,7 +12737,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0420',
     name: '玉米浓汤',
-    category: '汤',
+    category: '汤羹', tags: [],
     coverImage: '',
     description: '清甜玉米打成浓汤，奶香柔和，老少皆宜，早餐或配餐都合适。',
     ingredients: [
@@ -12766,7 +12766,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0421',
     name: '花椰菜切达浓汤',
-    category: '汤',
+    category: '汤羹', tags: [],
     coverImage: '',
     description: '花椰菜与切达奶酪熬成的浓汤，奶香浓郁口感顺滑，适合搭配面包。',
     ingredients: [
@@ -12798,7 +12798,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0422',
     name: '奶油菠菜浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜', '减脂餐'],
     coverImage: '',
     description: '菠菜与奶油打成的翠绿浓汤，清新顺滑，营养丰富适合轻食。',
     ingredients: [
@@ -12829,7 +12829,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0423',
     name: '法式洋葱汤',
-    category: '汤',
+    category: '汤羹', tags: [],
     coverImage: '',
     description: '洋葱慢炒至焦糖色的经典法式汤，浓郁甘甜，表面配面包奶酪烤制。',
     ingredients: [
@@ -12861,7 +12861,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0424',
     name: '番茄奶油浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '番茄的酸甜与奶油融合的浓汤，色泽红润口感丝滑，配烤面包很搭。',
     ingredients: [
@@ -12894,7 +12894,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0425',
     name: '九转大肠',
-    category: '鲁菜',
+    category: '鲁菜', tags: [],
     coverImage: '',
     description: '济南传统名菜，酸甜咸辣香五味俱全，肥肠软糯油亮。',
     ingredients: [
@@ -12930,7 +12930,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0426',
     name: '红烧大肠',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['下饭菜'],
     coverImage: '',
     description: '咸鲜酱香的家常烧菜，大肠软糯，汤汁浓稠下饭。',
     ingredients: [
@@ -12963,7 +12963,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0427',
     name: '葱烧蹄筋',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '葱香醇厚的鲁式烧菜，蹄筋软滑弹牙，胶质丰富。',
     ingredients: [
@@ -12996,7 +12996,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0428',
     name: '红烧面筋',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '素菜荤做的经典烧菜，面筋吸饱酱汁，咸鲜微甜。',
     ingredients: [
@@ -13027,7 +13027,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0429',
     name: '红烧排骨',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱香浓郁的家常烧排骨，色泽红亮，肉质酥烂脱骨。',
     ingredients: [
@@ -13060,7 +13060,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0430',
     name: '红烧豆腐',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '鲁式烧豆腐，外皮微韧内里嫩滑，酱汁咸鲜适口。',
     ingredients: [
@@ -13092,7 +13092,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0431',
     name: '粉蒸排骨',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '米粉吸足肉汁，排骨软糯脱骨，咸鲜带微辣，一蒸就上桌的家常硬菜。',
     ingredients: [
@@ -13126,7 +13126,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0432',
     name: '香菇蒸滑鸡',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鸡肉嫩滑多汁，香菇香气浓郁，少油少烟的经典粤式家常蒸菜。',
     ingredients: [
@@ -13160,7 +13160,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0433',
     name: '蒜蓉粉丝蒸丝瓜',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '丝瓜清甜软嫩，粉丝吸满蒜香酱汁，清爽下饭的快手蒸菜。',
     ingredients: [
@@ -13192,7 +13192,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0434',
     name: '梅干菜蒸五花肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '五花肉肥而不腻，梅干菜咸香回甘，蒸足时间后入口即化。',
     ingredients: [
@@ -13225,7 +13225,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0435',
     name: '蒸茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '茄子蒸后绵软不油腻，浇上蒜香酱汁，夏天开胃的清爽吃法。',
     ingredients: [
@@ -13256,7 +13256,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0436',
     name: '珍珠豆腐丸',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '豆腐丸子外裹糯米，蒸后晶莹软糯，清淡鲜美，造型讨喜。',
     ingredients: [
@@ -13290,7 +13290,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0437',
     name: '咸蛋蒸肉饼',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '肉饼嫩滑多汁，咸蛋黄油润沙香，蒸一盘就是一顿下饭好菜。',
     ingredients: [
@@ -13325,7 +13325,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0438',
     name: '迷迭香烤鸡腿',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '外皮酥脆、内里多汁，迷迭香与柠檬的清香很适合周末晚餐。',
     ingredients: [
@@ -13356,7 +13356,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0439',
     name: '蒜香黄油烤虾',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蒜香黄油包裹鲜虾，烤制后香气浓郁，适合作为开胃菜或配酒小食。',
     ingredients: [
@@ -13385,7 +13385,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0440',
     name: '奶油蘑菇焗饭',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '奶香浓郁的蘑菇焗饭，表面芝士拉丝，适合一人食的暖胃主餐。',
     ingredients: [
@@ -13417,7 +13417,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0441',
     name: '香烤柠檬三文鱼',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜', '减脂餐'],
     coverImage: '',
     description: '柠檬与香草衬托三文鱼的油脂香，烤制简单，适合轻食晚餐。',
     ingredients: [
@@ -13446,7 +13446,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0442',
     name: '烤蔬菜杂拌',
-    category: '西餐',
+    category: '西餐', tags: [],
     coverImage: '',
     description: '多种时蔬高温烤制，边缘焦香、内部软甜，是百搭的配菜。',
     ingredients: [
@@ -13477,7 +13477,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0443',
     name: '芝士焗西兰花',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '奶香芝士包裹翠绿西兰花，孩子也爱吃，适合作为烤箱配菜。',
     ingredients: [
@@ -13507,7 +13507,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0444',
     name: '普罗旺斯烤羊排',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '香草与蒜香渗入羊排，外焦里嫩，适合节日或周末大餐。',
     ingredients: [
@@ -13538,7 +13538,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0445',
     name: '西班牙式烤排骨',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '烟熏红椒与蜂蜜交织，排骨软嫩脱骨，适合聚餐分享。',
     ingredients: [
@@ -13570,7 +13570,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0446',
     name: '烤波特贝勒蘑菇',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '厚实蘑菇烤后多汁，蒜香与芝士融合，可作素食主菜。',
     ingredients: [
@@ -13601,7 +13601,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0447',
     name: '夫妻肺片',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '牛肉牛杂片薄入味，红油麻辣浓香，经典凉菜。',
     ingredients: [
@@ -13635,7 +13635,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0448',
     name: '鱼香茄子煲',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '茄子软糯吸汁，咸甜酸辣带鱼香，砂锅上桌热气足。',
     ingredients: [
@@ -13668,7 +13668,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0449',
     name: '豉汁蒸生蚝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '豉香咸鲜，生蚝肥嫩滑口，蒸制保留原汁原味，宵夜首选。',
     ingredients: [
@@ -13702,7 +13702,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0450',
     name: '蛤蜊疙瘩汤',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蛤蜊鲜味融进汤里，面疙瘩软滑，暖胃暖身的家常汤饭。',
     ingredients: [
@@ -13735,7 +13735,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0451',
     name: '牡蛎豆腐汤',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '素菜', '快手菜'],
     coverImage: '',
     description: '汤色奶白，牡蛎肥嫩，豆腐滑软，鲜味清爽不腥，适合秋冬。',
     ingredients: [
@@ -13767,7 +13767,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0452',
     name: '酱爆香螺',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '酱香浓郁，螺肉脆嫩弹牙，咸甜适口，适合配啤酒。',
     ingredients: [
@@ -13800,7 +13800,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0453',
     name: '酸菜炒海瓜子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '酸菜咸酸开胃，海瓜子鲜甜，酸辣交织，非常下饭。',
     ingredients: [
@@ -13833,7 +13833,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0454',
     name: '椒盐皮皮虾',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '外壳酥脆，椒盐咸香，虾肉紧实鲜甜，越吃越上瘾。',
     ingredients: [
@@ -13866,7 +13866,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0455',
     name: '红油耳丝',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '猪耳脆嫩弹牙，红油香辣回甜，经典川式凉菜，下酒佐饭皆宜。',
     ingredients: [
@@ -13900,7 +13900,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0456',
     name: '川味拌鸡丝',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡丝细嫩，麻辣鲜香带柠檬清香，夏天开胃的川式凉拌菜。',
     ingredients: [
@@ -13934,7 +13934,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0457',
     name: '陈皮牛肉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '牛肉干香耐嚼，陈皮回甘，麻辣中带果香，冷吃热吃都合适。',
     ingredients: [
@@ -13968,7 +13968,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0458',
     name: '红油莴笋丝',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜', '快手菜'],
     coverImage: '',
     description: '莴笋爽脆清口，裹上红油蒜香，五分钟上桌的川式小凉菜。',
     ingredients: [
@@ -13998,7 +13998,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0459',
     name: '椒麻鸡丝凉面',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '面条筋道，椒麻鲜香微辣，配鸡丝黄瓜，夏日一拌就开吃。',
     ingredients: [
@@ -14032,7 +14032,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0460',
     name: '凉拌折耳根',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '快手菜'],
     coverImage: '',
     description: '折耳根脆嫩独特，酸辣蒜香突出，川渝人最爱的开胃凉菜。',
     ingredients: [
@@ -14062,7 +14062,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0461',
     name: '酸辣蕨根粉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '快手菜'],
     coverImage: '',
     description: '蕨根粉爽滑弹牙，酸辣汁开胃，川式凉菜中的爽口担当。',
     ingredients: [
@@ -14093,7 +14093,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0462',
     name: '藜麦糙米饭',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '藜麦与糙米同煮，颗粒分明带坚果香，适合控糖人群的日常杂粮主食。',
     ingredients: [
@@ -14120,7 +14120,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0463',
     name: '红薯燕麦饼',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '红薯泥混合燕麦煎成小饼，外脆内软带自然甜味，适合当早餐主食。',
     ingredients: [
@@ -14149,7 +14149,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0464',
     name: '黑米红豆饭',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '黑米红豆与大米同焖，色泽紫亮、豆香软糯，适合补铁的杂粮饭。',
     ingredients: [
@@ -14175,7 +14175,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0465',
     name: '玉米碴子粥',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '东北风味粗粮粥，玉米碴熬得浓稠微甜，配小菜就是一顿踏实早餐。',
     ingredients: [
@@ -14201,7 +14201,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0466',
     name: '全麦蔬菜卷饼',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '全麦饼皮卷入鸡蛋和时蔬，麦香浓郁、营养均衡，适合快手午餐。',
     ingredients: [
@@ -14232,7 +14232,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0467',
     name: '南瓜小米发糕',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '南瓜泥和小米面发酵蒸制，蓬松微甜带粗粮香，适合当早餐主食。',
     ingredients: [
@@ -14262,7 +14262,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0468',
     name: '紫薯燕麦馒头',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '紫薯泥揉进面团蒸出的杂粮馒头，颜色漂亮、口感松软，适合家庭常备。',
     ingredients: [
@@ -14291,7 +14291,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0469',
     name: '杂粮鸡肉焖饭',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '糙米小米搭配鸡腿肉和胡萝卜一锅焖熟，咸香入味，省事又顶饱。',
     ingredients: [
@@ -14324,7 +14324,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0470',
     name: '绿豆薏米粥',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '绿豆与薏米慢熬成沙，清爽微甜，适合湿热天气当早餐或加餐。',
     ingredients: [
@@ -14351,7 +14351,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0471',
     name: '红油鸡片',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡片嫩滑，红油香辣微麻，是川式凉菜的经典开胃冷盘。',
     ingredients: [
@@ -14385,7 +14385,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0472',
     name: '凉拌木耳',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜', '快手菜'],
     coverImage: '',
     description: '木耳脆爽，酸辣微麻，清爽解腻，适合作为川式凉菜小碟。',
     ingredients: [
@@ -14417,7 +14417,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0473',
     name: '凉拌三丝',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '粉丝、黄瓜、胡萝卜三丝爽脆，酸辣开胃，家常川式凉菜。',
     ingredients: [
@@ -14448,7 +14448,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0474',
     name: '麻辣牛肉干',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '牛肉干香有嚼劲，麻辣回甜，川式凉菜中下酒佐餐皆宜。',
     ingredients: [
@@ -14482,7 +14482,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0475',
     name: '椒麻腰片',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '腰片嫩滑，椒麻清香微麻，川式凉菜中清爽不腻的一道。',
     ingredients: [
@@ -14514,7 +14514,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0476',
     name: '红油腐竹',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '腐竹柔韧吸味，红油香辣，简单快手的川式凉拌小菜。',
     ingredients: [
@@ -14546,7 +14546,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0477',
     name: '姜汁豇豆',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '快手菜'],
     coverImage: '',
     description: '豇豆脆嫩，姜汁酸香微辣，川式凉菜中清淡解腻的经典。',
     ingredients: [
@@ -14576,7 +14576,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0478',
     name: '陈皮兔丁',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '兔丁干香入味，陈皮回甘微辣，川式凉菜中风味独特的一道。',
     ingredients: [
@@ -14609,7 +14609,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0479',
     name: '奶油培根意面',
-    category: '西餐',
+    category: '西餐', tags: ['荤菜'],
     coverImage: '',
     description: '浓郁奶香裹住每根面条，培根咸香点缀，适合工作日晚餐的经典意面。',
     ingredients: [
@@ -14639,7 +14639,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0480',
     name: '番茄罗勒意面',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '酸甜番茄与新鲜罗勒的清香，简单清爽的意式家常面。',
     ingredients: [
@@ -14670,7 +14670,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0481',
     name: '蘑菇烩饭',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '米粒吸饱蘑菇鲜香，口感绵密带米芯，秋冬暖身的主食。',
     ingredients: [
@@ -14702,7 +14702,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0482',
     name: '南瓜烩饭',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '南瓜的自然甜糯融入米粒，色泽金黄，适合秋季的温柔主食。',
     ingredients: [
@@ -14733,7 +14733,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0483',
     name: '香蒜橄榄油意面',
-    category: '西餐',
+    category: '西餐', tags: ['快手菜'],
     coverImage: '',
     description: '蒜香与橄榄油清透不腻，五分钟就能上桌的极简意面。',
     ingredients: [
@@ -14762,7 +14762,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0484',
     name: '海鲜烩饭',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '虾仁与蛤蜊的鲜味渗入米粒，浓郁海味，适合周末慢慢享用。',
     ingredients: [
@@ -14796,7 +14796,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0485',
     name: '番茄海鲜意面',
-    category: '西餐',
+    category: '西餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '番茄酸甜衬托海鲜鲜甜，酱汁浓郁，适合家庭聚餐。',
     ingredients: [
@@ -14828,7 +14828,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0486',
     name: '奶油菠菜意面',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '菠菜翠绿与奶白酱汁交织，营养均衡，孩子也爱吃。',
     ingredients: [
@@ -14859,7 +14859,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0487',
     name: '柠檬芦笋烩饭',
-    category: '西餐',
+    category: '西餐', tags: ['素菜'],
     coverImage: '',
     description: '柠檬清香与芦笋脆嫩搭配，口感清爽不腻的春日烩饭。',
     ingredients: [
@@ -14891,7 +14891,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0488',
     name: '芝士焗通心粉',
-    category: '西餐',
+    category: '西餐', tags: [],
     coverImage: '',
     description: '通心粉裹满芝士白酱，表面烤至金黄，拉丝浓郁的 comfort food。',
     ingredients: [
@@ -14923,7 +14923,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0489',
     name: '清炖排骨莲藕汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '排骨酥软、莲藕粉糯，汤清味甜，秋冬润燥的家常好汤。',
     ingredients: [
@@ -14951,7 +14951,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0490',
     name: '清炖萝卜羊肉汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '羊肉鲜而不膻，白萝卜吸足汤汁清甜软糯，冬日暖身首选。',
     ingredients: [
@@ -14981,7 +14981,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0491',
     name: '清炖冬瓜丸子汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '肉丸嫩滑、冬瓜清透，汤鲜不油，适合夏天消暑下饭。',
     ingredients: [
@@ -15012,7 +15012,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0492',
     name: '清炖山药玉米汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '玉米清甜、山药绵软，汤色淡雅，素汤也鲜甜可口。',
     ingredients: [
@@ -15040,7 +15040,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0493',
     name: '清炖鲫鱼豆腐汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤色奶白、鱼肉细嫩，豆腐滑嫩入味，产后或日常补钙皆宜。',
     ingredients: [
@@ -15070,7 +15070,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0494',
     name: '清炖牛尾汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '牛尾胶质丰富，汤浓而不腻，配洋葱胡萝卜清甜醇厚。',
     ingredients: [
@@ -15099,7 +15099,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0495',
     name: '清炖花胶鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤色金黄澄澈，花胶软糯、鸡肉鲜甜，适合滋补养颜。',
     ingredients: [
@@ -15128,7 +15128,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0496',
     name: '清炖萝卜牛腱汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '牛腱紧实有嚼劲，白萝卜清甜解腻，汤清味醇不油腻。',
     ingredients: [
@@ -15157,7 +15157,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0497',
     name: '清炖香菇鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '干香菇香气浓郁，鸡汤清鲜回甘，简单食材炖出深滋味。',
     ingredients: [
@@ -15185,7 +15185,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0498',
     name: '手抓羊肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '原汁原味的内蒙风味，羊肉软烂鲜香，蘸料提味，适合家庭聚餐。',
     ingredients: [
@@ -15215,7 +15215,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0499',
     name: '葱爆羊肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '鲁菜经典，大火快炒锁住羊腿肉鲜嫩，葱香浓郁，下饭又快。',
     ingredients: [
@@ -15245,7 +15245,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0500',
     name: '萝卜炖羊肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '冬日暖身汤菜，羊肉酥烂、白萝卜清甜吸饱汤汁，汤鲜不膻。',
     ingredients: [
@@ -15274,7 +15274,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0501',
     name: '孜然羊肉粒',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '新疆风味下酒菜，羊肉粒外焦里嫩，孜然辣椒香气扑鼻。',
     ingredients: [
@@ -15305,7 +15305,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0502',
     name: '羊肉串',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '夜宵'],
     coverImage: '',
     description: '家庭烤箱版羊肉串，肥瘦相间、孜然辣椒双香，复刻烧烤摊味道。',
     ingredients: [
@@ -15336,7 +15336,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0503',
     name: '当归生姜羊肉汤',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '经典药膳汤品，汤色清亮、羊肉温补，适合手脚冰凉的秋冬进补。',
     ingredients: [
@@ -15365,7 +15365,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0504',
     name: '牙签羊肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '香辣过瘾的川式小炒肉，牙签串羊肉炸得外酥里嫩，配啤酒绝佳。',
     ingredients: [
@@ -15397,7 +15397,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0505',
     name: '羊肉丸子汤',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '清淡鲜美的家常汤，羊肉丸弹嫩不散，配粉丝蔬菜暖胃又解腻。',
     ingredients: [
@@ -15428,7 +15428,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0506',
     name: '黑椒羊肉粒',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '中西合璧快炒菜，黑胡椒酱香浓郁，羊肉粒嫩滑，配米饭或意面皆宜。',
     ingredients: [
@@ -15458,7 +15458,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0507',
     name: '红焖羊肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱香浓郁的重口味炖菜，羊肉红亮酥烂，胡萝卜吸汁，配米饭一绝。',
     ingredients: [
@@ -15493,7 +15493,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0508',
     name: '香蕉燕麦煎饼',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '无糖少油的甜口小饼，香蕉自然香甜，适合健身或给孩子做早餐。',
     ingredients: [
@@ -15520,7 +15520,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0509',
     name: '南瓜糯米饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '软糯微甜的小饼，南瓜色泽金黄，凉了也不硬。',
     ingredients: [
@@ -15546,7 +15546,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0510',
     name: '萝卜丝虾皮煎饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咸鲜带脆的白萝卜饼，虾皮提鲜，适合秋冬当热乎早餐。',
     ingredients: [
@@ -15576,7 +15576,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0511',
     name: '火腿芝士蛋饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '西式快手蛋饼，芝士拉丝、火腿咸香，五分钟搞定的上班族早餐。',
     ingredients: [
@@ -15605,7 +15605,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0512',
     name: '水晶虾饺',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '皮薄透亮、虾肉弹牙，是粤式早茶中最经典的点心之一，趁热吃最香。',
     ingredients: [
@@ -15639,7 +15639,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0513',
     name: '干蒸烧卖',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '猪肉虾仁馅鲜香多汁，顶部点缀蟹子，是广式茶楼必点的经典点心。',
     ingredients: [
@@ -15671,7 +15671,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0514',
     name: '广式萝卜糕',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '萝卜清甜、腊味咸香，煎至两面金黄外脆内软，是过年必备的粤式点心。',
     ingredients: [
@@ -15704,7 +15704,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0515',
     name: '流沙奶黄包',
-    category: '粤菜',
+    category: '粤菜', tags: [],
     coverImage: '',
     description: '咸蛋黄与奶香交融，咬开流沙缓缓流出，是粤式点心里的人气甜包。',
     ingredients: [
@@ -15736,7 +15736,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0516',
     name: '蛋挞',
-    category: '粤菜',
+    category: '粤菜', tags: [],
     coverImage: '',
     description: '酥皮层层分明，蛋液嫩滑香甜，是港式茶餐厅和粤式点心中的经典甜点。',
     ingredients: [
@@ -15766,7 +15766,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0517',
     name: '肠粉',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '米浆薄滑透亮，包裹鲜虾和肉末，淋上豉油鲜香爽口，是广式早餐代表。',
     ingredients: [
@@ -15799,7 +15799,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0518',
     name: '椰汁红豆糕',
-    category: '粤菜',
+    category: '粤菜', tags: [],
     coverImage: '',
     description: '椰香清甜、红豆软糯，口感Q弹冰凉，是粤式茶楼常见的消暑甜点。',
     ingredients: [
@@ -15827,7 +15827,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0519',
     name: '糯米鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '荷叶清香渗入糯米，包裹鸡肉、腊肠和咸蛋黄，是粤式点心中的饱腹首选。',
     ingredients: [
@@ -15861,7 +15861,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0520',
     name: '叉烧酥',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '酥皮一咬即碎，内馅叉烧甜咸浓郁，是粤式茶楼里最受欢迎的咸点之一。',
     ingredients: [
@@ -15893,7 +15893,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0521',
     name: '湘西外婆菜炒蛋',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '酸辣咸香的湘西风味，配鸡蛋同炒，简单快手又下饭。',
     ingredients: [
@@ -15923,7 +15923,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0522',
     name: '香辣口味虾',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '夜宵'],
     coverImage: '',
     description: '长沙夜宵代表，虾肉弹嫩，香辣入味，配啤酒最过瘾。',
     ingredients: [
@@ -15957,7 +15957,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0523',
     name: '酸豆角炒肉末',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '酸脆开胃的湘味小炒，肉末鲜香，配米饭或拌面都很合适。',
     ingredients: [
@@ -15988,7 +15988,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0524',
     name: '擂辣椒皮蛋',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '素菜', '快手菜'],
     coverImage: '',
     description: '湖南家常凉拌菜，青椒烧至焦香与皮蛋同擂，辣香绵密。',
     ingredients: [
@@ -16017,7 +16017,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0525',
     name: '湘式土豆烧牛腩',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '牛腩炖得软烂，土豆吸饱辣香汤汁，浓郁下饭的湘味炖菜。',
     ingredients: [
@@ -16052,7 +16052,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0526',
     name: '湘式红烧肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '加干辣椒与豆豉烧制的湘味红烧肉，甜咸微辣、油亮软糯。',
     ingredients: [
@@ -16086,7 +16086,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0527',
     name: '湘西酸辣鸡杂',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡胗鸡心配酸辣椒爆炒，酸辣脆嫩，湘西风味十足。',
     ingredients: [
@@ -16119,7 +16119,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0528',
     name: '低糖红豆双皮奶',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '奶香浓郁、豆香清甜，糖量克制，适合下午茶或饭后小甜点。',
     ingredients: [
@@ -16148,7 +16148,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0529',
     name: '肉桂苹果烤燕麦',
-    category: '甜点',
+    category: '甜点', tags: ['荤菜'],
     coverImage: '',
     description: '外脆内软的烤燕麦，苹果自然甜味配肉桂香，适合早餐或低糖甜点。',
     ingredients: [
@@ -16179,7 +16179,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0530',
     name: '无糖酸奶慕斯杯',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '轻盈顺滑的酸奶慕斯，靠代糖和柠檬提味，冷藏后清爽不腻。',
     ingredients: [
@@ -16210,7 +16210,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0531',
     name: '豆腐布朗尼',
-    category: '甜点',
+    category: '甜点', tags: ['素菜'],
     coverImage: '',
     description: '用嫩豆腐替代部分黄油，口感湿润浓郁，巧克力味足且糖分低。',
     ingredients: [
@@ -16242,7 +16242,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0532',
     name: '桂花山药糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '绵密清甜的山药糕，桂花香气淡雅，少糖也保留自然甘味。',
     ingredients: [
@@ -16271,7 +16271,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0533',
     name: '低糖紫薯奶冻',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '紫薯天然色泽与奶香融合，口感嫩滑，冷藏后清凉解馋。',
     ingredients: [
@@ -16301,7 +16301,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0534',
     name: '香蕉燕麦软饼干',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '只用香蕉提供甜味，外脆内软，适合当低糖零食或早餐。',
     ingredients: [
@@ -16331,7 +16331,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0535',
     name: '抹茶豆腐冰淇淋',
-    category: '甜点',
+    category: '甜点', tags: ['素菜'],
     coverImage: '',
     description: '无需冰淇淋机的低糖冰品，豆腐带来绵密口感，抹茶微苦回甘。',
     ingredients: [
@@ -16360,7 +16360,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0536',
     name: '红枣银耳炖奶',
-    category: '甜点',
+    category: '甜点', tags: ['素菜'],
     coverImage: '',
     description: '温润顺滑的炖奶，红枣自然甜味，适合秋冬暖胃的低糖甜汤。',
     ingredients: [
@@ -16388,7 +16388,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0537',
     name: '黑芝麻山药球',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '芝麻香浓、山药绵软，无额外砂糖，适合当茶点或儿童零食。',
     ingredients: [
@@ -16417,7 +16417,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0538',
     name: '西兰花土豆浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '蔬菜清甜搭配土豆绵密口感，颜色翠绿，营养清爽的西式浓汤。',
     ingredients: [
@@ -16448,7 +16448,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0539',
     name: '花椰菜芝士浓汤',
-    category: '汤',
+    category: '汤羹', tags: [],
     coverImage: '',
     description: '花椰菜清甜裹着芝士咸香，浓稠拉丝，适合作为西式主餐前汤。',
     ingredients: [
@@ -16481,7 +16481,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0540',
     name: '奶油蘑菇鸡蓉汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '鸡肉鲜嫩与蘑菇香气融入奶汤，口感浓郁，适合寒冷天气暖身。',
     ingredients: [
@@ -16514,7 +16514,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0541',
     name: '奶油芦笋浓汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '芦笋清香搭配奶油柔滑，色泽淡绿，口感清爽细腻的西式时令汤。',
     ingredients: [
@@ -16545,7 +16545,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0542',
     name: '洋葱芝士浓汤',
-    category: '汤',
+    category: '汤羹', tags: [],
     coverImage: '',
     description: '洋葱慢炒出甜味，融入芝士咸香，浓稠拉丝，是经典法式风味汤。',
     ingredients: [
@@ -16576,7 +16576,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0543',
     name: '红豆薏米糙米饭',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '粗粮搭配清香有嚼劲，祛湿利水，适合日常替代白米饭',
     ingredients: [
@@ -16603,7 +16603,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0544',
     name: '荞麦面煎饼',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '荞麦香浓郁，外脆内软，搭配蔬菜清爽不腻，适合快手早餐',
     ingredients: [
@@ -16633,7 +16633,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0545',
     name: '红薯燕麦发糕',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '红薯天然甘甜，燕麦增加纤维，松软微弹，蒸好当主食或点心',
     ingredients: [
@@ -16662,7 +16662,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0546',
     name: '黑米芝麻糊',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '黑米与黑芝麻打磨熬煮，香浓顺滑，暖胃养生，适合秋冬早餐',
     ingredients: [
@@ -16689,7 +16689,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0547',
     name: '全麦馒头',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '麦香扎实有嚼劲，比白馒头更饱腹，适合搭配菜肴或夹肉',
     ingredients: [
@@ -16718,7 +16718,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0548',
     name: '绿豆小米粥',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '绿豆清热小米养胃，清淡微甜，夏季消暑或病后调养都合适',
     ingredients: [
@@ -16744,7 +16744,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0549',
     name: '葱油拌面',
-    category: '主食',
+    category: '主食', tags: ['快手菜'],
     coverImage: '',
     description: '上海经典面食，葱香浓郁、酱香咸鲜，面条油润爽滑，适合快速解决一餐。',
     ingredients: [
@@ -16773,7 +16773,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0550',
     name: '番茄鸡蛋打卤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '酸甜番茄配嫩滑鸡蛋，卤汁浓郁挂面，家常又下饭的北方风味面食。',
     ingredients: [
@@ -16804,7 +16804,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0551',
     name: '炸酱面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '老北京风味，肉丁炸酱咸香浓郁，配黄瓜丝清爽解腻，面条筋道。',
     ingredients: [
@@ -16836,7 +16836,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0552',
     name: '西红柿牛腩面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '牛腩炖得软烂，汤头酸甜醇厚，一碗暖身暖胃的浓汤面。',
     ingredients: [
@@ -16868,7 +16868,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0553',
     name: '油泼面',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '陕西风味，宽面筋道，辣椒面被热油一泼香气四溢，酸辣过瘾。',
     ingredients: [
@@ -16899,7 +16899,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0554',
     name: '鸡丝凉面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '夏日清爽面食，鸡丝嫩滑、麻酱香浓，酸辣开胃不油腻。',
     ingredients: [
@@ -16932,7 +16932,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0555',
     name: '阳春面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '江南传统清汤面，汤清味鲜，猪油与葱花香气扑鼻，简单却讲究。',
     ingredients: [
@@ -16960,7 +16960,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0556',
     name: '雪菜肉丝面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '江南家常汤面，雪菜咸鲜、肉丝滑嫩，汤头清爽开胃。',
     ingredients: [
@@ -16992,7 +16992,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0557',
     name: '咖喱牛肉乌冬面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '日式风味，咖喱汤浓稠微辣，乌冬面滑溜弹牙，暖身饱腹。',
     ingredients: [
@@ -17022,7 +17022,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0558',
     name: '蚝油杏鲍菇',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '杏鲍菇煎出焦边，裹上蚝油汁，口感似肉、鲜香有嚼头。',
     ingredients: [
@@ -17051,7 +17051,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0559',
     name: '韭菜炒豆干',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '韭菜辛香、豆干有嚼劲，十分钟出锅的快手家常素炒。',
     ingredients: [
@@ -17079,7 +17079,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0560',
     name: '地三鲜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '茄子、土豆、青椒合炒，酱香浓郁、软糯下饭的东北名菜。',
     ingredients: [
@@ -17110,7 +17110,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0561',
     name: '炝炒藕片',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '藕片脆爽、酸辣微麻，焯水后快炒保持洁白不发黑。',
     ingredients: [
@@ -17139,7 +17139,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0562',
     name: '豆豉炒苦瓜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '苦瓜用盐腌去苦味，配豆豉蒜末炒制，咸香回甘不涩口。',
     ingredients: [
@@ -17168,7 +17168,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0563',
     name: '蒜蓉炒空心菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蒜香浓郁、清脆爽口的经典时令绿叶菜，几分钟就能上桌。',
     ingredients: [
@@ -17196,7 +17196,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0564',
     name: '豆豉鲮鱼炒油麦菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '豆豉鲮鱼的咸鲜配上油麦菜的清苦回甘，是广东家常下饭首选。',
     ingredients: [
@@ -17224,7 +17224,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0565',
     name: '上汤菠菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '皮蛋咸蛋吊出奶白上汤，菠菜滑嫩不涩，汤汁鲜美暖胃。',
     ingredients: [
@@ -17254,7 +17254,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0566',
     name: '腐乳炒通菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '腐乳的醇厚咸香裹住脆嫩通菜，广式小炒风味十足。',
     ingredients: [
@@ -17282,7 +17282,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0567',
     name: '猪油渣炒芥蓝',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '猪油香衬出芥蓝的清甜微苦，脆嫩爽口，米饭杀手。',
     ingredients: [
@@ -17312,7 +17312,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0568',
     name: '炝炒豌豆尖',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '川式炝炒，干辣椒花椒激香，豌豆尖嫩得出水，清香微辣。',
     ingredients: [
@@ -17341,7 +17341,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0569',
     name: '香菇扒生菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '香菇鲜香浓稠的酱汁浇在爽脆生菜上，清爽又入味。',
     ingredients: [
@@ -17371,7 +17371,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0570',
     name: '芝麻酱拌菠菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '麻酱浓香包裹焯嫩菠菜，配蒜末香醋，凉拌开胃解腻。',
     ingredients: [
@@ -17401,7 +17401,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0571',
     name: '凉拌黄瓜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '清脆爽口，蒜香酸辣，夏日开胃小菜，几分钟就能上桌。',
     ingredients: [
@@ -17430,7 +17430,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0572',
     name: '凉拌海带丝',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '海带丝酸辣爽脆，富含碘质，是家常餐桌上的经典凉菜。',
     ingredients: [
@@ -17460,7 +17460,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0573',
     name: '凉拌豆腐皮',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '豆腐皮柔韧有嚼劲，裹上麻酱蒜香汁，咸鲜浓郁，简单快手。',
     ingredients: [
@@ -17490,7 +17490,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0574',
     name: '凉拌莴笋丝',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '莴笋丝碧绿清脆，咸鲜微酸，口感爽利，适合春夏食用。',
     ingredients: [
@@ -17519,7 +17519,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0575',
     name: '凉拌藕片',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '藕片洁白脆嫩，酸甜微辣，带有花椒香气，开胃又解腻。',
     ingredients: [
@@ -17548,7 +17548,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0576',
     name: '凉拌菠菜粉丝',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '菠菜翠绿、粉丝滑爽，蒜香酸辣，营养均衡，适合家常快手。',
     ingredients: [
@@ -17577,7 +17577,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0577',
     name: '凉拌手撕包菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '包菜手撕后更易入味，酸辣脆爽，是下饭的经典凉拌做法。',
     ingredients: [
@@ -17606,7 +17606,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0578',
     name: '凉拌腐竹花生米',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '腐竹柔韧、花生香脆，搭配芹菜丁，咸鲜爽口，适合下酒。',
     ingredients: [
@@ -17637,7 +17637,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0579',
     name: '猪肉白菜水饺',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '皮薄馅大，白菜清甜猪肉鲜香，经典北方家常主食，适合全家包制。',
     ingredients: [
@@ -17671,7 +17671,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0580',
     name: '鲜肉小馄饨',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '夜宵'],
     coverImage: '',
     description: '薄皮包着鲜嫩肉馅，汤清味鲜，撒葱花紫菜，早餐夜宵都合适。',
     ingredients: [
@@ -17703,7 +17703,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0581',
     name: '韭菜鸡蛋盒子',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '外皮焦香酥脆，内馅韭菜鸡蛋鲜香多汁，趁热吃最过瘾。',
     ingredients: [
@@ -17733,7 +17733,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0582',
     name: '三鲜虾仁水饺',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '虾仁猪肉韭菜三鲜合一，鲜甜弹牙，节日家宴的体面主食。',
     ingredients: [
@@ -17766,7 +17766,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0583',
     name: '酸汤水饺',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '酸辣开胃的汤底配猪肉饺子，暖身解腻，冬日快手主食。',
     ingredients: [
@@ -17797,7 +17797,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0584',
     name: '荠菜鲜肉馄饨',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '荠菜清香配猪肉鲜嫩，汤头清爽，春季时令的江南风味主食。',
     ingredients: [
@@ -17830,7 +17830,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0585',
     name: '牛肉大葱饺子',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '牛肉馅紧实多汁，大葱辛香解腻，咬开满口肉香，扎实管饱。',
     ingredients: [
@@ -17863,7 +17863,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0586',
     name: '鲜虾云吞面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '弹牙竹升面配整只鲜虾云吞，汤清味鲜，广式茶餐厅经典主食。',
     ingredients: [
@@ -17897,7 +17897,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0587',
     name: '玉米猪肉蒸饺',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '玉米粒清甜爆汁，猪肉馅鲜嫩，蒸制不上火，适合当早餐。',
     ingredients: [
@@ -17929,7 +17929,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0588',
     name: '荠菜猪肉锅贴',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '底部金黄焦脆，上部柔软，荠菜猪肉馅清香多汁，一锅出快手主食。',
     ingredients: [
@@ -17961,7 +17961,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0589',
     name: '酸辣汤',
-    category: '汤',
+    category: '汤羹', tags: [],
     coverImage: '',
     description: '经典川味汤羹，酸香开胃、微辣暖身，适合秋冬或饭前佐餐。',
     ingredients: [
@@ -17995,7 +17995,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0590',
     name: '酸辣豆腐羹',
-    category: '汤',
+    category: '汤羹', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '豆腐滑嫩、汤汁酸辣浓稠，暖胃下饭，适合家常快手晚餐。',
     ingredients: [
@@ -18027,7 +18027,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0591',
     name: '酸辣鸡丝汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '鸡丝鲜嫩、汤酸辣清爽，低脂又有饱腹感，适合减脂期暖身。',
     ingredients: [
@@ -18060,7 +18060,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0592',
     name: '酸辣海带豆腐汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '海带鲜、豆腐嫩，酸辣开胃，适合想喝汤又怕油腻的一餐。',
     ingredients: [
@@ -18092,7 +18092,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0593',
     name: '酸辣木耳鸡蛋汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '木耳脆爽、蛋花柔嫩，酸辣清口，十分钟就能端上桌。',
     ingredients: [
@@ -18123,7 +18123,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0594',
     name: '番茄酸辣汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '番茄熬出自然酸甜，再加胡椒提辣，汤色红亮、开胃解腻。',
     ingredients: [
@@ -18155,7 +18155,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0595',
     name: '酸辣金针菇肥牛汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '肥牛鲜嫩、金针菇爽滑，酸辣汤底浓郁，适合冷天暖身。',
     ingredients: [
@@ -18188,7 +18188,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0596',
     name: '酸辣萝卜丝汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '白萝卜清甜配酸辣汤底，清爽解腻，适合搭配油腻主菜。',
     ingredients: [
@@ -18219,7 +18219,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0597',
     name: '酸辣菌菇汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '多种菌菇熬出鲜味，酸辣清爽不油腻，素食也能喝得满足。',
     ingredients: [
@@ -18252,7 +18252,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0598',
     name: '酸辣鸭血粉丝汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '鸭血嫩滑、粉丝顺口，酸辣汤底带胡椒香，暖胃又解馋。',
     ingredients: [
@@ -18285,7 +18285,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0599',
     name: '万能蒜香腌料',
-    category: '调料',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蒜香浓郁、咸鲜微甜的通用腌料，适合腌鸡翅、排骨、五花肉，冷藏可存一周。',
     ingredients: [
@@ -18315,7 +18315,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0600',
     name: '黑椒牛排腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '黑胡椒辛香配洋葱与橄榄油，锁住肉汁，适合牛排、猪排、鸡胸，现调现用最香。',
     ingredients: [
@@ -18345,7 +18345,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0601',
     name: '奥尔良风味腌料',
-    category: '调料',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '夜宵'],
     coverImage: '',
     description: '甜辣红亮的家庭版奥尔良腌料，烤鸡翅、鸡腿、烤串都适用，孩子也爱吃。',
     ingredients: [
@@ -18376,7 +18376,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0602',
     name: '五香卤水汁',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '八角桂皮香叶熬出的家常卤水，卤蛋、卤豆干、卤鸡爪都好吃，可反复使用。',
     ingredients: [
@@ -18408,7 +18408,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0603',
     name: '姜葱豉油汁',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '粤式经典蘸汁，姜葱香配豉油鲜甜，蘸白切鸡、蒸鱼、豆腐都提味。',
     ingredients: [
@@ -18437,7 +18437,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0604',
     name: '孜然烧烤撒料',
-    category: '调料',
+    category: '家常菜', tags: ['素菜', '快手菜', '夜宵'],
     coverImage: '',
     description: '孜然辣椒面配芝麻花生碎，撒在烤串、烤蔬菜、炸豆腐上干香扑鼻。',
     ingredients: [
@@ -18467,7 +18467,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0605',
     name: '糖醋腌萝卜汁',
-    category: '调料',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '酸甜脆爽的腌萝卜汁，白萝卜泡一夜即食，解腻开胃，配粥配饭都合适。',
     ingredients: [
@@ -18496,7 +18496,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0606',
     name: '鱼香调味汁',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜微辣带鱼香的复合味汁，调好即用，做鱼香肉丝、鱼香茄子不出错。',
     ingredients: [
@@ -18527,7 +18527,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0607',
     name: '韩式烤肉腌酱',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '梨泥果香加辣酱的韩式腌酱，腌五花肉、牛肋条都嫩滑多汁，包生菜吃最香。',
     ingredients: [
@@ -18557,7 +18557,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0608',
     name: '柠檬香草腌海鲜料',
-    category: '调料',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '柠檬酸香配迷迭香蒜片，去腥提鲜，腌虾、三文鱼、鱿鱼都清爽不腻。',
     ingredients: [
@@ -18586,7 +18586,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0609',
     name: '姜葱炒花蟹',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '蟹肉鲜甜紧实，姜葱香气扑鼻，酱汁挂身，适合下饭的经典粤式做法。',
     ingredients: [
@@ -18619,7 +18619,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0610',
     name: '辣炒海瓜子',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '海瓜子肉小而鲜，辣炒后汤汁浓郁，嗦壳下酒，夜市风味十足。',
     ingredients: [
@@ -18653,7 +18653,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0611',
     name: '番茄煮青口',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '番茄酸甜裹住青口贝的鲜味，汤汁浓郁，配面包蘸食尤佳。',
     ingredients: [
@@ -18686,7 +18686,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0612',
     name: '蒜香黄油焗生蚝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '黄油奶香与蒜香交融，蚝肉表面微焦内里多汁，西式焗烤风味浓郁。',
     ingredients: [
@@ -18717,7 +18717,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0613',
     name: '豆豉炒花甲',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '豆豉咸香配花甲鲜甜，酱汁浓稠挂壳，下饭下酒皆宜。',
     ingredients: [
@@ -18750,7 +18750,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0614',
     name: '紫苏炒田螺',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '紫苏独特香气压住螺肉泥味，辣中带鲜，嗦螺下酒的家常做法。',
     ingredients: [
@@ -18783,7 +18783,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0615',
     name: '冬瓜蛤蜊汤',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤色清亮，蛤蜊鲜味融入冬瓜，清淡解腻，适合夏日佐餐。',
     ingredients: [
@@ -18814,7 +18814,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0616',
     name: '黑椒鸡柳',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜', '快手菜'],
     coverImage: '',
     description: '黑胡椒香气浓郁的快手小炒，配洋葱彩椒，10分钟上桌。',
     ingredients: [
@@ -18845,7 +18845,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0617',
     name: '盐焗鸡翅',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '咸香入骨的广式风味，外皮干香，做法简单不需油炸。',
     ingredients: [
@@ -18874,7 +18874,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0618',
     name: '酸梅汤',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '乌梅山楂熬出的深红汤汁，酸甜生津带淡淡烟熏香，冰镇后最解腻消暑。',
     ingredients: [
@@ -18904,7 +18904,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0619',
     name: '冰糖雪梨银耳羹',
-    category: '饮品',
+    category: '饮品', tags: ['素菜'],
     coverImage: '',
     description: '银耳炖至出胶，配雪梨清甜润喉，秋冬干燥时温热喝最舒服。',
     ingredients: [
@@ -18931,7 +18931,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0620',
     name: '姜枣红糖茶',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '老姜与红枣熬出辛香甜润的热饮，驱寒暖身，适合受凉或经期饮用。',
     ingredients: [
@@ -18956,7 +18956,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0621',
     name: '山楂陈皮消食茶',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '山楂酸香配陈皮回甘，饭后一杯解腻助消化，冷热皆宜。',
     ingredients: [
@@ -18981,7 +18981,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0622',
     name: '蜂蜜柚子茶',
-    category: '饮品',
+    category: '饮品', tags: ['荤菜'],
     coverImage: '',
     description: '柚子皮与果肉慢熬成蜜酱，冲水酸甜带微苦，香气清新。',
     ingredients: [
@@ -19009,7 +19009,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0623',
     name: '桑葚枸杞饮',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '桑葚干与枸杞煮出的紫红饮品，酸甜柔和，日常补气色的温润茶。',
     ingredients: [
@@ -19035,7 +19035,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0624',
     name: '杏仁茶',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '南杏仁与糯米磨浆熬成的乳白饮品，滑润浓香，是老式早点的经典搭配。',
     ingredients: [
@@ -19062,7 +19062,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0625',
     name: '桂花酸梅冰饮',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '在酸梅汤基础上加桂花与话梅提香，冰凉酸甜，适合夏日餐前开胃。',
     ingredients: [
@@ -19092,7 +19092,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0626',
     name: '羊肉萝卜汤',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味鲜，羊肉不膻萝卜甘甜，暖胃滋补的清汤做法。',
     ingredients: [
@@ -19123,7 +19123,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0627',
     name: '羊肉白菜炖粉条',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '北方家常炖菜，羊肉鲜、白菜甜、粉条滑，一锅暖身。',
     ingredients: [
@@ -19155,7 +19155,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0628',
     name: '羊肉抓饭',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '米粒油亮粒粒分明，羊肉胡萝卜香甜，一锅出的大满足。',
     ingredients: [
@@ -19188,7 +19188,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0629',
     name: '萝卜羊肉煲',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酱香浓郁的砂锅煲，羊肉软烂萝卜吸饱汤汁，冬天必做。',
     ingredients: [
@@ -19222,7 +19222,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0630',
     name: '羊肉炒芹菜',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '芹菜脆爽解腻，羊肉滑嫩，十分钟出锅的清爽家常小炒。',
     ingredients: [
@@ -19253,7 +19253,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0631',
     name: '蒜苔炒肉丝',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '蒜苔脆嫩、肉丝滑香，咸鲜下饭，十分钟搞定的快手家常菜。',
     ingredients: [
@@ -19282,7 +19282,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0632',
     name: '西红柿炒鸡蛋',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜多汁的经典家常味，蛋香浓郁，配米饭最合适。',
     ingredients: [
@@ -19309,7 +19309,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0633',
     name: '干煸豆角',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '豆角表皮起皱、干香微辣，素菜也下饭的快手小炒。',
     ingredients: [
@@ -19337,7 +19337,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0634',
     name: '醋溜土豆丝',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '酸香爽脆、根根分明，成本低又开胃的快手素菜。',
     ingredients: [
@@ -19365,7 +19365,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0635',
     name: '肉末烧茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '茄子软糯吸汁，肉末咸香，酱汁浓郁的下饭家常菜。',
     ingredients: [
@@ -19396,7 +19396,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0636',
     name: '青椒土豆片',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '土豆片软糯微焦，青椒清香，简单调味就很下饭。',
     ingredients: [
@@ -19423,7 +19423,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0637',
     name: '红糖发糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '红糖香浓、组织松软的蒸制点心，适合早餐或下午茶。',
     ingredients: [
@@ -19453,7 +19453,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0638',
     name: '糯米糍',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '外皮软糯、内馅香甜的广式小点心，冷藏后口感更佳。',
     ingredients: [
@@ -19483,7 +19483,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0639',
     name: '红豆糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '豆香浓郁、清甜弹牙的蒸制糕点，冷藏后切块更整齐。',
     ingredients: [
@@ -19511,7 +19511,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0640',
     name: '芝麻球',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '外皮酥脆、内里空心软糯的炸制点心，裹满芝麻香气十足。',
     ingredients: [
@@ -19540,7 +19540,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0641',
     name: '党参黄芪乌鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤味甘香醇厚，鸡肉细嫩，适合秋冬滋补暖身，一家老小都能喝。',
     ingredients: [
@@ -19571,7 +19571,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0642',
     name: '霸王花猪骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '岭南经典清润汤水，霸王花滑嫩、汤头清甜不油腻，适合干燥季节。',
     ingredients: [
@@ -19601,7 +19601,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0643',
     name: '冬瓜薏米老鸭汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '鸭肉酥而不烂，薏米软糯，汤清味鲜带淡淡米香，夏天喝尤其舒服。',
     ingredients: [
@@ -19630,7 +19630,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0644',
     name: '山药玉米胡萝卜汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '清甜素汤，玉米香浓、山药绵密，无需荤油也鲜甜，适合日常清淡饮食。',
     ingredients: [
@@ -19658,7 +19658,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0645',
     name: '花生眉豆鸡脚汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '广东家常靓汤，鸡脚胶质丰富，花生眉豆粉糯，汤浓而不腻。',
     ingredients: [
@@ -19688,7 +19688,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0646',
     name: '沙参玉竹瘦肉汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤色清澈、入口甘润，瘦肉不柴，是经典清润老火汤，适合熬夜后喝。',
     ingredients: [
@@ -19718,7 +19718,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0647',
     name: '胡椒猪肚鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '胡椒辛香暖胃，猪肚爽脆、鸡肉鲜嫩，汤色乳白浓郁，冬天喝最过瘾。',
     ingredients: [
@@ -19749,7 +19749,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0648',
     name: '花生木瓜鲫鱼汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤色奶白，木瓜清甜、鲫鱼鲜嫩，花生增香，是催乳又家常的靓汤。',
     ingredients: [
@@ -19780,7 +19780,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0649',
     name: '菜干无花果猪肺汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤味清甜回甘，菜干香气浓，猪肺软嫩，是广式润肺老火汤代表。',
     ingredients: [
@@ -19811,7 +19811,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0650',
     name: '红烧牛肉面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '汤头浓郁醇厚，牛肉软烂入味，面条吸饱汤汁，适合寒冷天气暖身。',
     ingredients: [
@@ -19844,7 +19844,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0651',
     name: '西红柿鸡蛋面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜开胃、汤汁鲜浓，鸡蛋嫩滑，是家常又治愈的一碗面。',
     ingredients: [
@@ -19873,7 +19873,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0652',
     name: '武汉热干面',
-    category: '主食',
+    category: '主食', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '芝麻酱香浓、面条筋道，拌上萝卜丁和葱花，地道武汉早点。',
     ingredients: [
@@ -19904,7 +19904,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0653',
     name: '担担面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '麻辣鲜香、肉臊酥脆，芝麻酱打底，川味十足的干拌面。',
     ingredients: [
@@ -19935,7 +19935,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0654',
     name: '咖喱鸡肉乌冬面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '咖喱香浓微辣，乌冬面滑糯，汤汁裹面，一人食的满足主食。',
     ingredients: [
@@ -19965,7 +19965,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0655',
     name: '酸汤肥牛面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸辣鲜爽、汤色金黄，肥牛嫩滑，开胃解馋的网红面食。',
     ingredients: [
@@ -19996,7 +19996,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0656',
     name: '燕麦香蕉煎饼',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '外微脆内软，香蕉自然甜，适合赶时间的营养早餐。',
     ingredients: [
@@ -20025,7 +20025,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0657',
     name: '虾仁蔬菜蒸蛋羹',
-    category: '早餐',
+    category: '早餐', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '滑嫩如布丁，虾仁鲜甜，蛋白丰富适合全家早餐。',
     ingredients: [
@@ -20055,7 +20055,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0658',
     name: '南瓜小米粥',
-    category: '早餐',
+    category: '早餐', tags: ['素菜'],
     coverImage: '',
     description: '金黄绵稠，自带清甜，暖胃养人的经典早餐粥。',
     ingredients: [
@@ -20081,7 +20081,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0659',
     name: '全麦火腿蛋三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '层次分明，谷物香配蛋香，5分钟就能端上桌。',
     ingredients: [
@@ -20109,7 +20109,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0660',
     name: '红枣核桃豆浆',
-    category: '早餐',
+    category: '早餐', tags: [],
     coverImage: '',
     description: '豆香浓郁带坚果香，无需加糖也有自然甜味。',
     ingredients: [
@@ -20135,7 +20135,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0661',
     name: '蔬菜鸡蛋卷',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '蛋皮裹着脆嫩蔬菜，卷得紧实好携带，早餐便当皆宜。',
     ingredients: [
@@ -20164,7 +20164,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0662',
     name: '玉米鸡蛋羹',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜'],
     coverImage: '',
     description: '玉米清甜与蛋香融合，口感嫩滑，孩子也爱吃。',
     ingredients: [
@@ -20192,7 +20192,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0663',
     name: '盐焗鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '客家传统名菜，皮爽肉滑、咸香入骨，冷吃热食皆宜。',
     ingredients: [
@@ -20221,7 +20221,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0664',
     name: '猪油渣炒菜心',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '镬气十足的客家家常小炒，菜心脆嫩清甜，猪油香浓。',
     ingredients: [
@@ -20249,7 +20249,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0665',
     name: '客家咸鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '咸香紧实的客家风味冷盘，做法简单，配粥下酒都合适。',
     ingredients: [
@@ -20277,7 +20277,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0666',
     name: '萝卜干炒腊肉',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '咸香微辣的客家下饭菜，萝卜干爽脆、腊肉油润，配米饭极佳。',
     ingredients: [
@@ -20306,7 +20306,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0667',
     name: '客家糟汁炒大肠',
-    category: '粤菜',
+    category: '粤菜', tags: [],
     coverImage: '',
     description: '酒糟香气独特的客家小炒，大肠爽脆无异味，酸香开胃。',
     ingredients: [
@@ -20338,7 +20338,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0668',
     name: '把子肉',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '济南街头经典下饭菜，五花肉酱香浓郁肥而不腻，配米饭一绝。',
     ingredients: [
@@ -20371,7 +20371,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0669',
     name: '奶汤蒲菜',
-    category: '鲁菜',
+    category: '鲁菜', tags: [],
     coverImage: '',
     description: '济南大明湖风味汤菜，汤色乳白清鲜，蒲菜脆嫩，春夏时令佳品。',
     ingredients: [
@@ -20402,7 +20402,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0670',
     name: '油爆双脆',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '济南传统火候菜，猪肚头与鸡胗急火快炒，脆嫩爽口，考验刀工火功。',
     ingredients: [
@@ -20436,7 +20436,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0671',
     name: '锅塌豆腐',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['素菜'],
     coverImage: '',
     description: '济南家常名菜，豆腐裹蛋液煎至金黄再焖烧，外香里嫩咸鲜适口。',
     ingredients: [
@@ -20468,7 +20468,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0672',
     name: '四喜丸子',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '济南喜庆宴席必备，四个大丸子寓意吉祥，肉馅松软汤汁浓香。',
     ingredients: [
@@ -20503,7 +20503,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0673',
     name: '爆炒腰花',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '济南经典爆炒菜，腰花脆嫩无腥，配木耳笋片酸香开胃。',
     ingredients: [
@@ -20537,7 +20537,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0674',
     name: '糟煎鱼片',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '济南香糟风味菜，鱼片嫩滑带酒香，糟香浓郁别具一格。',
     ingredients: [
@@ -20569,7 +20569,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0675',
     name: '清汤燕菜',
-    category: '鲁菜',
+    category: '鲁菜', tags: [],
     coverImage: '',
     description: '济南高档汤菜，清汤澄澈见底，燕菜柔滑，体现鲁菜吊汤功夫。',
     ingredients: [
@@ -20601,7 +20601,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0676',
     name: '炸藕盒',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '济南家常炸货，莲藕夹肉馅裹糊炸制，外酥里嫩，逢年过节必备。',
     ingredients: [
@@ -20634,7 +20634,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0677',
     name: '剁椒蒸鸡块',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '鸡腿肉滑嫩多汁，剁椒鲜辣，蒸出的原汁鲜香浓郁。',
     ingredients: [
@@ -20666,7 +20666,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0678',
     name: '剁椒蒸冬瓜',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '冬瓜清甜软糯，吸收剁椒咸辣，清爽又下饭的夏日蒸菜。',
     ingredients: [
@@ -20696,7 +20696,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0679',
     name: '剁椒蒸臭豆腐',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '臭豆腐闻着臭吃着香，剁椒蒸后外软内嫩，湘味经典。',
     ingredients: [
@@ -20726,7 +20726,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0680',
     name: '剁椒蒸南瓜',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '南瓜粉甜软糯，剁椒咸辣提味，甜辣交织的湘式蒸菜。',
     ingredients: [
@@ -20754,7 +20754,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0681',
     name: '清蒸滑鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鸡肉原汁原味、皮爽肉滑，姜葱香气清淡，是粤式蒸鸡的家常做法。',
     ingredients: [
@@ -20783,7 +20783,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0682',
     name: '豆豉蒸鲮鱼',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '豆豉咸香渗入鱼肉，肉质紧实鲜甜，是广东人钟爱的家常蒸鱼做法。',
     ingredients: [
@@ -20814,7 +20814,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0683',
     name: '陈皮蒸牛肉',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '陈皮清香解腻，牛肉滑嫩带果香，是粤式蒸菜中别具风味的一道。',
     ingredients: [
@@ -20846,7 +20846,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0684',
     name: '土豆炖牛腩',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '牛腩软烂入味，土豆吸饱肉汁绵密起沙，汤汁浓郁拌饭一绝。',
     ingredients: [
@@ -20881,7 +20881,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0685',
     name: '酱爆鸡丁',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '鸡丁滑嫩、酱香浓郁，甜咸适口带葱香，快手又下饭。',
     ingredients: [
@@ -20913,7 +20913,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0686',
     name: '奥尔良烤鸡腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '甜辣微酸的经典美式腌料，适合腌制鸡翅鸡腿，冷藏过夜更入味。',
     ingredients: [
@@ -20943,7 +20943,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0687',
     name: '蒜香蜂蜜芥末腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '酸甜带蒜香的万能腌料，适合鸡胸、猪排和烤蔬菜。',
     ingredients: [
@@ -20971,7 +20971,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0688',
     name: '韩式烤肉腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '甜咸微辣的梨香腌料，腌五花肉或牛肋条后烤制最地道。',
     ingredients: [
@@ -21001,7 +21001,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0689',
     name: '糖醋排骨腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜平衡的经典糖醋汁，腌排骨或做糖醋里脊都适用。',
     ingredients: [
@@ -21030,7 +21030,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0690',
     name: '五香卤水腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '香料复合的咸香卤汁，可腌鸡蛋、鸡爪、豆干，卤完还能复用。',
     ingredients: [
@@ -21063,7 +21063,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0691',
     name: '蒜蓉豆豉腌料',
-    category: '调料',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '咸鲜豉香的广式风味，腌排骨、鱼块后蒸制特别下饭。',
     ingredients: [
@@ -21092,7 +21092,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0692',
     name: '泰式酸辣腌料',
-    category: '调料',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '青柠鱼露打底的东南亚风味，腌虾、鸡翅或拌粉丝都开胃。',
     ingredients: [
@@ -21120,7 +21120,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0693',
     name: '椒盐腌料',
-    category: '调料',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '咸香带麻的干撒腌料，腌鸡翅、炸鲜菇、烤玉米都够味。',
     ingredients: [
@@ -21147,7 +21147,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0694',
     name: '莲藕绿豆猪骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清甜带豆香，莲藕粉糯，清热润燥，适合夏秋交替时喝。',
     ingredients: [
@@ -21176,7 +21176,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0695',
     name: '霸王花南北杏猪肺汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清润止咳、汤味甘甜，广东传统老火汤，适合干燥天气润肺。',
     ingredients: [
@@ -21206,7 +21206,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0696',
     name: '五指毛桃茯苓鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '椰香清润、健脾祛湿，汤色清亮，适合湿气重的季节。',
     ingredients: [
@@ -21234,7 +21234,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0697',
     name: '木瓜花生鲫鱼汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤色奶白、鲜甜滋润，木瓜软糯，有助产后催乳和日常滋补。',
     ingredients: [
@@ -21264,7 +21264,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0698',
     name: '清补凉瘦肉汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '清甜回甘、不油不腻，广东家常清润汤水，四季皆宜。',
     ingredients: [
@@ -21294,7 +21294,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0699',
     name: '虫草花干贝玉米汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '金黄清甜、鲜味足，虫草花配干贝层次丰富，老少皆宜。',
     ingredients: [
@@ -21324,7 +21324,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0700',
     name: '粉葛赤小豆鲮鱼汤',
-    category: '汤',
+    category: '汤羹', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '粉葛粉糯、豆香浓郁，祛湿降火，是广东春季经典汤水。',
     ingredients: [
@@ -21354,7 +21354,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0701',
     name: '海底椰雪梨瘦肉汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清甜润喉、带淡淡椰香，适合干燥季节或熬夜后滋润。',
     ingredients: [
@@ -21384,7 +21384,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0702',
     name: '椒盐炸鸡块',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外皮酥脆、内里多汁的经典炸鸡，撒上椒盐香气十足，适合当追剧小食。',
     ingredients: [
@@ -21415,7 +21415,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0703',
     name: '孜然煎羊排',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '孜然与羊肉的经典搭配，煎出焦香外壳，肉质鲜嫩，适合家庭西式主菜。',
     ingredients: [
@@ -21445,7 +21445,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0704',
     name: '香煎猪肉脯',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '自制猪肉脯甜咸适口、边缘微焦，凉后切片当零食或配粥都合适。',
     ingredients: [
@@ -21476,7 +21476,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0705',
     name: '蒜香烤鸡腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '蒜味浓郁的烤鸡腿，皮脆肉嫩，一盘解决全家晚餐主菜。',
     ingredients: [
@@ -21506,7 +21506,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0706',
     name: '黑椒煎猪排',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '黑胡椒酱汁包裹的嫩煎猪排，肉厚多汁，配米饭或意面都好吃。',
     ingredients: [
@@ -21535,7 +21535,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0707',
     name: '酥炸小酥肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '川味小酥肉外壳酥松、肉条鲜嫩，撒椒盐趁热吃最香。',
     ingredients: [
@@ -21566,7 +21566,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0708',
     name: '蜜汁叉烧肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '甜咸焦香的广式叉烧，边缘微焦带蜜味，切片配饭或夹馒头都合适。',
     ingredients: [
@@ -21597,7 +21597,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0709',
     name: '黑胡椒烤鸡翅',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '黑胡椒香气突出的烤翅，咸香微辣，烤箱一开就能上桌。',
     ingredients: [
@@ -21626,7 +21626,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0710',
     name: '盐酥鸡',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '台式夜市风味盐酥鸡，九层塔提香，外酥内嫩越嚼越香。',
     ingredients: [
@@ -21658,7 +21658,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0711',
     name: '牙签牛肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '香辣有嚼劲的牙签牛肉，干香下酒，凉了也好吃。',
     ingredients: [
@@ -21691,7 +21691,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0712',
     name: '凉拌腐竹',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '腐竹吸饱酸辣料汁，柔韧有嚼劲，配花生米是经典下酒凉菜。',
     ingredients: [
@@ -21721,7 +21721,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0713',
     name: '凉拌土豆丝',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '土豆丝脆爽不面，酸辣清香，成本低又下饭，家常凉菜首选。',
     ingredients: [
@@ -21750,7 +21750,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0714',
     name: '蒜泥茄子',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '茄子蒸后绵软，蒜香浓郁，淋上料汁咸鲜微酸，少油健康。',
     ingredients: [
@@ -21779,7 +21779,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0715',
     name: '凉拌粉丝菠菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '粉丝滑爽、菠菜嫩绿，拌上芝麻酱香浓醇厚，营养又饱腹。',
     ingredients: [
@@ -21808,7 +21808,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0716',
     name: '番茄鸡蛋面',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜开胃的一人食快手面，汤汁浓郁，鸡蛋滑嫩，十分钟出锅。',
     ingredients: [
@@ -21838,7 +21838,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0717',
     name: '香菇滑鸡饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '一人食电饭煲焖饭，鸡肉嫩滑、香菇吸汁，米饭粒粒入味。',
     ingredients: [
@@ -21870,7 +21870,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0718',
     name: '蒜蓉蒸金针菇',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '零油烟的一人食蒸菜，蒜香浓郁，金针菇滑嫩吸汁，配饭正好。',
     ingredients: [
@@ -21900,7 +21900,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0719',
     name: '番茄豆腐汤',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '酸甜清爽的一人食汤菜，豆腐嫩滑、汤汁开胃，配主食很舒服。',
     ingredients: [
@@ -21930,7 +21930,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0720',
     name: '青椒肉丝炒饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '一人食经典炒饭，肉丝嫩、青椒香，粒粒分明的饱腹主食。',
     ingredients: [
@@ -21961,7 +21961,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0721',
     name: '照烧鸡腿饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '一人食日式盖饭，鸡皮焦香、酱汁甜咸浓郁，裹着米饭超满足。',
     ingredients: [
@@ -21993,7 +21993,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0722',
     name: '白菜豆腐煲',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '一人食暖胃小煲，白菜清甜、豆腐吸汁，汤汁咸鲜下饭。',
     ingredients: [
@@ -22024,7 +22024,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0723',
     name: '蒜蓉蒸茄子',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '茄子软糯吸满蒜香酱汁，蒸制少油，一人食下饭省事。',
     ingredients: [
@@ -22055,7 +22055,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0724',
     name: '酱油炒饭',
-    category: '家常菜',
+    category: '家常菜', tags: ['快手菜'],
     coverImage: '',
     description: '粒粒分明的酱油炒饭，咸香带葱香，十分钟解决一餐。',
     ingredients: [
@@ -22086,7 +22086,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0725',
     name: '白菜猪肉水饺',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '皮薄馅大的家常水饺，白菜清甜猪肉鲜香，一次包好冷冻随吃。',
     ingredients: [
@@ -22120,7 +22120,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0726',
     name: '马拉糕',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '金黄蓬松、带焦糖香气，茶楼常见的广式蒸糕。',
     ingredients: [
@@ -22151,7 +22151,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0727',
     name: '艾草青团',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '艾草清香配豆沙馅，软糯不粘牙的清明时令点心。',
     ingredients: [
@@ -22181,7 +22181,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0728',
     name: '核桃酥',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '酥脆掉渣、核桃香浓，配茶极佳的传统中式饼干。',
     ingredients: [
@@ -22212,7 +22212,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0729',
     name: '芝麻汤圆',
-    category: '甜点',
+    category: '甜点', tags: [],
     coverImage: '',
     description: '黑芝麻流心馅，糯米皮软糯，元宵节经典甜品。',
     ingredients: [
@@ -22240,7 +22240,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0730',
     name: '芋头糕',
-    category: '甜点',
+    category: '甜点', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '芋头粒粒分明，咸香软糯，煎后外脆内绵的广式点心。',
     ingredients: [
@@ -22271,7 +22271,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0731',
     name: '酸辣鸭血豆腐汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '鸭血滑嫩、豆腐软白，酸辣汤底鲜香开胃，适合配米饭或面条。',
     ingredients: [
@@ -22303,7 +22303,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0732',
     name: '酸辣番茄豆腐汤',
-    category: '汤',
+    category: '汤羹', tags: ['素菜'],
     coverImage: '',
     description: '番茄酸甜打底，豆腐滑嫩，微辣开胃，适合孩子和老人。',
     ingredients: [
@@ -22335,7 +22335,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0733',
     name: '酸辣粉丝汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '粉丝爽滑、汤酸辣鲜香，配豆芽和肉末，适合寒冷天气暖身。',
     ingredients: [
@@ -22367,7 +22367,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0734',
     name: '番茄虾仁滑蛋',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜番茄配嫩滑蛋和弹牙虾仁，颜色鲜亮、口感柔软，孩子爱吃。',
     ingredients: [
@@ -22398,7 +22398,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0735',
     name: '玉米胡萝卜蒸肉饼',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '肉饼软嫩多汁，玉米清甜、胡萝卜增色，蒸制不上火，适合小朋友。',
     ingredients: [
@@ -22429,7 +22429,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0736',
     name: '虾仁豆腐煲',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '豆腐嫩滑吸汁，虾仁鲜甜，汤汁浓稠，清淡下饭又补钙。',
     ingredients: [
@@ -22461,7 +22461,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0737',
     name: '酸甜菠萝咕咾肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外酥里嫩的肉块裹上酸甜汁，配菠萝清爽解腻，孩子特别捧场。',
     ingredients: [
@@ -22495,7 +22495,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0738',
     name: '南瓜蒸蛋羹',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '南瓜泥与蛋液同蒸，颜色金黄、口感细腻，甜味自然，适合幼儿。',
     ingredients: [
@@ -22522,7 +22522,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0739',
     name: '番茄牛肉丸汤',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '番茄汤底酸甜开胃，牛肉丸弹嫩，一碗有汤有肉，适合晚餐。',
     ingredients: [
@@ -22554,7 +22554,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0740',
     name: '黄瓜鸡蛋炒木耳',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '黄瓜脆嫩、木耳爽口，配鸡蛋清淡鲜香，十分钟上桌的家常小炒。',
     ingredients: [
@@ -22583,7 +22583,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0741',
     name: '香煎五花肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '外皮焦脆、肥而不腻，配生菜或米饭都很下饭的家常煎肉。',
     ingredients: [
@@ -22613,7 +22613,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0742',
     name: '孜然羊肉串',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '夜宵'],
     coverImage: '',
     description: '孜然辣椒香气浓，肉块外焦里嫩，在家用烤箱复刻烧烤摊风味。',
     ingredients: [
@@ -22644,7 +22644,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0743',
     name: '蒜香烤鸡翅',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '蒜香浓郁、表皮微脆，烤箱一键完成，适合追剧或聚餐。',
     ingredients: [
@@ -22674,7 +22674,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0744',
     name: '香煎鸭胸',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '鸭皮焦脆、肉质粉嫩，搭配黑椒汁在家也能做出西餐质感。',
     ingredients: [
@@ -22703,7 +22703,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0745',
     name: '烤羊肉串',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '腌料入味、炭香十足，家庭烤箱版羊肉串外焦里嫩。',
     ingredients: [
@@ -22735,7 +22735,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0746',
     name: '炸酥肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外酥里嫩、椒香扑鼻，可直接吃也可下火锅的家常炸酥肉。',
     ingredients: [
@@ -22765,7 +22765,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0747',
     name: '铁板黑椒牛柳',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '黑椒味浓、牛柳滑嫩，洋葱垫底香气足，在家铁锅即可完成。',
     ingredients: [
@@ -22797,7 +22797,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0748',
     name: '蜜汁烤排骨',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '外层蜜汁焦亮、肉质软嫩，烤箱慢烤出的甜咸排骨。',
     ingredients: [
@@ -22829,7 +22829,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0749',
     name: '辣椒炒肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '湘菜头牌家常菜，青椒焦香微辣，五花肉油润咸鲜，下饭一绝。',
     ingredients: [
@@ -22859,7 +22859,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0750',
     name: '湘西外婆菜炒腊肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '腌菜干香配烟熏腊肉，咸鲜微辣，越嚼越香的下饭小炒。',
     ingredients: [
@@ -22889,7 +22889,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0751',
     name: '酸辣鸡杂',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡胗鸡心配泡椒酸豆角爆炒，酸辣脆嫩，开胃下饭。',
     ingredients: [
@@ -22921,7 +22921,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0752',
     name: '湘味干锅花菜',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '花菜干香脆爽，五花肉油润，干辣椒提辣，越煮越入味。',
     ingredients: [
@@ -22952,7 +22952,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0753',
     name: '香辣火焙鱼',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '小鱼干焦香酥脆，辣椒蒜末裹匀，咸辣耐嚼的湘式下酒菜。',
     ingredients: [
@@ -22982,7 +22982,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0754',
     name: '酸辣藕丁',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '素菜', '快手菜'],
     coverImage: '',
     description: '藕丁脆爽，泡椒酸辣，快炒出锅，湘味家常素菜。',
     ingredients: [
@@ -23012,7 +23012,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0755',
     name: '湘味红烧肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '五花肉红亮软糯，干辣椒与豆豉添湘味，咸甜带辣。',
     ingredients: [
@@ -23044,7 +23044,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0756',
     name: '酸辣土豆粉',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '土豆粉滑溜筋道，酸辣汤汁开胃，适合嗜辣者的快手午餐。',
     ingredients: [
@@ -23077,7 +23077,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0757',
     name: '香辣牛肉拌米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '湖南风味拌粉，牛肉香辣入味，米粉吸满酱汁，咸香下饭。',
     ingredients: [
@@ -23111,7 +23111,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0758',
     name: '广式干炒牛河',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '河粉干爽有镬气，牛肉嫩滑，豆芽爽脆，是考验火候的经典粉类主食。',
     ingredients: [
@@ -23145,7 +23145,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0759',
     name: '浆水凉粉',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '西北风味凉粉，浆水微酸清爽，配上蒜辣油，夏季消暑开胃。',
     ingredients: [
@@ -23178,7 +23178,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0760',
     name: '榨菜肉丝汤粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '榨菜咸鲜脆爽，汤头清亮，配米粉简单快手又开胃。',
     ingredients: [
@@ -23211,7 +23211,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0761',
     name: '芝麻酱凉面',
-    category: '主食',
+    category: '主食', tags: ['快手菜'],
     coverImage: '',
     description: '芝麻酱香浓顺滑，面条筋道，配黄瓜丝清爽，适合炎热天气。',
     ingredients: [
@@ -23243,7 +23243,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0762',
     name: '红薯粉蒸肉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '红薯吸足肉汁软糯香甜，米粉裹肉咸香，蒸一锅即是主食也是菜。',
     ingredients: [
@@ -23275,7 +23275,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0763',
     name: '五花肉炖干豆角',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '干豆角吸足肉香，五花肉软糯不腻，秋冬暖身下饭的经典炖菜。',
     ingredients: [
@@ -23308,7 +23308,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0764',
     name: '白菜豆腐炖粉条',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '清淡鲜美的北方家常炖菜，白菜软甜、粉条滑溜，配米饭很舒服。',
     ingredients: [
@@ -23340,7 +23340,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0765',
     name: '排骨炖豆角',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '东北风味家常炖菜，排骨酥烂、豆角入味，汤汁咸香浓郁。',
     ingredients: [
@@ -23374,7 +23374,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0766',
     name: '番茄土豆炖牛肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜浓郁的家常炖菜，牛肉软烂、土豆吸汁，汤汁拌饭很香。',
     ingredients: [
@@ -23408,7 +23408,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0767',
     name: '小鸡炖蘑菇',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '东北名菜家常版，榛蘑香气浓郁，鸡肉鲜嫩汤汁醇厚。',
     ingredients: [
@@ -23442,7 +23442,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0768',
     name: '黄豆炖猪蹄',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '胶质丰富的家常炖菜，猪蹄软糯、黄豆粉面，咸香滋补。',
     ingredients: [
@@ -23476,7 +23476,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0769',
     name: '冬瓜炖排骨',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味鲜的家常炖菜，冬瓜入口即化，排骨软嫩不柴。',
     ingredients: [
@@ -23506,7 +23506,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0770',
     name: '酸菜炖粉条',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酸香开胃的东北家常炖菜，酸菜脆爽、粉条顺滑、五花肉解腻。',
     ingredients: [
@@ -23538,7 +23538,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0771',
     name: '泡椒猪肝',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '猪肝滑嫩无腥，泡椒酸辣开胃，是江湖小炒的经典搭配。',
     ingredients: [
@@ -23571,7 +23571,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0772',
     name: '啤酒烧鸭',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸭肉酱香浓郁带啤酒麦香，微辣回甜，适合秋冬家常聚餐。',
     ingredients: [
@@ -23605,7 +23605,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0773',
     name: '麻辣鸡杂',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡胗鸡心脆嫩弹牙，麻辣鲜香，配米饭或下酒都很够味。',
     ingredients: [
@@ -23638,7 +23638,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0774',
     name: '跳水鱼',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '鱼肉嫩滑，藤椒与鲜椒的清麻鲜辣扑面，是川式江湖鱼做法。',
     ingredients: [
@@ -23671,7 +23671,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0775',
     name: '蒜苗回锅肉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '肉片灯盏窝卷曲，豆瓣酱香浓，蒜苗清香解腻，经典下饭。',
     ingredients: [
@@ -23704,7 +23704,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0776',
     name: '香辣干锅虾',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '虾壳酥脆麻辣，配土豆藕片吸满汤汁，干锅风味浓烈过瘾。',
     ingredients: [
@@ -23738,7 +23738,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0777',
     name: '酸菜肥肠',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '肥肠软糯有嚼劲，酸菜解腻提鲜，酸辣开胃的江湖热菜。',
     ingredients: [
@@ -23772,7 +23772,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0778',
     name: '剁椒蒸腊肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜', '宴客菜'],
     coverImage: '',
     description: '腊肉咸香微熏，与剁椒同蒸油润不腻，是湘味十足的宴客菜。',
     ingredients: [
@@ -23802,7 +23802,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0779',
     name: '客家煎酿三宝',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '茄子、青椒、豆腐酿入肉馅煎焖，一菜三味，酱香浓郁。',
     ingredients: [
@@ -23836,7 +23836,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0780',
     name: '糟熘鱼片',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲁菜传统糟熘菜，香糟酒香清雅，鱼片雪白滑嫩，汁薄芡亮。',
     ingredients: [
@@ -23869,7 +23869,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0781',
     name: '醋烹西葫芦',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['快手菜', '下饭菜'],
     coverImage: '',
     description: '鲁菜家常扒炒小菜，西葫芦清鲜脆嫩，醋香开胃，解腻下饭。',
     ingredients: [
@@ -23898,7 +23898,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0782',
     name: '扒三鲜',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲁式扒菜荤素搭配，海参虾仁鸡肉三鲜同扒，汁浓味厚，鲜香软嫩。',
     ingredients: [
@@ -23933,7 +23933,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0783',
     name: '葱扒羊肉',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜'],
     coverImage: '',
     description: '鲁式扒菜冬季暖身菜，羊肉软烂无膻，大葱香浓，汤汁醇厚。',
     ingredients: [
@@ -23967,7 +23967,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0784',
     name: '煎蛋芝士三明治',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '流心蛋搭配双层芝士，趁热咬下会拉丝，简单却满足的快手早餐。',
     ingredients: [
@@ -23995,7 +23995,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0785',
     name: '肉松海苔三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '咸香肉松配蛋黄酱与海苔碎，口感蓬松，孩子也爱吃的快手早餐。',
     ingredients: [
@@ -24023,7 +24023,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0786',
     name: '午餐肉煎蛋三明治',
-    category: '早餐',
+    category: '早餐', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '午餐肉焦边咸香，配煎蛋和番茄，扎实管饱的经典早餐组合。',
     ingredients: [
@@ -24052,7 +24052,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0787',
     name: '香蕉花生酱三明治',
-    category: '早餐',
+    category: '早餐', tags: ['快手菜'],
     coverImage: '',
     description: '花生酱的浓香配香蕉清甜，无需开火，三分钟搞定的甜口早餐。',
     ingredients: [
@@ -24079,7 +24079,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0788',
     name: '干锅土豆片',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '土豆片外焦里糯，配五花肉与辣椒干香麻辣，越吃越香。',
     ingredients: [
@@ -24111,7 +24111,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0789',
     name: '干锅肥肠',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '肥肠软糯入味，麻辣干香，配洋葱青椒越嚼越香。',
     ingredients: [
@@ -24145,7 +24145,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0790',
     name: '干锅虾',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '鲜虾外壳酥香，麻辣味浓，配藕片芹菜爽脆解腻。',
     ingredients: [
@@ -24178,7 +24178,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0791',
     name: '干锅茶树菇',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '茶树菇干香有嚼劲，麻辣鲜香，素食也能吃得过瘾。',
     ingredients: [
@@ -24210,7 +24210,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0792',
     name: '干锅鸡杂',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡胗鸡心脆嫩弹牙，麻辣干香，配芹菜洋葱十分下饭。',
     ingredients: [
@@ -24245,7 +24245,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0793',
     name: '干锅排骨',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '排骨外焦里嫩，麻辣干香，配土豆片吸足汤汁。',
     ingredients: [
@@ -24280,7 +24280,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0794',
     name: '干锅杏鲍菇',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '海鲜', '荤菜'],
     coverImage: '',
     description: '杏鲍菇干香有嚼劲，麻辣鲜香，素菜也能吃出肉感。',
     ingredients: [
@@ -24312,7 +24312,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0795',
     name: '干锅千页豆腐',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '千页豆腐弹嫩吸味，麻辣干香，配五花肉格外下饭。',
     ingredients: [
@@ -24344,7 +24344,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0796',
     name: '干锅牛蛙',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '牛蛙肉质细嫩，麻辣干香，配藕片芹菜鲜辣过瘾。',
     ingredients: [
@@ -24378,7 +24378,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0797',
     name: '蚝油豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '酱汁浓稠鲜甜的蚝油烧豆腐，色泽红亮，做法快手。',
     ingredients: [
@@ -24409,7 +24409,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0798',
     name: '豆腐蒸蛋',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '嫩滑如布丁的蒸蛋配上豆腐，清淡鲜香，老少皆宜。',
     ingredients: [
@@ -24437,7 +24437,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0799',
     name: '豆皮拌黄瓜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '豆皮筋道、黄瓜爽脆的凉拌组合，酸辣开胃。',
     ingredients: [
@@ -24467,7 +24467,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0800',
     name: '蚬肉蒸蛋',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蛋羹嫩滑如布丁，蚬肉鲜味融入蛋液，老少皆宜。',
     ingredients: [
@@ -24496,7 +24496,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0801',
     name: '蒜香烤生蚝',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '夜宵'],
     coverImage: '',
     description: '蒜蓉黄油香浓，生蚝肥美多汁，烤箱在家也能做出烧烤摊味道。',
     ingredients: [
@@ -24525,7 +24525,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0802',
     name: '爆炒海螺片',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '螺片脆弹，配彩椒爽口，酱香微辣，是道快手下酒菜。',
     ingredients: [
@@ -24557,7 +24557,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0803',
     name: '咸菜炒蛤蜊肉',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '咸菜酸脆解腻，蛤蜊肉鲜甜，咸鲜开胃，配粥下饭皆宜。',
     ingredients: [
@@ -24588,7 +24588,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0804',
     name: '白切鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '皮爽肉滑，原汁原味，蘸姜葱蓉最地道，适合宴客或家常。',
     ingredients: [
@@ -24617,7 +24617,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0805',
     name: '干炒牛河',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '河粉干香不油、牛肉嫩滑，镬气十足，是广府宵夜代表。',
     ingredients: [
@@ -24650,7 +24650,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0806',
     name: '陈皮红豆沙',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '红豆绵沙、陈皮回甘，甜而不腻，是广式糖水铺经典。',
     ingredients: [
@@ -24677,7 +24677,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0807',
     name: '咸鱼鸡粒炒饭',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咸鱼咸香与鸡肉鲜嫩交融，粒粒分明，广式炒饭代表。',
     ingredients: [
@@ -24708,7 +24708,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0808',
     name: '节瓜章鱼瘦肉汤',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '汤清味鲜、节瓜软糯，消暑祛湿，是广府家常老火汤。',
     ingredients: [
@@ -24737,7 +24737,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0809',
     name: '豉油皇炒面',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '面条干香带焦边，豉油咸甜适口，配豆芽爽脆，街头风味十足。',
     ingredients: [
@@ -24769,7 +24769,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0810',
     name: '土豆炖牛肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '牛肉酥烂土豆绵软，汤汁浓稠咸香，秋冬暖身下饭的经典炖菜。',
     ingredients: [
@@ -24804,7 +24804,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0811',
     name: '小鸡炖土豆',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '鸡肉鲜嫩土豆入味，酱香浓郁的一锅炖，家常又下饭。',
     ingredients: [
@@ -24838,7 +24838,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0812',
     name: '茄子炖土豆',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '茄子软糯土豆绵密，酱香微咸的东北家常炖菜，拌饭特别香。',
     ingredients: [
@@ -24870,7 +24870,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0813',
     name: '海带炖排骨',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味鲜，排骨酥软海带滑嫩，清淡不油腻的家常炖汤菜。',
     ingredients: [
@@ -24900,7 +24900,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0814',
     name: '豆角炖土豆',
-    category: '家常菜',
+    category: '家常菜', tags: ['素菜', '下饭菜'],
     coverImage: '',
     description: '东北家常炖菜代表，豆角软嫩土豆起沙，酱香浓郁超下饭。',
     ingredients: [
@@ -24932,7 +24932,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0815',
     name: '番茄炖牛腩',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '番茄酸甜解腻，牛腩软烂入味，汤汁红亮浓郁，拌饭拌面都好吃。',
     ingredients: [
@@ -24965,7 +24965,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0816',
     name: '香菇炖鸡',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '香菇香气浓郁，鸡肉鲜嫩汤清味醇，滋补又简单的家常炖菜。',
     ingredients: [
@@ -24995,7 +24995,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0817',
     name: '洋葱炒猪肝',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '猪肝滑嫩无腥，洋葱微甜，快手补铁家常菜。',
     ingredients: [
@@ -25028,7 +25028,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0818',
     name: '家常烧豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '豆腐外焦里嫩，酱香浓郁，下饭又实惠的家常做法。',
     ingredients: [
@@ -25060,7 +25060,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0819',
     name: '香煎豆腐配蒜蓉汁',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '减脂餐'],
     coverImage: '',
     description: '外皮金黄酥脆，淋蒜香酱汁，简单快手的低脂小菜。',
     ingredients: [
@@ -25091,7 +25091,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0820',
     name: '家常豆腐煲',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '豆腐吸足汤汁，配香菇木耳，暖身下饭的一锅煲。',
     ingredients: [
@@ -25124,7 +25124,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0821',
     name: '豆腐皮拌黄瓜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '豆香浓郁、黄瓜清脆，酸辣开胃的凉拌小菜。',
     ingredients: [
@@ -25155,7 +25155,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0822',
     name: '冻豆腐炖白菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜'],
     coverImage: '',
     description: '冻豆腐多孔吸汤，配白菜清甜，暖胃的家常炖菜。',
     ingredients: [
@@ -25186,7 +25186,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0823',
     name: '孜然煎豆腐',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '外酥里嫩，孜然香气十足，当零食或下酒都合适。',
     ingredients: [
@@ -25216,7 +25216,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0824',
     name: '黑椒煎牛小排',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外焦里嫩，黑椒香气浓郁，适合周末在家做西式主菜。',
     ingredients: [
@@ -25245,7 +25245,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0825',
     name: '香煎鸡腿排',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜'],
     coverImage: '',
     description: '皮脆肉嫩、咸香多汁，配米饭或夹面包都合适。',
     ingredients: [
@@ -25275,7 +25275,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0826',
     name: '孜然煎鸡翅',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '夜宵'],
     coverImage: '',
     description: '外皮焦香、孜然味浓，像烧烤摊风味的下酒小菜。',
     ingredients: [
@@ -25305,7 +25305,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0827',
     name: '日式炸猪排',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外壳酥脆掉渣，内里粉嫩多汁，配卷心菜丝解腻。',
     ingredients: [
@@ -25335,7 +25335,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0828',
     name: '蒜香烤羊腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '蒜香浓郁、肉质软嫩，适合家庭聚餐端上桌的硬菜。',
     ingredients: [
@@ -25366,7 +25366,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0829',
     name: '酥炸鸡米花',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '一口一个的香脆小食，孩子和追剧党都爱。',
     ingredients: [
@@ -25396,7 +25396,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0830',
     name: '椒盐煎虾',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '外壳酥香、椒盐咸鲜，下饭下酒都快手。',
     ingredients: [
@@ -25425,7 +25425,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0831',
     name: '锅包肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '下饭菜', '宴客菜'],
     coverImage: '',
     description: '外酥里嫩、酸甜挂汁，东北经典下饭硬菜。',
     ingredients: [
@@ -25457,7 +25457,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0832',
     name: '鲜榨西瓜汁',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜', '夜宵'],
     coverImage: '',
     description: '清甜解暑，冰镇后风味更佳，适合夏季消暑或搭配烧烤。',
     ingredients: [
@@ -25484,7 +25484,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0833',
     name: '蜂蜜柠檬水',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '酸甜清爽，润喉解腻，适合早晨或饭后饮用。',
     ingredients: [
@@ -25511,7 +25511,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0834',
     name: '草莓牛奶',
-    category: '饮品',
+    category: '饮品', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '粉嫩香甜、奶味柔和，适合早餐或儿童饮用。',
     ingredients: [
@@ -25538,7 +25538,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0835',
     name: '冰糖雪梨汁',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '清润甘甜，润燥止咳，适合干燥季节温热饮用。',
     ingredients: [
@@ -25565,7 +25565,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0836',
     name: '柠檬薄荷气泡水',
-    category: '饮品',
+    category: '饮品', tags: ['快手菜'],
     coverImage: '',
     description: '清凉爽口、低糖解腻，适合餐后或运动后饮用。',
     ingredients: [
@@ -25592,7 +25592,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0837',
     name: '红枣桂圆茶',
-    category: '饮品',
+    category: '饮品', tags: [],
     coverImage: '',
     description: '温润甘香、补气暖身，适合女性经期或冬季热饮。',
     ingredients: [
@@ -25620,7 +25620,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0838',
     name: '胡萝卜苹果汁',
-    category: '饮品',
+    category: '饮品', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '清甜温和、营养均衡，适合早餐搭配或儿童饮用。',
     ingredients: [
@@ -25647,7 +25647,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0839',
     name: '沙姜鸡',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '沙姜独特辛香渗入滑嫩鸡肉，咸鲜微辛，是广式白切鸡的风味变奏。',
     ingredients: [
@@ -25677,7 +25677,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0840',
     name: '菜心炒牛肉',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '牛肉嫩滑、菜心清甜，蚝油芡汁挂汁均匀，是广式家常快炒代表。',
     ingredients: [
@@ -25708,7 +25708,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0841',
     name: '腐乳通菜',
-    category: '粤菜',
+    category: '粤菜', tags: ['快手菜', '下饭菜'],
     coverImage: '',
     description: '腐乳咸鲜带发酵香，通菜脆嫩爽口，几块钱就能搞定的经典下饭菜。',
     ingredients: [
@@ -25736,7 +25736,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0842',
     name: '扒羊肉条',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '鲁式扒菜代表，羊肉酥烂挂芡，咸鲜醇厚，适合冬季滋补宴客。',
     ingredients: [
@@ -25769,7 +25769,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0843',
     name: '扒鲍鱼',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鲍鱼片成薄片旺火快扒，口感脆嫩、芡汁清亮，属鲁菜精细扒制技法。',
     ingredients: [
@@ -25801,7 +25801,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0844',
     name: '扒鱼福',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '鱼泥加蛋清搅打成泥，挤成小圆饼扒制，色白如玉、软嫩鲜滑。',
     ingredients: [
@@ -25833,7 +25833,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0845',
     name: '扒素四宝',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '香菇、口蘑、笋片、油菜四样素料同扒，清淡鲜香、芡汁明亮，解腻佳品。',
     ingredients: [
@@ -25866,7 +25866,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0846',
     name: '扒海参',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '水发海参以葱姜高汤扒制，参体软糯、汁浓味鲜，滋补又体面。',
     ingredients: [
@@ -25899,7 +25899,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0847',
     name: '扒豆腐',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '嫩豆腐煎定型后以高汤扒制，外皮微韧、内里嫩滑，汤汁鲜美下饭。',
     ingredients: [
@@ -25930,7 +25930,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0848',
     name: '扒双冬',
-    category: '鲁菜',
+    category: '鲁菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '冬笋与冬菇同扒的经典鲁菜，双冬鲜香交融，咸鲜清口、素菜上品。',
     ingredients: [
@@ -25963,7 +25963,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0849',
     name: '开水白菜',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜'],
     coverImage: '',
     description: '汤清味鲜，白菜软嫩，看似清淡实则工夫深厚的高汤菜。',
     ingredients: [
@@ -25995,7 +25995,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0850',
     name: '盐焗鸡腿',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '咸香入味、皮爽肉嫩，电饭煲就能做的懒人硬菜',
     ingredients: [
@@ -26024,7 +26024,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0851',
     name: '番茄炖鸡块',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜开胃、汤汁浓郁，鸡肉吸饱番茄汁，拌饭一绝',
     ingredients: [
@@ -26057,7 +26057,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0852',
     name: '孜然鸡翅',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '海鲜', '夜宵'],
     coverImage: '',
     description: '外焦里嫩、孜然香浓，空气炸锅版少油解馋夜宵',
     ingredients: [
@@ -26089,7 +26089,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0853',
     name: '莲藕排骨汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '汤色清亮带粉，莲藕粉糯排骨酥烂，清甜滋补，适合秋冬全家围桌暖身。',
     ingredients: [
@@ -26117,7 +26117,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0854',
     name: '萝卜牛腩汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '汤浓味厚，牛腩软烂白萝卜吸足肉香，暖胃下饭，适合寒冷天。',
     ingredients: [
@@ -26146,7 +26146,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0855',
     name: '花胶炖鸡汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '汤色奶白胶质丰厚，花胶软滑鸡肉鲜甜，滋补养颜，适合宴客或进补。',
     ingredients: [
@@ -26175,7 +26175,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0856',
     name: '无花果雪梨瘦肉汤',
-    category: '汤',
+    category: '汤羹', tags: ['荤菜'],
     coverImage: '',
     description: '清甜润喉，果香融合肉香，润肺止咳，适合换季喉咙干痒时喝。',
     ingredients: [
@@ -26203,7 +26203,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0857',
     name: '凉拌黄瓜木耳',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '爽脆黄瓜配弹嫩木耳，酸辣开胃，夏日佐餐或解腻小菜都合适。',
     ingredients: [
@@ -26234,7 +26234,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0858',
     name: '凉拌菠菜花生',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '菠菜嫩绿配酥香花生，蒜香微酸，营养均衡的快手凉菜。',
     ingredients: [
@@ -26264,7 +26264,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0859',
     name: '凉拌豆芽',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '绿豆芽脆嫩爽口，配蒜香酸辣汁，几分钟就能上桌的清爽小菜。',
     ingredients: [
@@ -26295,7 +26295,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0860',
     name: '凉拌藕丁',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '藕丁洁白脆嫩，裹上酸辣麻香汁，咬起来咯吱作响的开胃凉菜。',
     ingredients: [
@@ -26327,7 +26327,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0861',
     name: '清炒豌豆尖',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '清甜柔嫩的时令嫩尖，只需蒜片提香，最大程度保留本味。',
     ingredients: [
@@ -26353,7 +26353,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0862',
     name: '炝炒圆白菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '干辣椒花椒炝出香味，圆白菜脆爽微辣，配米饭特别下饭。',
     ingredients: [
@@ -26383,7 +26383,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0863',
     name: '腐乳空心菜梗',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '腐乳的咸鲜裹住脆嫩菜梗，风味独特，是广东家常做法。',
     ingredients: [
@@ -26411,7 +26411,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0864',
     name: '麻酱拌油麦菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '芝麻酱香浓顺滑，油麦菜清脆微苦，凉拌开胃解腻。',
     ingredients: [
@@ -26440,7 +26440,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0865',
     name: '清炒鸡毛菜',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '荤菜', '快手菜'],
     coverImage: '',
     description: '最简单的家常小炒，鸡毛菜鲜嫩清甜，几分钟就出锅。',
     ingredients: [
@@ -26466,7 +26466,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0866',
     name: '蒜香红薯叶',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '红薯叶软嫩带清香，蒜末爆香后简单一炒，营养又下饭。',
     ingredients: [
@@ -26493,7 +26493,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0867',
     name: '白灼芥蓝',
-    category: '蔬菜',
+    category: '家常菜', tags: ['素菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '芥蓝焯水后淋豉油，脆嫩清甜带微苦，粤式经典吃法。',
     ingredients: [
@@ -26521,7 +26521,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0868',
     name: '避风塘炒蟹',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蒜酥金黄酥脆，蟹肉鲜甜紧实，是港式酒楼里最下酒的螃蟹做法。',
     ingredients: [
@@ -26553,7 +26553,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0869',
     name: '香辣蟹',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '麻辣鲜香，蟹肉入味，配啤酒或米饭都过瘾的川式家常做法。',
     ingredients: [
@@ -26585,7 +26585,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0870',
     name: '咸蛋黄焗虾',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咸蛋黄沙沙地裹满虾身，咸香浓郁，外壳酥脆，一上桌就被抢光。',
     ingredients: [
@@ -26615,7 +26615,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0871',
     name: '啤酒焖小龙虾',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '夜宵'],
     coverImage: '',
     description: '啤酒去腥增香，汤汁浓郁，虾肉弹嫩，夏夜配冰饮最惬意。',
     ingredients: [
@@ -26648,7 +26648,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0872',
     name: '芙蓉蒸蟹',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蛋羹滑嫩如布丁，吸满蟹的鲜汁，老少皆宜的清淡蒸菜。',
     ingredients: [
@@ -26678,7 +26678,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0873',
     name: '干烧大虾',
-    category: '海鲜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '下饭菜'],
     coverImage: '',
     description: '川式做法，酱香微辣带甜，汤汁紧紧扒在虾身上，下饭一流。',
     ingredients: [
@@ -26710,7 +26710,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0874',
     name: '杂粮饭',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '糙米燕麦米红豆混合蒸制，颗粒分明有嚼劲，适合控糖和日常主食替换。',
     ingredients: [
@@ -26737,7 +26737,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0875',
     name: '腊肠糙米饭',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '腊肠油脂渗入糙米，咸香浓郁、粒粒分明，一锅出省事又饱腹。',
     ingredients: [
@@ -26765,7 +26765,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0876',
     name: '红薯杂粮窝头',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '红薯泥混合玉米面和黄豆面蒸制，粗粮香甜、松软不噎人。',
     ingredients: [
@@ -26793,7 +26793,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0877',
     name: '黑米八宝粥',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '黑米配红豆花生莲子慢熬，软糯浓稠、甜度适中，适合冬日晚餐。',
     ingredients: [
@@ -26824,7 +26824,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0878',
     name: '全麦葱油花卷',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '全麦面粉做的葱油花卷，麦香扎实、层次分明，可一次多做冷冻保存。',
     ingredients: [
@@ -26854,7 +26854,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0879',
     name: '红烧羊肉',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜', '宴客菜'],
     coverImage: '',
     description: '酱色红亮、软烂入味的冬季硬菜，汤汁拌饭一绝。',
     ingredients: [
@@ -26890,7 +26890,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0880',
     name: '羊肉炒面',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '羊肉鲜嫩、面条筋道，孜然酱香裹满每一根面，快手主食。',
     ingredients: [
@@ -26924,7 +26924,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0881',
     name: '羊肉丸子',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '外酥里弹的炸羊肉丸，可当零食也可煮汤，一次做好冷冻备用。',
     ingredients: [
@@ -26956,7 +26956,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0882',
     name: '番茄羊肉煲',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '番茄酸甜中和羊肉醇厚，汤汁浓郁，配米饭或蘸馒头都好吃。',
     ingredients: [
@@ -26988,7 +26988,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0883',
     name: '羊肉炒饭',
-    category: '肉类',
+    category: '家常菜', tags: ['荤菜'],
     coverImage: '',
     description: '隔夜饭配羊肉粒和洋葱，粒粒分明、肉香十足的快手主食。',
     ingredients: [
@@ -27021,7 +27021,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0884',
     name: '钟水饺',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '皮薄馅嫩，淋上甜辣红油蒜香汁，川味小吃经典代表',
     ingredients: [
@@ -27054,7 +27054,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0885',
     name: '红油抄手',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '薄皮大馅裹红油，麻辣鲜香微带回甜，早餐宵夜皆宜',
     ingredients: [
@@ -27087,7 +27087,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0886',
     name: '川北凉粉',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜'],
     coverImage: '',
     description: '凉粉滑嫩爽口，麻辣酸甜交织，夏日开胃小吃的首选',
     ingredients: [
@@ -27121,7 +27121,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0887',
     name: '凉拌鸡丝面',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '凉面配手撕鸡丝，麻辣鲜香带微酸，适合炎热天当主食',
     ingredients: [
@@ -27155,7 +27155,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0888',
     name: '麻辣兔丁',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '兔肉细嫩，干辣椒花椒爆香，麻辣干香的自贡风味小吃',
     ingredients: [
@@ -27189,7 +27189,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0889',
     name: '叶儿粑',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '糯米外皮包芽菜肉馅，粽叶清香，川南传统蒸制小吃',
     ingredients: [
@@ -27221,7 +27221,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0890',
     name: '番茄金针菇肥牛',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜番茄汤底配肥牛和金针菇，汤汁浓郁，一人食暖胃又满足。',
     ingredients: [
@@ -27253,7 +27253,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0891',
     name: '青椒土豆丝炒肉',
-    category: '家常菜',
+    category: '家常菜', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '土豆丝爽脆、肉丝滑嫩，咸鲜微辣，一人食下饭又顶饱。',
     ingredients: [
@@ -27286,7 +27286,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0892',
     name: '鸡蛋炒河粉',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '河粉根根分明、蛋香裹身，配豆芽青菜，一人食十分钟搞定的主食。',
     ingredients: [
@@ -27319,7 +27319,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0893',
     name: '金针菇肥牛卷',
-    category: '家常菜',
+    category: '家常菜', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '肥牛裹金针菇煎香，淋咸甜酱汁，一人食也有小菜仪式感。',
     ingredients: [
@@ -27352,7 +27352,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0894',
     name: '湘味蒸蛋卷',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '蛋皮卷入肉馅蒸制，切片后蘸辣汁食用，鲜嫩咸香，适合家常。',
     ingredients: [
@@ -27384,7 +27384,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0895',
     name: '湘味红烧猪蹄',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜', '宴客菜'],
     coverImage: '',
     description: '猪蹄软糯脱骨，酱色红亮，辣中带香，是湘式家常硬菜。',
     ingredients: [
@@ -27417,7 +27417,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0896',
     name: '湘味炒香干',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '香干配青红椒快炒，豆香浓郁，咸辣开胃，是湘式家常快手菜。',
     ingredients: [
@@ -27447,7 +27447,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0897',
     name: '湘味腊肉炒蒜苗',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '腊肉咸香，蒜苗清甜，辣味点缀，是湘式冬季家常小炒。',
     ingredients: [
@@ -27475,7 +27475,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0898',
     name: '湘味酸辣鸡杂',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '鸡杂脆嫩，酸辣浓郁，加泡椒和酸豆角同炒，湘味十足。',
     ingredients: [
@@ -27506,7 +27506,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0899',
     name: '湘味粉蒸肉',
-    category: '湘菜',
+    category: '湘菜', tags: ['下饭菜', '荤菜'],
     coverImage: '',
     description: '五花肉裹米粉蒸制，软糯咸香带微辣，是湘式家常蒸菜。',
     ingredients: [
@@ -27537,7 +27537,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0900',
     name: '虾饺',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '广式早茶头牌，皮薄透亮，虾肉鲜甜弹牙，一口一个满足。',
     ingredients: [
@@ -27569,7 +27569,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0901',
     name: '豉油皇鸡脚',
-    category: '粤菜',
+    category: '粤菜', tags: ['荤菜'],
     coverImage: '',
     description: '茶楼必点小食，鸡脚软糯入味，豉油香浓带微甜，冷热皆宜。',
     ingredients: [
@@ -27600,7 +27600,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0902',
     name: '萝卜糕',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '广式贺年糕点，萝卜丝清甜，腊味咸香，煎后外脆内软。',
     ingredients: [
@@ -27633,7 +27633,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0903',
     name: '叉烧包',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '广式茶楼名点，包子松软微甜，内馅叉烧浓香，爆口开花才地道。',
     ingredients: [
@@ -27665,7 +27665,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0904',
     name: '流沙包',
-    category: '粤菜',
+    category: '粤菜', tags: [],
     coverImage: '',
     description: '咬开会流心的甜点，咸蛋黄奶黄馅香浓顺滑，甜咸交织。',
     ingredients: [
@@ -27695,7 +27695,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0905',
     name: '鲜虾红米肠',
-    category: '粤菜',
+    category: '粤菜', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '广式茶楼新派点心，红米浆皮包裹酥脆网丝与鲜虾，外软内脆。',
     ingredients: [
@@ -27727,7 +27727,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0906',
     name: '干锅藕片',
-    category: '川菜',
+    category: '川菜', tags: ['下饭菜', '素菜', '快手菜'],
     coverImage: '',
     description: '藕片脆爽拉丝，麻辣干香带微甜，素菜也能撑起一锅硬味。',
     ingredients: [
@@ -27759,7 +27759,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0907',
     name: '遵义羊肉粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '汤鲜肉烂，米粉爽滑，油辣椒香气扑鼻，冬日暖身首选。',
     ingredients: [
@@ -27793,7 +27793,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0908',
     name: '清汤羊肉面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味醇，羊肉软嫩，面条筋道，适合早餐或病后调理。',
     ingredients: [
@@ -27825,7 +27825,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0909',
     name: '孜然羊肉炒面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '孜然焦香浓郁，羊肉嫩滑，面条干香有嚼劲，夜市风味十足。',
     ingredients: [
@@ -27859,7 +27859,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0910',
     name: '羊肉烩面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '河南风味，宽面筋道，羊肉汤浓，配菜丰富，一碗顶饱。',
     ingredients: [
@@ -27893,7 +27893,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0911',
     name: '番茄羊肉意面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '番茄酸甜解腻，羊肉末鲜香，裹满酱汁的意面开胃又满足。',
     ingredients: [
@@ -27925,7 +27925,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0912',
     name: '番茄鸡蛋手擀面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '番茄酸甜浓郁，手擀面筋道爽滑，家常暖胃的一碗面。',
     ingredients: [
@@ -27956,7 +27956,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0913',
     name: '腊肠煲仔饭风味河粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '腊肠油脂渗入河粉，酱香焦香，广式风味的快手炒河粉。',
     ingredients: [
@@ -27988,7 +27988,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0914',
     name: '牛肉粿条汤',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '汤清味鲜，粿条滑嫩，牛肉片嫩滑，潮汕风味汤粉。',
     ingredients: [
@@ -28020,7 +28020,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0915',
     name: '凉皮拌黄瓜丝',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '凉皮筋道爽滑，酸辣麻酱香浓，夏日消暑主食。',
     ingredients: [
@@ -28053,7 +28053,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0916',
     name: '酸汤肥牛乌冬面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸辣金黄汤底配肥牛和乌冬，暖身开胃，一人食首选。',
     ingredients: [
@@ -28084,7 +28084,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0917',
     name: '榨菜肉丝汤米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '汤鲜微咸，米粉滑爽，榨菜肉丝家常快手，适合早餐。',
     ingredients: [
@@ -28115,7 +28115,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0918',
     name: '宜宾燃面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '芽菜肉臊香辣干香，面条油润根根分明，川南经典早点。',
     ingredients: [
@@ -28148,7 +28148,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0919',
     name: '榨菜肉丝汤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '榨菜咸鲜爽脆，肉丝嫩滑，汤清面香，简单快手。',
     ingredients: [
@@ -28179,7 +28179,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0920',
     name: '老北京炸酱面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '黄酱甜面酱炒肉丁，酱香浓郁，配菜清爽。',
     ingredients: [
@@ -28211,7 +28211,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0921',
     name: '番茄鸡蛋汤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜开胃的家常汤面，番茄熬出浓汤，卧一个嫩滑蛋花，暖胃又满足。',
     ingredients: [
@@ -28242,7 +28242,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0922',
     name: '酸辣肥牛粉丝',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸辣过瘾的汤粉丝，肥牛卷鲜嫩，汤底带醋香和胡椒辣，适合天冷时吃。',
     ingredients: [
@@ -28275,7 +28275,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0923',
     name: '雪菜肉丝汤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '江南风味汤面，雪菜咸鲜、肉丝滑嫩，汤头清鲜带一点腌菜香，早餐很合适。',
     ingredients: [
@@ -28307,7 +28307,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0924',
     name: '西红柿打卤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '北方家常打卤面，番茄鸡蛋卤汁浓稠挂面，酸甜咸香，一拌就停不下来。',
     ingredients: [
@@ -28339,7 +28339,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0925',
     name: '豉油皇炒米粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '广东茶楼风味炒米粉，豉油香气足，米粉干爽不粘，配豆芽爽脆。',
     ingredients: [
@@ -28370,7 +28370,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0926',
     name: '酸汤米线',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '云南风味酸汤米线，酸辣鲜香，汤底用番茄和酸菜熬制，暖身又开胃。',
     ingredients: [
@@ -28403,7 +28403,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0927',
     name: '牛肉河粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '广式汤河粉，牛骨汤清鲜，河粉滑嫩，配几片烫熟的牛肉，清淡又滋补。',
     ingredients: [
@@ -28436,7 +28436,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0928',
     name: '咖喱乌冬面',
-    category: '主食',
+    category: '主食', tags: ['素菜', '下饭菜'],
     coverImage: '',
     description: '日式咖喱汤乌冬，汤底浓稠微辣，乌冬面滑弹，配洋葱和胡萝卜很下饭。',
     ingredients: [
@@ -28466,7 +28466,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0929',
     name: '雪菜黄鱼面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '雪菜咸鲜微酸，黄鱼肉嫩汤白，是江浙一带经典的汤面，暖胃又满足。',
     ingredients: [
@@ -28500,7 +28500,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0930',
     name: '西红柿鸡蛋手擀面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜番茄配滑嫩鸡蛋，汤浓面筋道，家常又开胃的一碗热汤面。',
     ingredients: [
@@ -28532,7 +28532,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0931',
     name: '肥肠米线',
-    category: '主食',
+    category: '主食', tags: ['下饭菜'],
     coverImage: '',
     description: '卤肥肠软糯浓香，汤底麻辣鲜，米线爽滑，重口味爱好者的心头好。',
     ingredients: [
@@ -28566,7 +28566,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0932',
     name: '番茄肉酱意面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '番茄酸甜浓郁，肉酱醇厚挂面，家庭西餐的经典之选。',
     ingredients: [
@@ -28599,7 +28599,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0933',
     name: '砂锅米线',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '汤鲜料足，米线爽滑，砂锅保温，适合秋冬暖身。',
     ingredients: [
@@ -28631,7 +28631,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0934',
     name: '番茄肥牛乌冬面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '酸甜番茄汤底配嫩肥牛，乌冬弹滑，一人食快手主食。',
     ingredients: [
@@ -28662,7 +28662,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0935',
     name: '酸辣米线',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '酸辣开胃，汤头浓郁，米线顺滑，适合重口味爱好者。',
     ingredients: [
@@ -28695,7 +28695,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0936',
     name: '香菇鸡丝汤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '清鲜不腻，鸡丝嫩滑，香菇提香，适合清淡口味的一餐。',
     ingredients: [
@@ -28726,7 +28726,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0937',
     name: '咖喱鱼蛋河粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咖喱香浓微辣，鱼蛋弹牙，河粉吸饱汤汁，港式风味。',
     ingredients: [
@@ -28756,7 +28756,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0938',
     name: '麻辣凉皮',
-    category: '主食',
+    category: '主食', tags: ['快手菜', '下饭菜'],
     coverImage: '',
     description: '筋道爽滑，麻辣酸香，配黄瓜丝清爽解腻，夏日开胃。',
     ingredients: [
@@ -28788,7 +28788,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0939',
     name: '重庆酸辣粉',
-    category: '主食',
+    category: '主食', tags: ['下饭菜'],
     coverImage: '',
     description: '麻辣酸香，红薯粉爽滑弹牙，汤底浓郁，在家也能复刻街头风味。',
     ingredients: [
@@ -28823,7 +28823,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0940',
     name: '酸辣粉丝',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '粉丝吸满酸辣汤汁，搭配金针菇和肉末，爽口又下饭。',
     ingredients: [
@@ -28856,7 +28856,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0941',
     name: '酸辣宽粉',
-    category: '主食',
+    category: '主食', tags: ['快手菜'],
     coverImage: '',
     description: '宽粉厚实有嚼劲，酸辣酱汁裹满粉条，拌一拌就上桌。',
     ingredients: [
@@ -28889,7 +28889,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0942',
     name: '酸辣意面',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '意面裹上酸辣番茄酱汁，中西结合，开胃又有饱腹感。',
     ingredients: [
@@ -28923,7 +28923,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0943',
     name: '酸辣河粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '河粉宽薄爽滑，酸辣汤底加牛肉丸和豆芽，清爽又饱腹。',
     ingredients: [
@@ -28955,7 +28955,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0944',
     name: '酸辣荞麦面',
-    category: '主食',
+    category: '主食', tags: ['快手菜', '减脂餐'],
     coverImage: '',
     description: '荞麦面劲道低负担，酸辣凉拌汁配黄瓜丝，适合春夏轻食。',
     ingredients: [
@@ -28988,7 +28988,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0945',
     name: '酸辣乌冬面',
-    category: '主食',
+    category: '主食', tags: ['素菜', '快手菜'],
     coverImage: '',
     description: '乌冬面滑溜弹牙，酸辣汤底配香菇和青菜，简单暖胃。',
     ingredients: [
@@ -29020,7 +29020,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0946',
     name: '麻酱拌面',
-    category: '主食',
+    category: '主食', tags: ['快手菜'],
     coverImage: '',
     description: '芝麻酱香浓厚、微酸开胃的老北京风味拌面，夏天吃最舒服。',
     ingredients: [
@@ -29051,7 +29051,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0947',
     name: '西红柿鸡蛋拌面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜番茄裹着滑嫩鸡蛋，浇在热面上，家常开胃又管饱。',
     ingredients: [
@@ -29082,7 +29082,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0948',
     name: '豆角肉末拌面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '豆角脆嫩、肉末咸香，酱汁浓稠挂面，一碗很有满足感。',
     ingredients: [
@@ -29115,7 +29115,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0949',
     name: '酸辣凉拌米粉',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '酸辣爽滑的凉拌米粉，配花生碎和香菜，夏天开胃解腻。',
     ingredients: [
@@ -29148,7 +29148,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0950',
     name: '蒜香酱油乌冬面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '蒜香扑鼻、酱香咸鲜的炒乌冬，Q弹有嚼劲，快速解决一餐。',
     ingredients: [
@@ -29179,7 +29179,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0951',
     name: '鸡丝凉拌面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '鸡丝嫩滑、面条爽口，麻酱与醋香交融，适合夏日正餐。',
     ingredients: [
@@ -29212,7 +29212,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0952',
     name: '雪菜肉丝拌面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '雪菜咸鲜爽脆，肉丝滑嫩，浇在热面上咸香开胃，江浙家常味。',
     ingredients: [
@@ -29244,7 +29244,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0953',
     name: '番茄鸡蛋米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜番茄配嫩滑蛋花，汤鲜味浓，米线爽滑，适合忙碌工作日的快手晚餐。',
     ingredients: [
@@ -29276,7 +29276,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0954',
     name: '榨菜肉丝米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '榨菜咸鲜脆爽，肉丝滑嫩，汤清味鲜，是清爽不油腻的家常米线。',
     ingredients: [
@@ -29308,7 +29308,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0955',
     name: '香菇鸡丝米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '鸡汤打底，香菇鲜香、鸡丝嫩滑，汤头清甜温润，适合换季暖胃。',
     ingredients: [
@@ -29339,7 +29339,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0956',
     name: '麻辣肥牛米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '麻辣鲜香，肥牛卷嫩滑多汁，汤底浓郁，重口味爱好者的解馋首选。',
     ingredients: [
@@ -29373,7 +29373,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0957',
     name: '凉拌米线',
-    category: '主食',
+    category: '主食', tags: ['快手菜'],
     coverImage: '',
     description: '酸辣爽口，米线弹牙，配黄瓜丝和花生碎，夏天没胃口时的清爽主食。',
     ingredients: [
@@ -29405,7 +29405,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0958',
     name: '雪菜肉丝汤米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '雪菜鲜咸开胃，肉丝滑嫩，汤头清鲜，是江南风味的家常汤米线。',
     ingredients: [
@@ -29437,7 +29437,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0959',
     name: '咖喱鸡肉米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '咖喱香浓郁，鸡肉软嫩、土豆绵软，汤汁裹满米线，异域风味十足。',
     ingredients: [
@@ -29469,7 +29469,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0960',
     name: '酸汤肥牛米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸辣鲜香，黄灯笼椒带来独特酸辣，肥牛嫩滑，汤底金黄诱人。',
     ingredients: [
@@ -29501,7 +29501,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0961',
     name: '葱油拌米线',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '葱香浓郁、酱香微甜，米线油润不腻，简单几步做出老上海风味。',
     ingredients: [
@@ -29530,7 +29530,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0962',
     name: '河南羊肉烩面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '汤浓面宽，羊肉酥烂，配上海带千张，一碗下肚浑身暖和',
     ingredients: [
@@ -29565,7 +29565,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0963',
     name: '河南炝锅烩面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '羊肉炝锅加高汤烩面，汤鲜面滑，带焦香锅气，河南街头风味',
     ingredients: [
@@ -29599,7 +29599,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0964',
     name: '香菇肉酱拌面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '香菇肉末熬成浓酱，拌上热面条，咸香浓郁，做一次吃两顿',
     ingredients: [
@@ -29630,7 +29630,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0965',
     name: '陕西油泼面',
-    category: '主食',
+    category: '主食', tags: ['下饭菜'],
     coverImage: '',
     description: '宽面铺辣椒面和蒜末，热油一泼滋滋作响，香辣过瘾',
     ingredients: [
@@ -29662,7 +29662,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0966',
     name: '西红柿鸡蛋打卤面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '浓稠番茄鸡蛋卤浇在手擀面上，酸甜咸香，老少都爱的家常面',
     ingredients: [
@@ -29695,7 +29695,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0967',
     name: '开洋葱油拌面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '葱香浓郁、开洋鲜咸，面条油润不腻，是上海经典的快手拌面。',
     ingredients: [
@@ -29725,7 +29725,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0968',
     name: '上海辣肉拌面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '辣肉丁酱香微辣、油润下饭，拌上细面浓香扑鼻，本帮经典。',
     ingredients: [
@@ -29758,7 +29758,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0969',
     name: '鸡蛋火腿炒米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜', '夜宵'],
     coverImage: '',
     description: '米粉干香不坨，鸡蛋火腿咸香，配豆芽脆爽，是快手夜宵首选。',
     ingredients: [
@@ -29789,7 +29789,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0970',
     name: '麻酱凉皮',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '凉皮筋道爽滑，麻酱香浓带酸辣，夏日开胃的经典凉拌主食。',
     ingredients: [
@@ -29822,7 +29822,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0971',
     name: '葱油拌意面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '意面弹牙裹满葱油酱香，中西合璧的简约拌面，十分钟出锅。',
     ingredients: [
@@ -29853,7 +29853,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0972',
     name: '常德牛肉米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '汤头香辣醇厚，牛肉软烂，圆粉爽滑，湖南常德经典早餐。',
     ingredients: [
@@ -29887,7 +29887,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0973',
     name: '衡阳酸辣米粉',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '酸辣开胃、汤色红亮，配酸豆角和花生，衡阳街头风味。',
     ingredients: [
@@ -29919,7 +29919,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0974',
     name: '长沙肉丝炒粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '锅气十足的干炒扁粉，肉丝嫩、豆芽脆，咸香微辣。',
     ingredients: [
@@ -29951,7 +29951,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0975',
     name: '湘西酸汤米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '番茄与酸菜熬出的酸汤，配滑嫩肉片，酸香暖胃。',
     ingredients: [
@@ -29984,7 +29984,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0976',
     name: '剁椒肉末拌米粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '快手菜', '下饭菜'],
     coverImage: '',
     description: '剁椒鲜辣、肉末酱香，拌一拌就开胃，适合快手午餐。',
     ingredients: [
@@ -30014,7 +30014,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0977',
     name: '酸辣鸡杂米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '鸡杂脆嫩、酸辣带劲，湘味十足的汤粉。',
     ingredients: [
@@ -30047,7 +30047,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0978',
     name: '湘味腊肉炒粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '腊肉咸香出油，配蒜苗炒出焦香锅气，冬日下饭主食。',
     ingredients: [
@@ -30077,7 +30077,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0979',
     name: '酸辣米粉',
-    category: '主食',
+    category: '主食', tags: ['素菜'],
     coverImage: '',
     description: '酸辣汤头配木耳豆皮，清爽开胃的素汤粉。',
     ingredients: [
@@ -30108,7 +30108,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0980',
     name: '湘式牛肉拌粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '卤牛肉切片拌上辣椒油和花生碎，干拌更香浓。',
     ingredients: [
@@ -30141,7 +30141,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0981',
     name: '酸菜肉丝米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸菜爽脆、肉丝滑嫩，汤清味鲜的家常汤粉。',
     ingredients: [
@@ -30174,7 +30174,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0982',
     name: '川味干拌米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '米粉筋道，肉臊香辣，拌上芽菜和花生碎，麻辣干香越拌越有味。',
     ingredients: [
@@ -30207,7 +30207,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0983',
     name: '蚝油牛肉炒河粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '河粉爽滑不碎，牛肉嫩滑，蚝油酱香浓郁，是粤式茶餐厅的招牌主食。',
     ingredients: [
@@ -30241,7 +30241,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0984',
     name: '凉拌鸡丝凉面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '面条爽滑、鸡丝鲜嫩，麻酱酸辣汁拌匀，清爽解腻的夏日凉面。',
     ingredients: [
@@ -30275,7 +30275,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0985',
     name: '黑椒牛柳意面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '黑椒香气浓郁，牛柳嫩滑，意面裹满酱汁，西式家常的经典组合。',
     ingredients: [
@@ -30309,7 +30309,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0986',
     name: '黑椒牛柳炒河粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '河粉滑爽有镬气，牛柳嫩滑，黑椒香浓，粤式茶餐厅风味。',
     ingredients: [
@@ -30341,7 +30341,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0987',
     name: '咖喱鱼蛋粗面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '咖喱香浓微辣，鱼蛋弹牙，粗面吸汁，港式街头风味十足。',
     ingredients: [
@@ -30371,7 +30371,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0988',
     name: '榨菜肉丝米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '榨菜爽脆咸鲜，肉丝滑嫩，汤清味鲜，十分钟搞定的暖胃米粉。',
     ingredients: [
@@ -30401,7 +30401,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0989',
     name: '沙茶海鲜面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '沙茶酱浓香微辣，配鲜虾鱿鱼，汤头醇厚，闽南风味十足。',
     ingredients: [
@@ -30434,7 +30434,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0990',
     name: '酸辣肥牛米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸辣汤底开胃，肥牛嫩滑，米粉爽口，秋冬暖身首选。',
     ingredients: [
@@ -30465,7 +30465,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0991',
     name: '凉拌鸡丝荞麦面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '减脂餐'],
     coverImage: '',
     description: '荞麦面劲道低脂，鸡丝黄瓜清爽，酸辣酱汁开胃解腻。',
     ingredients: [
@@ -30496,7 +30496,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0992',
     name: '牛肉炒河粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '镬气十足的干炒牛河，河粉油亮不粘，牛肉嫩滑。',
     ingredients: [
@@ -30527,7 +30527,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0993',
     name: '榨菜肉丝面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '榨菜咸鲜脆爽，肉丝滑嫩，汤清味足，十分钟出锅。',
     ingredients: [
@@ -30557,7 +30557,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0994',
     name: '客家腌面',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '快手菜'],
     coverImage: '',
     description: '猪油蒜香裹满碱水面，咸鲜干香，梅州早餐经典。',
     ingredients: [
@@ -30588,7 +30588,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0995',
     name: '猪油蒜香捞面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '简单快手的猪油捞面，蒜香浓郁，十分钟出锅。',
     ingredients: [
@@ -30617,7 +30617,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0996',
     name: '番茄牛肉河粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜番茄汤底配嫩牛肉，河粉爽滑，汤鲜开胃。',
     ingredients: [
@@ -30650,7 +30650,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0997',
     name: '咖喱鸡丝乌冬面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '浓郁咖喱汤裹乌冬，配鸡丝和洋葱，饱腹又暖胃。',
     ingredients: [
@@ -30680,7 +30680,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0998',
     name: '冬阴功海鲜米粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '酸辣鲜香的泰式汤粉，虾与米粉吸足冬阴功汤底。',
     ingredients: [
@@ -30712,7 +30712,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen0999',
     name: '凉拌鸡丝凉皮',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '爽滑凉皮配黄瓜鸡丝，酸辣麻香，夏日开胃主食。',
     ingredients: [
@@ -30744,7 +30744,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1000',
     name: '绵阳米粉',
-    category: '主食',
+    category: '主食', tags: ['下饭菜'],
     coverImage: '',
     description: '汤色红亮、米粉细滑，麻辣鲜香中带一丝酸爽，川北经典早餐。',
     ingredients: [
@@ -30778,7 +30778,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1001',
     name: '肉酱意面',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '番茄肉酱慢炖浓郁，裹住弹牙意面，经典西式家常主食。',
     ingredients: [
@@ -30811,7 +30811,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1002',
     name: '蒜香虾仁炒乌冬',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜', '快手菜'],
     coverImage: '',
     description: '乌冬弹滑，蒜香与酱油香交融，虾仁鲜甜，快手日式风味。',
     ingredients: [
@@ -30842,7 +30842,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1003',
     name: '咖喱鱼蛋乌冬面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '浓郁咖喱汤裹住弹牙乌冬，鱼蛋鲜甜，港式茶餐厅风味。',
     ingredients: [
@@ -30872,7 +30872,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1004',
     name: '湖南牛肉米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '汤头香辣浓郁，牛肉软烂入味，米粉爽滑，湘味十足的经典早餐。',
     ingredients: [
@@ -30907,7 +30907,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1005',
     name: '湖南酸辣粉',
-    category: '主食',
+    category: '主食', tags: [],
     coverImage: '',
     description: '红薯粉滑韧弹牙，酸辣汤汁浓郁，配花生碎香气十足。',
     ingredients: [
@@ -30938,7 +30938,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1006',
     name: '湖南剁椒拌米粉',
-    category: '主食',
+    category: '主食', tags: ['快手菜', '下饭菜'],
     coverImage: '',
     description: '剁椒鲜辣咸香，拌上爽滑米粉，冷热皆宜的湘式快手主食。',
     ingredients: [
@@ -30967,7 +30967,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1007',
     name: '湖南三鲜汤粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '猪肝瘦肉配时蔬，汤鲜味美，营养均衡的湘式家常汤粉。',
     ingredients: [
@@ -30999,7 +30999,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1008',
     name: '湖南酸豆角肉末米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '酸豆角脆爽开胃，肉末鲜香，拌在米粉上酸辣下饭。',
     ingredients: [
@@ -31030,7 +31030,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1009',
     name: '湖南辣椒炒肉拌粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜', '下饭菜'],
     coverImage: '',
     description: '湘菜经典辣椒炒肉拌入米粉，香辣浓郁，一口满足。',
     ingredients: [
@@ -31061,7 +31061,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1010',
     name: '湖南猪脚米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '猪脚软糯胶质满满，汤底醇厚，湖南人钟爱的硬核早餐。',
     ingredients: [
@@ -31095,7 +31095,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1011',
     name: '湖南腊肉炒米粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '腊肉咸香浓郁，米粉干香有嚼劲，湘味十足的炒粉。',
     ingredients: [
@@ -31125,7 +31125,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1012',
     name: '湖南酸辣米线',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '米线细滑，酸辣汤底配酸菜肉末，酸香微辣十分过瘾。',
     ingredients: [
@@ -31157,7 +31157,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1013',
     name: '西红柿鸡蛋打卤面手擀版',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜番茄配滑嫩蛋花浇在手擀面上，汤汁浓稠，家常暖胃。',
     ingredients: [
@@ -31190,7 +31190,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1014',
     name: '蒜香虾仁意面',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '蒜香橄榄油裹住弹牙意面，虾仁鲜甜，清爽不腻的西式快手面。',
     ingredients: [
@@ -31221,7 +31221,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1015',
     name: '香菇肉丝烩米粉',
-    category: '主食',
+    category: '主食', tags: ['海鲜', '荤菜'],
     coverImage: '',
     description: '香菇鲜香、肉丝滑嫩，汤汁裹住软滑米粉，咸鲜入味的家常主食。',
     ingredients: [
@@ -31254,7 +31254,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1016',
     name: '咖喱鸡肉乌冬',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '浓郁咖喱汤汁裹住滑溜乌冬，鸡肉土豆软糯，一锅搞定的暖胃面。',
     ingredients: [
@@ -31284,7 +31284,7 @@ export const generatedRecipes: Recipe[] = [
   {
     id: 'gen1017',
     name: '番茄肉酱通心粉',
-    category: '主食',
+    category: '主食', tags: ['荤菜'],
     coverImage: '',
     description: '酸甜番茄肉酱裹满通心粉，芝士奶香浓郁，孩子也爱吃的西式主食。',
     ingredients: [

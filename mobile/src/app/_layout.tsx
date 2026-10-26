@@ -8,6 +8,7 @@ import {
 import { Palette } from '@/constants/theme';
 import { AddToMealPlanModal } from '@/components/AddToMealPlanModal';
 import { GlobalCustomFeedback } from '@/components/CustomFeedback';
+import { AiGenerateConfirmSheet } from '@/components/AiGenerateConfirmSheet';
 import { startAutoSync } from '@/lib/cloudSync';
 
 export default function RootLayout() {
@@ -38,6 +39,9 @@ export default function RootLayout() {
 
       {/* 全局统一自建弹窗与通知（彻底替代系统原生 Alert 与分散 Toast） */}
       <GlobalCustomFeedback />
+
+      {/* 全局 AI 生成前确认层：二次确认 + 渠道商切换 + 补充要求输入 */}
+      <AiGenerateConfirmSheet />
     </SafeAreaProvider>
   );
 }

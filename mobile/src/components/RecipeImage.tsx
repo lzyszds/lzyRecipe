@@ -26,10 +26,11 @@ function getMorandiBg(name: string) {
 export function resolveCoverUrl(coverImage?: string): string | null {
   if (!coverImage) return null;
   const trimmed = coverImage.trim();
+  // base64 数据图不再展示（体积大、拖慢加载与云同步），统一按缺图处理，交由手动/自动补全
+  if (trimmed.startsWith('data:')) return null;
   if (
     trimmed.startsWith('http://') ||
-    trimmed.startsWith('https://') ||
-    trimmed.startsWith('data:image/')
+    trimmed.startsWith('https://')
   ) {
     return trimmed;
   }

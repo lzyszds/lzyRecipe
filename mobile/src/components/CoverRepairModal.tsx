@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { ImagePlus, Sparkles, CheckCircle2, RotateCw } from 'lucide-react-native';
+import { ImagePlus, Sparkles, CheckCircle2, RotateCw, ShieldAlert } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
 import { Palette, Radius } from '../constants/theme';
-import { fillMissingCovers, countMissingCovers } from '@/lib/coverImage';
+import { fillMissingCovers, countMissingCovers, findBrokenCoverRecipes } from '@/lib/coverImage';
 import { useImportedRecipesStore } from '@/store/importedRecipesStore';
+import { useAllRecipes } from '@/lib/recipes';
 import { toast } from '@/store/feedbackStore';
+import { logActivity } from '@/store/activityLogStore';
 
 interface CoverRepairModalProps {
   visible: boolean;
@@ -19,10 +21,47 @@ export const CoverRepairModal: React.FC<CoverRepairModalProps> = ({ visible, onC
   const updateImportedRecipeCovers = useImportedRecipesStore(
     (s) => s.updateImportedRecipeCovers
   );
+  const saveOrUpdateRecipe = useImportedRecipesStore((s) => s.saveOrUpdateRecipe);
+  const allRecipes = useAllRecipes();
 
   const [phase, setPhase] = useState<Phase>('idle');
   const [progress, setProgress] = useState({ done: 0, total: 0, name: '' });
   const [result, setResult] = useState({ success: 0, failed: 0 });
+
+  // 失效封面检测状态
+  const [checkPhase, setCheckPhase] = useState<'idle' | 'running'>('idle');
+  const [checkProgress, setCheckProgress] = useState({ done: 0, total: 0, name: '' });
+
+  /** 检测失效封面（base64 / 死链）并清空，清完可手动补图 */
+  const handleCheckBroken = async () => {
+    if (checkPhase === 'running') return;
+    setCheckPhase('running');
+    setCheckProgress({ done: 0, total: 0, name: '' });
+    try {
+      const broken = await findBrokenCoverRecipes(allRecipes, (p) =>
+        setCheckProgress({ done: p.done, total: p.total, name: p.name || '' })
+      );
+      if (broken.length > 0) {
+        const now = new Date().toISOString();
+        broken.forEach((r) => saveOrUpdateRecipe({ ...r, coverImage: '', updatedAt: now }));
+        toast({
+          type: 'warning',
+          message: `已清空 ${broken.length} 张失效封面（含 base64/死链），可手动重新补图`,
+        });
+        logActivity({
+          type: 'cover',
+          action: '检测失效封面',
+          detail: `清空 ${broken.length} 张失效封面，待手动补图`,
+        });
+      } else {
+        toast({ type: 'success', message: '所有封面均有效，无需处理' });
+      }
+    } catch (err: any) {
+      toast({ type: 'error', message: err?.message || '检测失败，请重试' });
+    } finally {
+      setCheckPhase('idle');
+    }
+  };
 
   const missing = useMemo(() => importedRecipes.filter((r) => !String(r.coverImage || '').trim()), [
     importedRecipes,
@@ -73,6 +112,11 @@ export const CoverRepairModal: React.FC<CoverRepairModalProps> = ({ visible, onC
           success > 0
             ? `已补全 ${success} 道菜谱封面${failed > 0 ? `，${failed} 道未找到合适图片` : ''}`
             : '暂未找到合适的封面图片，请稍后重试',
+      });
+      logActivity({
+        type: 'cover',
+        action: '封面自动补全',
+        detail: `补全 ${success} 道${failed > 0 ? `，失败 ${failed} 道` : ''}`,
       });
     } catch (err: any) {
       setPhase('idle');
@@ -160,17 +204,40 @@ export const CoverRepairModal: React.FC<CoverRepairModalProps> = ({ visible, onC
 
         <View style={styles.footer}>
           {phase === 'idle' && (
-            <TouchableOpacity
-              style={[styles.primaryBtn, missingCount === 0 && styles.btnDisabled]}
-              onPress={handleStart}
-              disabled={missingCount === 0}
-              activeOpacity={0.85}
-            >
-              <Sparkles size={15} color="#FFFFFF" />
-              <Text style={styles.primaryBtnText}>
-                {missingCount === 0 ? '所有菜谱均已有封面' : `开始补全 ${missingCount} 道封面`}
-              </Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={[styles.primaryBtn, missingCount === 0 && styles.btnDisabled]}
+                onPress={handleStart}
+                disabled={missingCount === 0}
+                activeOpacity={0.85}
+              >
+                <Sparkles size={15} color="#FFFFFF" />
+                <Text style={styles.primaryBtnText}>
+                  {missingCount === 0 ? '所有菜谱均已有封面' : `开始补全 ${missingCount} 道封面`}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.secondaryBtn}
+                onPress={handleCheckBroken}
+                disabled={checkPhase === 'running'}
+                activeOpacity={0.8}
+              >
+                {checkPhase === 'running' ? (
+                  <>
+                    <ActivityIndicator size="small" color={Palette.cocoa[700]} />
+                    <Text style={styles.secondaryBtnText}>
+                      检测中 {checkProgress.done}/{checkProgress.total}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <ShieldAlert size={14} color={Palette.cocoa[700]} />
+                    <Text style={styles.secondaryBtnText}>检测失效封面并清空</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </>
           )}
 
           {phase === 'running' && (

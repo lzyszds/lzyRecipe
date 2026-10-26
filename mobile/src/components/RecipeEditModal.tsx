@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -28,11 +28,14 @@ import {
 } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
 import { Palette, Radius } from '../constants/theme';
-import { RECIPE_CATEGORIES } from '../constants/recipeCategories';
+import { RECIPE_CATEGORIES, RECIPE_TAGS, MAX_RECIPE_TAGS, inferRecipeTags } from '../constants/recipeCategories';
 import { Recipe, Ingredient, Step, DifficultyLevel } from '../types';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { generateRecipeWithAi, RecipeGenField } from '../lib/aiRecipe';
-import { toast, confirm } from '../store/feedbackStore';
+import { toast } from '../store/feedbackStore';
+import { ensureAiIdle, runAiTask } from '../store/aiTaskStore';
+import { logActivity } from '../store/activityLogStore';
+import { requestAiGenerateConfirm } from './AiGenerateConfirmSheet';
 
 interface RecipeEditModalProps {
   visible: boolean;
@@ -41,7 +44,19 @@ interface RecipeEditModalProps {
   onSaved?: (updated: Recipe) => void;
 }
 
-const CATEGORIES = RECIPE_CATEGORIES;
+const CATEGORIES: string[] = [...RECIPE_CATEGORIES];
+
+/** 各字段生成入口的文案 */
+const FIELD_META: Record<RecipeGenField, { title: string; desc?: string }> = {
+  all: {
+    title: 'AI 一键生成整道食谱',
+    desc: '将分两步生成：先定用料与风味，再按用料逐条编排步骤（食材保证全部用到），质量更稳。',
+  },
+  description: { title: 'AI 生成风味描述' },
+  ingredients: { title: 'AI 生成标准用料清单' },
+  steps: { title: 'AI 编排烹饪步骤' },
+  tips: { title: 'AI 生成关键小诀窍' },
+};
 
 export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
   visible,
@@ -63,6 +78,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
       : [{ order: 1, description: '' }]
   );
   const [tips, setTips] = useState(recipe.tips || '');
+  const [tags, setTags] = useState<string[]>(recipe.tags || []);
   const scrollViewRef = useRef<any>(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -98,11 +114,38 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
           : [{ order: 1, description: '' }]
       );
       setTips(recipe.tips || '');
+      setTags(recipe.tags || []);
       setAiGeneratingField(null);
     }
   }, [visible, recipe]);
 
-  // AI 字段生成调度器
+  // 内容是否相对原菜谱有实际修改（保存按钮仅在修改后可用）
+  const isDirty = useMemo(() => {
+    // 归一化：去首尾空格、忽略全空行、步骤按顺序位对比
+    const normIngredients = (list: Ingredient[]) =>
+      list
+        .map((i) => `${i.name.trim()}|${i.amount.trim()}`)
+        .filter((s) => s !== '|');
+    const normSteps = (list: Step[]) =>
+      list
+        .map((s, idx) => `${idx}|${s.description.trim()}`)
+        .filter((s) => !s.endsWith('|'));
+
+    return (
+      name.trim() !== recipe.name.trim() ||
+      category !== recipe.category ||
+      String(recipe.cookTime || 20) !== cookTime ||
+      (recipe.difficulty || 'medium') !== difficulty ||
+      description.trim() !== (recipe.description || '').trim() ||
+      tips.trim() !== (recipe.tips || '').trim() ||
+      JSON.stringify(tags) !== JSON.stringify(recipe.tags || []) ||
+      JSON.stringify(normIngredients(ingredients)) !==
+        JSON.stringify(normIngredients(recipe.ingredients || [])) ||
+      JSON.stringify(normSteps(steps)) !== JSON.stringify(normSteps(recipe.steps || []))
+    );
+  }, [name, category, cookTime, difficulty, description, ingredients, steps, tips, tags, recipe]);
+
+  // AI 字段生成调度器（二次确认 → 渠道/模型可选 → 全局忙碌守卫）
   const handleAiGenerate = async (field: RecipeGenField) => {
     const dishName = name.trim();
     if (!dishName) {
@@ -110,28 +153,39 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
       return;
     }
 
-    if (field === 'all') {
-      const ok = await confirm({
-        title: 'AI 一键生成整道食谱',
-        message: `将分两步为「${dishName}」生成食谱：先定用料与风味，再按用料逐条编排步骤（食材保证全部用到，质量更稳），约需 1 分钟。确定继续吗？`,
-        confirmText: '立即生成',
-        icon: 'sparkles',
-      });
-      if (!ok) return;
+    // 本弹窗内已有生成任务，或全局有其他 AI 任务在跑时，拦截并提示
+    if (aiGeneratingField) {
+      toast({ type: 'warning', message: `已有 AI 在生成「${FIELD_META[aiGeneratingField].title}」中，请稍候再试` });
+      return;
     }
+    if (!ensureAiIdle()) return;
+
+    const fieldMeta = FIELD_META[field];
+    const confirmed = await requestAiGenerateConfirm({
+      title: fieldMeta.title,
+      dishName,
+      description: fieldMeta.desc,
+      estimated: field === 'all' ? '约需 1 分钟' : '约需 10-30 秒',
+    });
+    // 未确认或所选渠道配置不完整（弹层已兜底提示）时中止
+    if (!confirmed?.confirmed) return;
 
     setAiGeneratingField(field);
     try {
-      const result = await generateRecipeWithAi({
-        field,
-        recipeName: dishName,
-        category,
-        categoryOptions: CATEGORIES,
-        cookTime,
-        difficulty,
-        currentIngredients: ingredients,
-        currentSteps: steps,
-      });
+      const result = await runAiTask(fieldMeta.title, () =>
+        generateRecipeWithAi({
+          field,
+          recipeName: dishName,
+          category,
+          categoryOptions: CATEGORIES,
+          cookTime,
+          difficulty,
+          currentIngredients: ingredients,
+          currentSteps: steps,
+          extraPrompt: confirmed.input || undefined,
+          aiSettings: confirmed.config,
+        })
+      );
 
       if (field === 'all') {
         if (result.category) setCategory(result.category);
@@ -159,6 +213,13 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
         setTips(result.tips);
         toast({ type: 'success', message: '已生成大厨烹饪秘诀' });
       }
+
+      logActivity({
+        type: 'ai',
+        action: fieldMeta.title,
+        detail: dishName,
+        meta: { 渠道: confirmed.config.providerId || '—', 模型: confirmed.config.model || '—' },
+      });
 
       // 一致性体检结果提示：有食材漏用时要明确告诉用户
       const unusedList = result.warnings?.unusedIngredients || [];
@@ -213,6 +274,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
   };
 
   const handleSave = () => {
+    if (!isDirty) return;
     const trimmedName = name.trim();
     if (!trimmedName) {
       toast({ type: 'info', message: '请输入菜谱名称' });
@@ -226,6 +288,17 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
       .filter((s) => s.description.trim())
       .map((s, idx) => ({ order: idx + 1, description: s.description.trim() }));
 
+    // 标签：用户勾选优先；为空时按内容自动推断兜底
+    const nextTags = tags.length
+      ? tags
+      : inferRecipeTags({
+          name: trimmedName,
+          description: description.trim(),
+          cookTime: parseInt(cookTime, 10) || 20,
+          ingredients: cleanIngredients,
+          category: category.trim() || '家常菜',
+        });
+
     const updatedRecipe: Recipe = {
       ...recipe,
       name: trimmedName,
@@ -235,11 +308,18 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
       description: description.trim(),
       ingredients: cleanIngredients.length ? cleanIngredients : recipe.ingredients,
       steps: cleanSteps.length ? cleanSteps : recipe.steps,
+      tags: nextTags,
       tips: tips.trim(),
     };
 
     useImportedRecipesStore.getState().saveOrUpdateRecipe(updatedRecipe);
     toast({ type: 'success', message: '菜谱修改已保存' });
+    logActivity({
+      type: 'recipe',
+      action: '编辑菜谱',
+      detail: `${trimmedName}（${updatedRecipe.category}）`,
+      meta: { 分类: updatedRecipe.category, 标签: updatedRecipe.tags?.join('/') || '无' },
+    });
     if (onSaved) onSaved(updatedRecipe);
     onClose();
   };
@@ -336,7 +416,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
             />
           </View>
 
-          {/* 2. 所属分类 */}
+          {/* 2. 所属分类 + 特性标签 */}
           <View style={styles.fieldCard}>
             <View style={styles.fieldHeaderRow}>
               <View style={styles.fieldTitleRow}>
@@ -366,6 +446,35 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
                 );
               })}
             </ScrollView>
+
+            {/* 特性标签（多选） */}
+            <View style={styles.fieldTitleRow}>
+              <Text style={styles.fieldLabel}>特性标签</Text>
+              <Text style={styles.fieldSubHint}>可多选，用于筛选与推荐</Text>
+            </View>
+            <View style={styles.tagWrap}>
+              {RECIPE_TAGS.map((tag) => {
+                const isSelected = tags.includes(tag);
+                return (
+                  <TouchableOpacity
+                    key={tag}
+                    style={[styles.chip, isSelected && styles.chipActive]}
+                    onPress={() =>
+                      setTags((prev) =>
+                        isSelected
+                          ? prev.filter((t) => t !== tag)
+                          : prev.length >= MAX_RECIPE_TAGS
+                          ? prev
+                          : [...prev, tag]
+                      )
+                    }
+                    activeOpacity={0.75}
+                  >
+                    <Text style={[styles.chipText, isSelected && styles.chipTextActive]}>{tag}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
           {/* 3. 烹饪时长与难度 */}
@@ -629,12 +738,19 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
         {/* 底部保存按钮 */}
         <View style={styles.footer}>
           <TouchableOpacity
-            style={styles.saveBtn}
+            style={[styles.saveBtn, !isDirty && styles.saveBtnDisabled]}
             onPress={handleSave}
+            disabled={!isDirty}
             activeOpacity={0.85}
           >
-            <Check size={18} color="#FFFFFF" strokeWidth={2.5} />
-            <Text style={styles.saveBtnText}>保存菜谱</Text>
+            <Check
+              size={18}
+              color={isDirty ? '#FFFFFF' : Palette.cocoa[400]}
+              strokeWidth={2.5}
+            />
+            <Text style={[styles.saveBtnText, !isDirty && styles.saveBtnTextDisabled]}>
+              {isDirty ? '保存菜谱' : '尚未修改'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -862,6 +978,12 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 4,
   },
+  tagWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    paddingVertical: 4,
+  },
   chip: {
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -963,6 +1085,12 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     paddingVertical: 13,
     gap: 6,
+  },
+  saveBtnDisabled: {
+    backgroundColor: Palette.cocoa[200],
+  },
+  saveBtnTextDisabled: {
+    color: Palette.cocoa[700],
   },
   saveBtnText: {
     color: '#FFFFFF',
