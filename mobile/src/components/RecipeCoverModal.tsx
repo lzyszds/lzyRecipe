@@ -374,7 +374,7 @@ export const RecipeCoverModal: React.FC<RecipeCoverModalProps> = ({
                 </Pressable>
               ) : (
                 <View style={styles.aiEmptyBox}>
-                  <Sparkles size={36} color={Palette.sage[500]} />
+                  <Sparkles size={36} color={Palette.sage} />
                   <Text style={styles.aiEmptyTitle}>AI 定制高画质美食封面</Text>
                   <Text style={styles.aiEmptyDesc}>
                     大模型将根据菜品专属特点，构图生动光影与盘饰，生成餐厅级封面
@@ -778,7 +778,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: Palette.sage[600],
+    backgroundColor: Palette.sage,
     paddingVertical: 14,
     borderRadius: Radius.lg,
   },

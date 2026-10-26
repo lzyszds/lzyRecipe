@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,7 @@ import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useImportedRecipesStore } from '@/store/importedRecipesStore';
+import { useRecentViewsStore } from '@/store/recentViewsStore';
 import { toast } from '@/store/feedbackStore';
 import { RecipeImage } from '@/components/RecipeImage';
 import { RecipeCoverModal } from '@/components/RecipeCoverModal';
@@ -52,6 +53,14 @@ export default function RecipeDetailScreen() {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [previewImageVisible, setPreviewImageVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const recordView = useRecentViewsStore((s) => s.recordView);
+
+  // 记录最近浏览，供首页“最近点过”快速回到常看的菜
+  useEffect(() => {
+    if (recipe?.id) {
+      recordView(recipe.id);
+    }
+  }, [recipe?.id, recordView]);
 
   if (!recipe) {
     return (

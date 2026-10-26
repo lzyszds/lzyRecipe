@@ -44,38 +44,14 @@ import {
 import { pushToCloud } from '@/lib/cloudSync';
 import { toast } from '@/store/feedbackStore';
 import { Palette } from '@/constants/theme';
+import { AI_CHANNELS } from '@/constants/aiChannels';
 
 interface AiSettingsModalProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const PRESETS = [
-  {
-    id: 'nvidia',
-    name: 'NVIDIA NIM',
-    baseUrl: 'https://integrate.api.nvidia.com/v1',
-    model: 'meta/llama-3.1-70b-instruct',
-    placeholderKey: 'nvapi-xxxxxxxxxxxx',
-    desc: '英伟达云端高性能微服务，支持 Llama 3.1、Nemotron 等，含免费体验额度',
-  },
-  {
-    id: 'siliconflow',
-    name: '硅基流动',
-    baseUrl: 'https://api.siliconflow.cn/v1',
-    model: 'deepseek-ai/DeepSeek-V3',
-    placeholderKey: 'sk-xxxxxxxxxxxx',
-    desc: '国内优质模型托管平台，支持 DeepSeek-V3/R1、Qwen 等，极速响应',
-  },
-  {
-    id: 'custom',
-    name: '自定义接口 (OpenAI 规范)',
-    baseUrl: '',
-    model: '',
-    placeholderKey: '填入自定义渠道对应的 API Key',
-    desc: '自由填写任意兼容 OpenAI /chat/completions 规范的 API 接口',
-  },
-];
+const PRESETS = AI_CHANNELS;
 
 type FilterType = 'all' | 'free' | 'large' | 'light' | 'vision';
 
@@ -102,8 +78,8 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
 
   const [channelModels, setChannelModels] = useState<Record<string, string>>({
     nvidia: 'meta/llama-3.1-70b-instruct',
-    siliconflow: 'deepseek-ai/DeepSeek-V3',
-    deepseek: 'deepseek-chat',
+    siliconflow: 'deepseek-ai/DeepSeek-V3.2',
+    deepseek: 'deepseek-flash',
     custom: '',
   });
 
@@ -155,8 +131,8 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
 
       const models: Record<string, string> = {
         nvidia: 'meta/llama-3.1-70b-instruct',
-        siliconflow: 'deepseek-ai/DeepSeek-V3',
-        deepseek: 'deepseek-chat',
+        siliconflow: 'deepseek-ai/DeepSeek-V3.2',
+        deepseek: 'deepseek-flash',
         custom: '',
         ...(currentAi.channelModels || {}),
       };
@@ -491,28 +467,29 @@ export const AiSettingsModal: React.FC<AiSettingsModalProps> = ({
                   {PRESETS.map((p) => {
                     const isSelected = selectedPresetId === p.id;
                     const hasKey = Boolean(channelKeys[p.id]?.trim());
+                    const Icon = p.icon;
                     return (
                       <TouchableOpacity
                         key={p.id}
                         style={[
                           styles.presetChip,
+                          !isSelected && styles.presetChipIconOnly,
                           isSelected && styles.presetChipActive,
                         ]}
                         onPress={() => handleApplyPreset(p)}
                         activeOpacity={0.75}
                       >
-                        <Text
-                          style={[
-                            styles.presetChipText,
-                            isSelected && styles.presetChipTextActive,
-                          ]}
-                        >
-                          {p.name}
-                        </Text>
+                        <Icon size={isSelected ? 14 : 17} color={isSelected ? Palette.primary : p.iconColor} />
+                        {isSelected && (
+                          <Text style={[styles.presetChipText, styles.presetChipTextActive]} numberOfLines={1}>
+                            {p.name}
+                          </Text>
+                        )}
                         {hasKey && (
                           <View
                             style={[
                               styles.keyBadgeDot,
+                              !isSelected && styles.keyBadgeDotSolo,
                               isSelected && styles.keyBadgeDotActive,
                             ]}
                           />
@@ -1017,6 +994,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
   },
+  presetChipIconOnly: {
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 0,
+    borderRadius: 18,
+  },
   presetChipActive: {
     backgroundColor: 'rgba(217, 107, 56, 0.12)',
     borderColor: Palette.primary,
@@ -1027,6 +1012,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#10B981',
     marginLeft: 6,
+  },
+  keyBadgeDotSolo: {
+    position: 'absolute',
+    right: 5,
+    top: 4,
+    marginLeft: 0,
   },
   keyBadgeDotActive: {
     backgroundColor: Palette.primary,

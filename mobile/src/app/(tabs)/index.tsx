@@ -22,9 +22,11 @@ import {
   ChefHat,
   Flame,
   ArrowRight,
+  History,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
+import { useRecentViewsStore } from '@/store/recentViewsStore';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImage } from '@/components/RecipeImage';
 import { getTodayString, getWeekdayName } from '@/lib/bentoDate';
@@ -68,6 +70,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const allRecipes = useAllRecipes();
   const openMealPlanSheet = useMealPlanSheetStore((s) => s.openSheet);
+  const recentViews = useRecentViewsStore((s) => s.recent);
+  const clearRecent = useRecentViewsStore((s) => s.clearRecent);
   const { width: windowWidth } = useWindowDimensions();
 
   const [selectedIngredient, setSelectedIngredient] = useState<string | null>(null);
@@ -107,6 +111,15 @@ export default function HomeScreen() {
       allRecipes[1];
     return [ribs, pork].filter(Boolean) as Recipe[];
   }, [allRecipes]);
+
+  // 最近点开的菜（按浏览时间倒序，自动过滤已删除菜谱）
+  const recentRecipes = useMemo(() => {
+    const recipeMap = new Map(allRecipes.map((recipe) => [recipe.id, recipe]));
+    return recentViews
+      .map((item) => recipeMap.get(item.recipeId))
+      .filter((recipe): recipe is Recipe => Boolean(recipe))
+      .slice(0, 10);
+  }, [recentViews, allRecipes]);
 
   // 根据选中的食材实时匹配菜品
   const matchedRecipes = useMemo(() => {
@@ -294,6 +307,65 @@ export default function HomeScreen() {
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
+        )}
+
+        {/* 最近点过：一键回到常看的菜 */}
+        {recentRecipes.length > 0 && (
+          <View style={styles.recentSection}>
+            <View style={styles.recentHeader}>
+              <View style={styles.sectionTitleRow}>
+                <History size={16} color={Palette.primary} />
+                <Text style={styles.sectionTitle}>最近点过</Text>
+                <View style={styles.countBadge}>
+                  <Text style={styles.countBadgeText}>{recentRecipes.length}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={clearRecent}
+                activeOpacity={0.7}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Text style={styles.recentClearText}>清空</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.recentScrollContent}
+            >
+              {recentRecipes.map((dish) => (
+                <TouchableOpacity
+                  key={dish.id}
+                  style={styles.recentCard}
+                  onPress={() => handleOpenRecipe(dish)}
+                  activeOpacity={0.86}
+                >
+                  <View style={styles.recentImageWrap}>
+                    <RecipeImage
+                      coverImage={dish.coverImage}
+                      name={dish.name}
+                      category={dish.category}
+                    />
+                    <TouchableOpacity
+                      style={styles.recentAddBtn}
+                      onPress={(e) => handleAddToPlan(e, dish)}
+                      activeOpacity={0.8}
+                      accessibilityLabel={`将${dish.name}排入便当盒`}
+                    >
+                      <Plus size={13} color={Palette.cocoa[900]} strokeWidth={2.6} />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={styles.recentName} numberOfLines={1}>
+                    {dish.name}
+                  </Text>
+                  <Text style={styles.recentMeta} numberOfLines={1}>
+                    {dish.cookTime || 0}分钟 · {dish.category}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
         )}
 
         {/* 冰箱清库存 · 点食材配菜 卡片 */}
@@ -657,6 +729,58 @@ const styles = StyleSheet.create({
     color: '#1C1917',
     fontSize: 12,
     fontWeight: '800',
+  },
+  // 最近点过的菜
+  recentSection: {
+    marginBottom: 20,
+  },
+  recentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  recentClearText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: Palette.cocoa[400],
+  },
+  recentScrollContent: {
+    gap: 10,
+    paddingRight: 4,
+  },
+  recentCard: {
+    width: 104,
+  },
+  recentImageWrap: {
+    width: 104,
+    height: 78,
+    borderRadius: 14,
+    overflow: 'hidden',
+    backgroundColor: Palette.tagWarm,
+    position: 'relative',
+  },
+  recentAddBtn: {
+    position: 'absolute',
+    right: 6,
+    bottom: 6,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recentName: {
+    marginTop: 6,
+    fontSize: 12,
+    fontWeight: '700',
+    color: Palette.cocoa[900],
+  },
+  recentMeta: {
+    marginTop: 2,
+    fontSize: 10,
+    color: Palette.cocoa[400],
   },
   // 冰箱清库存卡片
   inventoryCard: {

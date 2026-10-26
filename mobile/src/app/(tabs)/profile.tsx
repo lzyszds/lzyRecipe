@@ -21,6 +21,7 @@ import {
   Cloud,
   FileUp,
   ImagePlus,
+  FlaskConical,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
@@ -206,6 +207,26 @@ export default function ProfileScreen() {
               <Text style={styles.menuTitle}>菜谱智能导入</Text>
               <Text style={styles.menuSubtitle}>
                 AI 自由提取 · JSON 文件/剪贴板批量导入
+              </Text>
+            </View>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
+          </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          {/* AI 试菜对比入口 */}
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => router.push('/ai-compare')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#EEF2FF' }]}>
+              <FlaskConical size={18} color="#4F46E5" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.menuTitle}>AI 试菜对比</Text>
+              <Text style={styles.menuSubtitle}>
+                同一道菜用两个模型各生成一次，闭环体检给出口碑
               </Text>
             </View>
             <ChevronRight size={16} color={Palette.cocoa[400]} />

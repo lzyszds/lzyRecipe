@@ -28,6 +28,7 @@ import {
 } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
 import { Palette, Radius } from '../constants/theme';
+import { RECIPE_CATEGORIES } from '../constants/recipeCategories';
 import { Recipe, Ingredient, Step, DifficultyLevel } from '../types';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { generateRecipeWithAi, RecipeGenField } from '../lib/aiRecipe';
@@ -40,22 +41,7 @@ interface RecipeEditModalProps {
   onSaved?: (updated: Recipe) => void;
 }
 
-const CATEGORIES = [
-  '家常菜',
-  '快手菜',
-  '川菜',
-  '粤菜',
-  '湘菜',
-  '鲁菜',
-  '汤羹',
-  '主食',
-  '海鲜',
-  '肉类',
-  '蔬菜',
-  '减脂餐',
-  '甜点',
-  '饮品',
-];
+const CATEGORIES = RECIPE_CATEGORIES;
 
 export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
   visible,
@@ -127,7 +113,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
     if (field === 'all') {
       const ok = await confirm({
         title: 'AI 一键生成整道食谱',
-        message: `将根据菜名「${dishName}」自动补全分类、用时、风味描述、食材用量、制作步骤与做饭秘诀。确定继续吗？`,
+        message: `将分两步为「${dishName}」生成食谱：先定用料与风味，再按用料逐条编排步骤（食材保证全部用到，质量更稳），约需 1 分钟。确定继续吗？`,
         confirmText: '立即生成',
         icon: 'sparkles',
       });
@@ -140,6 +126,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
         field,
         recipeName: dishName,
         category,
+        categoryOptions: CATEGORIES,
         cookTime,
         difficulty,
         currentIngredients: ingredients,
@@ -171,6 +158,15 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
       } else if (field === 'tips' && result.tips) {
         setTips(result.tips);
         toast({ type: 'success', message: '已生成大厨烹饪秘诀' });
+      }
+
+      // 一致性体检结果提示：有食材漏用时要明确告诉用户
+      const unusedList = result.warnings?.unusedIngredients || [];
+      if (unusedList.length > 0) {
+        toast({
+          type: 'warning',
+          message: `注意：「${unusedList.join('、')}」未出现在步骤中，建议手动检查或重新生成步骤`,
+        });
       }
     } catch (err: any) {
       toast({
@@ -299,7 +295,7 @@ export const RecipeEditModal: React.FC<RecipeEditModalProps> = ({
               <View style={styles.aiBannerTextCol}>
                 <Text style={styles.aiBannerTitle}>AI 智能一键生成完整食谱</Text>
                 <Text style={styles.aiBannerDesc}>
-                  输入菜名后点击，自动生成食材比例、火候步骤与大厨秘诀
+                  两步生成：先定用料 → 再按用料编排步骤，保证每个食材都用上
                 </Text>
               </View>
             </View>

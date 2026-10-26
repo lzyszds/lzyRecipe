@@ -27,10 +27,12 @@ import {
   Clock,
 } from 'lucide-react-native';
 import { useAllRecipes, getCategoriesWithCounts } from '@/lib/recipes';
+import { searchRecipes } from '@/lib/search';
 import { RecipeImage } from '@/components/RecipeImage';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useBentoStore } from '@/store/bentoStore';
+import { useSearchHistoryStore } from '@/store/searchHistoryStore';
 import { toast } from '@/store/feedbackStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { Recipe, DifficultyLevel } from '@/types';
@@ -294,6 +296,7 @@ export default function RecipesScreen() {
   const [cardLayout, setCardLayout] = useState<CardLayout>('compact');
 
   const { isFavorite } = useFavoritesStore();
+  const addSearch = useSearchHistoryStore((s) => s.addSearch);
   const showToast = (message: string) => toast({ type: 'info', message });
 
   const flatListRef = useRef<FlatList<FlatListItem>>(null);
@@ -317,7 +320,6 @@ export default function RecipesScreen() {
   // 构建平铺数据（包含分类 Header 与 Recipe Item），用于虚拟化滚动和精准跳转
   const { flatListData, categoryIndexMap, totalCount } = useMemo(() => {
     const isSearching = Boolean(searchQuery.trim());
-    const q = searchQuery.trim().toLowerCase();
 
     const diffMap: Record<DifficultyLevel, number> = {
       easy: 1,
@@ -325,16 +327,10 @@ export default function RecipesScreen() {
       hard: 3,
     };
 
-    // 过滤函数
+    // 过滤函数：搜索匹配交给 lib/search 统一处理（支持同义词、多关键词与相关度排序）
     const matchFilter = (r: Recipe) => {
       if (onlyFast && r.cookTime > 30) return false;
       if (onlyFav && !isFavorite(r.id)) return false;
-      if (isSearching) {
-        const matchTitle = r.name.toLowerCase().includes(q);
-        const matchCat = r.category.toLowerCase().includes(q);
-        const matchIng = r.ingredients.some((i) => i.name.toLowerCase().includes(q));
-        if (!matchTitle && !matchCat && !matchIng) return false;
-      }
       return true;
     };
 
@@ -350,8 +346,10 @@ export default function RecipesScreen() {
     let total = 0;
 
     if (isSearching) {
-      // 搜索模式：直接展示搜索结果平铺
-      const matched = allRecipes.filter(matchFilter);
+      // 搜索模式：按相关度排序，平铺展示搜索结果
+      const matched = searchRecipes(allRecipes, searchQuery)
+        .hits.map((hit) => hit.recipe)
+        .filter(matchFilter);
       if (sortMode !== 'default') matched.sort(sortFn);
       matched.forEach((r) => {
         flatItems.push({ type: 'recipe', recipe: r });
@@ -577,11 +575,14 @@ export default function RecipesScreen() {
             <Search size={15} color={Palette.primary} strokeWidth={2.2} />
             <TextInput
               style={styles.searchInput}
-              placeholder="搜菜名、冰箱食材（如：排骨、冬瓜、虾）..."
+              placeholder="搜菜名、食材、口味（支持空格多词）..."
               placeholderTextColor="rgba(133, 124, 116, 0.7)"
               value={searchQuery}
               onChangeText={(text) => {
                 setSearchQuery(text);
+              }}
+              onSubmitEditing={() => {
+                if (searchQuery.trim()) addSearch(searchQuery.trim());
               }}
               returnKeyType="search"
             />

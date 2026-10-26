@@ -54,8 +54,8 @@ export const DEFAULT_AI: AiSettings = {
   },
   channelModels: {
     nvidia: 'meta/llama-3.1-70b-instruct',
-    siliconflow: 'deepseek-ai/DeepSeek-V3',
-    deepseek: 'deepseek-chat',
+    siliconflow: 'deepseek-ai/DeepSeek-V3.2',
+    deepseek: 'deepseek-flash',
     custom: '',
   },
   channelBaseUrls: {

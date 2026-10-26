@@ -30,6 +30,7 @@ export default function RootLayout() {
         <Stack.Screen name="favorites" options={{ headerShown: false }} />
         <Stack.Screen name="search" options={{ headerShown: false }} />
         <Stack.Screen name="notes" options={{ headerShown: false }} />
+        <Stack.Screen name="ai-compare" options={{ headerShown: false }} />
       </Stack>
 
       {/* 自选排入便当盒抽屉 */}
