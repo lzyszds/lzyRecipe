@@ -315,7 +315,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={() => router.push('/activity-log')}
+            onPress={() => router.push('/activity-log' as any)}
             activeOpacity={0.7}
           >
             <View style={[styles.menuIconBg, { backgroundColor: '#E8F0E9' }]}>
