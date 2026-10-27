@@ -2,7 +2,7 @@
   "expo": {
     "name": "食刻 CookMoment",
     "slug": "mobile",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "mobile",
@@ -17,7 +17,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.mobile",
-      "versionCode": 10100
+      "versionCode": 10200
     },
     "web": {
       "output": "single",
