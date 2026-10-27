@@ -15,15 +15,16 @@ import {
   Sparkles,
   ChevronRight,
   Heart,
-  ChefHat,
   ArrowRight,
   History,
 } from 'lucide-react-native';
+import { Image } from 'expo-image';
 import { useAllRecipes } from '@/lib/recipes';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useRecentCookedStore } from '@/store/recentCookedStore';
 import { useUiPrefsStore } from '@/store/uiPrefsStore';
 import { useFavoritesStore } from '@/store/favoritesStore';
+import { useBrandFont } from '@/hooks/useBrandFont';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImage } from '@/components/RecipeImage';
 import { HeroCarousel } from '@/components/HeroCarousel';
@@ -78,6 +79,8 @@ function scoreRecipe(
 
 export default function HomeScreen() {
   const router = useRouter();
+  // 品牌字体：站酷快乐体（与开屏一致，全局缓存）
+  const brandFontReady = useBrandFont();
   const allRecipes = useAllRecipes();
   const openMealPlanSheet = useMealPlanSheetStore((s) => s.openSheet);
   const recentCooked = useRecentCookedStore((s) => s.recent);
@@ -181,16 +184,23 @@ export default function HomeScreen() {
         {/* 品牌行与快捷入口 */}
         <View style={styles.headerTopRow}>
           <View style={styles.brandRow}>
-            <View style={styles.brandBadge}>
-              <ChefHat size={16} color="#FFFFFF" strokeWidth={2.4} />
-            </View>
+            <Image
+              source={require('../../assets/images/093926azcUrjbXBsmEPSSw.png')}
+              style={styles.brandMascot}
+              contentFit="contain"
+            />
             <View style={styles.brandTextWrap}>
               <View style={styles.brandTitleRow}>
-                <Text style={styles.brandTitle}>食刻</Text>
+                <Text
+                  style={[styles.brandTitle, brandFontReady && styles.brandTitleFont]}
+                >
+                  食刻
+                </Text>
                 <View style={styles.periodPill}>
                   <Text style={styles.periodPillText}>{inspirationSubtitle}</Text>
                 </View>
               </View>
+              <Text style={styles.brandSubtitle}>CookMoment</Text>
             </View>
           </View>
 
@@ -379,16 +389,13 @@ const styles = StyleSheet.create({
     gap: 10,
     flex: 1,
   },
-  brandBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: Palette.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
+  brandMascot: {
+    width: 48,
+    height: 36,
   },
   brandTextWrap: {
     flex: 1,
+    gap: 1,
   },
   brandTitleRow: {
     flexDirection: 'row',
@@ -396,10 +403,21 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   brandTitle: {
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 23,
+    fontWeight: '400',
     color: Palette.cocoa[900],
-    letterSpacing: -0.3,
+    letterSpacing: 2,
+  },
+  // 站酷快乐体（与开屏动画一致的品牌展示字体），就绪后启用
+  brandTitleFont: {
+    fontFamily: 'ZCOOL KuaiLe',
+  },
+  brandSubtitle: {
+    fontSize: 9,
+    fontWeight: '600',
+    color: Palette.inkLight,
+    letterSpacing: 2.5,
+    textTransform: 'uppercase',
   },
   periodPill: {
     backgroundColor: Palette.amberSoft,
