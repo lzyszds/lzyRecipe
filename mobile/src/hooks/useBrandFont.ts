@@ -7,7 +7,7 @@ import { useFonts } from 'expo-font';
  */
 export function useBrandFont(): boolean {
   const [loaded, error] = useFonts({
-    'ZCOOL KuaiLe': require('../assets/fonts/ZCOOLKuaiLe-Regular.ttf'),
+    'ZCOOL KuaiLe': require('../../assets/fonts/ZCOOLKuaiLe-Regular.ttf'),
   });
   return loaded || !!error;
 }

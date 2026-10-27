@@ -185,7 +185,7 @@ export default function HomeScreen() {
         <View style={styles.headerTopRow}>
           <View style={styles.brandRow}>
             <Image
-              source={require('../../assets/images/093926azcUrjbXBsmEPSSw.png')}
+              source={require('../../../assets/images/093926azcUrjbXBsmEPSSw.png')}
               style={styles.brandMascot}
               contentFit="contain"
             />
