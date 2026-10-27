@@ -1,5 +1,13 @@
 # 项目开发与 AI 交互规范
 
+## 0. 版本发布与热更约定（每次用户要求"更新/发布"时必须遵守）
+- **每次发版必须升级版本号**：先运行 `node scripts/bump-version.mjs auto`（按模块改动自动判断 patch/minor/major），脚本会同步更新 `expo.version` 与 `android.versionCode`。
+- **级别判断**：bug 修复/样式/文案/性能 → `patch`；新功能/新模块/交互增强 → `minor`；破坏性改版/架构重做 → `major`。用户说"帮我更新"时未指定级别就按此推断，并在回复中说明判断依据。
+- **runtimeVersion（固定 "1.0.0"）**：纯 JS 改动**永远不要动它**——动了已装用户就收不到热更。仅当新增/升级原生依赖时手动 bump 并重新 `eas build`。
+- **发版命令顺序**：
+  1. bump 脚本 → 2. `git add -A && git commit -m "chore(release): vX.Y.Z"` → 3. push → 4. `bunx eas-cli update --branch production --environment production --message "vX.Y.Z 摘要"`
+- **重新打包**（仅原生变更时）：`bunx eas-cli build --platform android --profile production --non-interactive`
+
 ## 1. Git Commit 提交规范（必须遵守）
 - **语言要求**：本项目的所有 Git Commit 提交信息**必须全部使用中文**撰写，严禁生成英文提交信息。
 - **提交规范**：遵循语义化前缀 + 清晰中文描述，格式推荐为：
