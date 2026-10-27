@@ -42,7 +42,8 @@
         }
       ],
       "expo-font",
-      "expo-image"
+      "expo-image",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -58,7 +59,7 @@
         "projectId": "3d935fe6-c25d-40ea-a8fd-12503cc2c09b"
       }
     },
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": "1.1.0",
     "updates": {
       "url": "https://u.expo.dev/3d935fe6-c25d-40ea-a8fd-12503cc2c09b"
     }

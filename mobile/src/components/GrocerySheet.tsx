@@ -18,8 +18,10 @@ import {
   Zap,
   Package,
   Lightbulb,
+  Copy,
 } from 'lucide-react-native';
 import { BottomSheetModal } from './BottomSheetModal';
+import { ShareCardModal } from './ShareCardModal';
 import { useBentoStore } from '@/store/bentoStore';
 import { useAllRecipes } from '@/lib/recipes';
 import { buildGroceryList, formatGroceryToText, GroceryItem } from '@/lib/grocery';
@@ -43,6 +45,7 @@ export const GrocerySheet: React.FC<GrocerySheetProps> = ({
   const allRecipes = useAllRecipes();
   const { bentoByDate, purchasedIngredients, togglePurchased, clearPurchased } =
     useBentoStore();
+  const [shareModalVisible, setShareModalVisible] = React.useState(false);
 
   const groceryData = useMemo(
     () => buildGroceryList(weekDates, bentoByDate, allRecipes),
@@ -118,11 +121,12 @@ export const GrocerySheet: React.FC<GrocerySheetProps> = ({
   };
 
   return (
-    <BottomSheetModal
-      visible={visible}
-      onClose={onClose}
-      sheetStyle={styles.sheet}
-    >
+    <>
+      <BottomSheetModal
+        visible={visible}
+        onClose={onClose}
+        sheetStyle={styles.sheet}
+      >
       <SafeAreaView edges={['bottom']} style={styles.safeArea}>
         {/* 顶栏 */}
         <View style={styles.header}>
@@ -185,7 +189,7 @@ export const GrocerySheet: React.FC<GrocerySheetProps> = ({
               activeOpacity={0.7}
             >
               <RotateCcw size={14} color={Palette.cocoa[700]} />
-              <Text style={styles.resetBtnText}>重置打勾</Text>
+              <Text style={styles.resetBtnText}>重置</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -193,13 +197,40 @@ export const GrocerySheet: React.FC<GrocerySheetProps> = ({
               onPress={handleCopy}
               activeOpacity={0.85}
             >
+              <Copy size={15} color={Palette.cocoa[700]} />
+              <Text style={styles.copyBtnText}>复制</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.shareBtn}
+              onPress={() => setShareModalVisible(true)}
+              activeOpacity={0.85}
+            >
               <Share2 size={15} color="#FFFFFF" />
-              <Text style={styles.copyBtnText}>一键复制发给家人</Text>
+              <Text style={styles.shareBtnText}>分享</Text>
             </TouchableOpacity>
           </View>
         )}
       </SafeAreaView>
-    </BottomSheetModal>
+      </BottomSheetModal>
+
+      {/* 一键分享卡片弹窗 */}
+      <ShareCardModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        payload={{
+          kind: 'grocery',
+          weekRange: formatWeekRange(mondayStr),
+          todayItems: groceryData.todayItems,
+          weekItems: groceryData.weekItems,
+          text: formatGroceryToText(
+            mondayStr,
+            groceryData.todayItems,
+            groceryData.weekItems
+          ),
+        }}
+      />
+    </>
   );
 };
 
@@ -401,6 +432,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: Palette.oat[100],
+    paddingVertical: 12,
+    borderRadius: 16,
+    gap: 6,
+  },
+  copyBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Palette.cocoa[700],
+  },
+  shareBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Palette.primary,
     paddingVertical: 12,
     borderRadius: 16,
@@ -411,7 +457,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  copyBtnText: {
+  shareBtnText: {
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',

@@ -20,6 +20,7 @@ import {
   Camera,
   Edit3,
   ZoomIn,
+  Share2,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
 import { useFavoritesStore } from '@/store/favoritesStore';
@@ -30,6 +31,8 @@ import { RecipeImage } from '@/components/RecipeImage';
 import { RecipeCoverModal } from '@/components/RecipeCoverModal';
 import { RecipeEditModal } from '@/components/RecipeEditModal';
 import { ImagePreviewModal } from '@/components/ImagePreviewModal';
+import { ShareCardModal } from '@/components/ShareCardModal';
+import { buildRecipeShareText } from '@/lib/share';
 import { DifficultyLevel } from '@/types';
 import { Palette, Radius } from '@/constants/theme';
 
@@ -51,6 +54,7 @@ export default function RecipeDetailScreen() {
   const [coverModalVisible, setCoverModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [previewImageVisible, setPreviewImageVisible] = useState(false);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   if (!recipe) {
@@ -135,6 +139,14 @@ export default function RecipeDetailScreen() {
                 {recipe.name}
               </Animated.Text>
             </View>
+
+            <TouchableOpacity
+              style={styles.iconCircle}
+              onPress={() => setShareModalVisible(true)}
+              activeOpacity={0.8}
+            >
+              <Share2 size={17} color={Palette.cocoa[700]} />
+            </TouchableOpacity>
 
             <TouchableOpacity
               style={styles.iconCircle}
@@ -347,6 +359,17 @@ export default function RecipeDetailScreen() {
         coverImage={recipe.coverImage}
         title={recipe.name}
         category={recipe.category}
+      />
+
+      {/* 一键分享卡片弹窗 */}
+      <ShareCardModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        payload={{
+          kind: 'recipe',
+          recipe,
+          text: buildRecipeShareText(recipe),
+        }}
       />
     </View>
   );

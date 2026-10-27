@@ -44,6 +44,11 @@ import {
   isToday,
 } from '@/lib/bentoDate';
 import { buildGroceryList, formatGroceryToText } from '@/lib/grocery';
+import {
+  buildWeeklyPlanShareText,
+  WeeklyPlanDayShare,
+} from '@/lib/share';
+import { ShareCardModal } from '@/components/ShareCardModal';
 import * as Clipboard from 'expo-clipboard';
 import { Palette } from '@/constants/theme';
 
@@ -87,6 +92,7 @@ export default function WeeklyPlanScreen() {
   const [grocerySheetVisible, setGrocerySheetVisible] = useState(false);
   const [clearModalVisible, setClearModalVisible] = useState(false);
   const [smartFillModalVisible, setSmartFillModalVisible] = useState(false);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
 
   // 本周 7 天
   const weekDates = useMemo(() => getWeekDates(mondayStr), [mondayStr]);
@@ -116,6 +122,32 @@ export default function WeeklyPlanScreen() {
   const handleThisWeek = () => {
     setMondayStr(currentWeekMonday);
     setSelectedDate(todayStr);
+  };
+
+  // 组装「一周便当计划」分享数据（图片卡片 + 纯文本）
+  const buildWeeklyPlanSharePayload = () => {
+    const days: WeeklyPlanDayShare[] = weekDates.map((date) => {
+      const dayBento = getDayBento(date);
+      const joinNames = (items: { recipeId: string }[]) =>
+        items
+          .map((item) => recipeMap.get(item.recipeId)?.name)
+          .filter(Boolean)
+          .join('、') || '未安排';
+      return {
+        weekday: getWeekdayName(date),
+        dateLabel: formatMonthDay(date),
+        breakfast: joinNames(dayBento.breakfast),
+        lunch: joinNames(dayBento.lunch),
+        dinner: joinNames(dayBento.dinner),
+      };
+    });
+    const weekRange = formatWeekRange(mondayStr);
+    return {
+      kind: 'weeklyPlan' as const,
+      weekRange,
+      days,
+      text: buildWeeklyPlanShareText(weekRange, days),
+    };
   };
 
   // 智能填充弹窗呼出
@@ -200,6 +232,15 @@ export default function WeeklyPlanScreen() {
           >
             <Sparkles size={13} color="#FFFFFF" />
             <Text style={styles.smartFillBtnText}>智能填充</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={() => setShareModalVisible(true)}
+            activeOpacity={0.8}
+            accessibilityLabel="分享本周便当计划"
+          >
+            <Share2 size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -507,6 +548,13 @@ export default function WeeklyPlanScreen() {
         selectedDate={selectedDate}
         mondayStr={mondayStr}
         weekDates={weekDates}
+      />
+
+      {/* 10. 一键分享卡片弹窗（本周便当计划） */}
+      <ShareCardModal
+        visible={shareModalVisible}
+        onClose={() => setShareModalVisible(false)}
+        payload={buildWeeklyPlanSharePayload()}
       />
     </SafeAreaView>
   );
