@@ -22,6 +22,7 @@ import {
 import { useAllRecipes } from '@/lib/recipes';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useRecentCookedStore } from '@/store/recentCookedStore';
+import { useUiPrefsStore } from '@/store/uiPrefsStore';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImage } from '@/components/RecipeImage';
@@ -84,7 +85,9 @@ export default function HomeScreen() {
   const favorites = useFavoritesStore((s) => s.favorites);
   const { width: windowWidth } = useWindowDimensions();
 
-  const [activeScene, setActiveScene] = useState<string>('all');
+  // 场景筛选持久化，回到首页保持上次的选择
+  const activeScene = useUiPrefsStore((s) => s.homeScene);
+  const setActiveScene = useUiPrefsStore((s) => s.setHomeScene);
   // 计算两列网格宽度
   const columnWidth = useMemo(() => {
     return Math.floor((windowWidth - 32 - 12) / 2);

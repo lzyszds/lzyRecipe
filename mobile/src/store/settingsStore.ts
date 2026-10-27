@@ -45,7 +45,7 @@ export const DEFAULT_AI: AiSettings = {
   providerId: 'nvidia',
   baseUrl: 'https://integrate.api.nvidia.com/v1',
   apiKey: '',
-  model: 'meta/llama-3.1-70b-instruct',
+  model: 'minimaxai/minimax-m3.1-flash',
   channelKeys: {
     nvidia: '',
     siliconflow: '',
@@ -53,7 +53,7 @@ export const DEFAULT_AI: AiSettings = {
     custom: '',
   },
   channelModels: {
-    nvidia: 'meta/llama-3.1-70b-instruct',
+    nvidia: 'minimaxai/minimax-m3.1-flash',
     siliconflow: 'deepseek-ai/DeepSeek-V3.2',
     deepseek: 'deepseek-flash',
     custom: '',
@@ -106,6 +106,17 @@ export const useSettingsStore = create<SettingsState>()(
           ...existingChannelKeys,
         };
 
+        // 旧版默认模型自动升级：llama-3.1-70b 已从 NVIDIA 渠道默认位退役，
+        // 若用户从未手动改过（仍等于旧默认值），则跟随新默认值，避免新装/老用户拿到过时模型
+        const LEGACY_DEFAULT_MODEL = 'meta/llama-3.1-70b-instruct';
+        const mergedChannelModels = {
+          ...DEFAULT_AI.channelModels,
+          ...(persistedAi.channelModels || {}),
+        };
+        if (mergedChannelModels.nvidia?.trim() === LEGACY_DEFAULT_MODEL) {
+          mergedChannelModels.nvidia = DEFAULT_AI.channelModels?.nvidia ?? '';
+        }
+
         const activeProviderId = persistedAi.providerId || detectedChannel;
         const activeKey = mergedChannelKeys[activeProviderId] || legacyKey || '';
 
@@ -123,11 +134,12 @@ export const useSettingsStore = create<SettingsState>()(
             ...persistedAi,
             providerId: activeProviderId,
             apiKey: activeKey,
+            model:
+              persistedAi.model?.trim() && persistedAi.model !== LEGACY_DEFAULT_MODEL
+                ? persistedAi.model
+                : DEFAULT_AI.model,
             channelKeys: mergedChannelKeys,
-            channelModels: {
-              ...DEFAULT_AI.channelModels,
-              ...(persistedAi.channelModels || {}),
-            },
+            channelModels: mergedChannelModels,
             channelBaseUrls: {
               ...DEFAULT_AI.channelBaseUrls,
               ...(persistedAi.channelBaseUrls || {}),

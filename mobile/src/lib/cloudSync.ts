@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
-import { useWeeklyPlanStore, emptyDay, WeeklyPlanDay } from '../store/weeklyPlanStore';
 import { useNotesStore, Note } from '../store/notesStore';
 import {
   useSettingsStore,
@@ -18,12 +17,6 @@ export interface SyncPayload {
   favorites: string[];
   favoritesUpdatedAt?: number;
   importedRecipes: Recipe[];
-  weeklyPlan: {
-    weekKey: string;
-    plans: WeeklyPlanDay[];
-    includeOptionalGroups?: any;
-    templates?: any[];
-  };
   notes: Note[];
   bento?: {
     recipePool: string[];
@@ -92,18 +85,12 @@ async function requestJson<T>(
 }
 
 export function collectPayload(): SyncPayload {
-  const plan = useWeeklyPlanStore.getState();
   const settings = useSettingsStore.getState();
   const allRecipes = getAllRecipes(useImportedRecipesStore.getState().importedRecipes);
   return {
     favorites: useFavoritesStore.getState().favorites,
     favoritesUpdatedAt: useFavoritesStore.getState().favoritesUpdatedAt,
     importedRecipes: allRecipes,
-    weeklyPlan: {
-      weekKey: plan.weekKey,
-      plans: plan.plans,
-      includeOptionalGroups: plan.includeOptionalGroups,
-    },
     notes: useNotesStore.getState().notes,
     bento: {
       recipePool: useBentoStore.getState().recipePool,
@@ -156,21 +143,6 @@ function applyPayload(
       }
     }
     useImportedRecipesStore.setState({ importedRecipes: [...map.values()] });
-  }
-
-  if (payload.weeklyPlan) {
-    const currentPlan = useWeeklyPlanStore.getState();
-    useWeeklyPlanStore.setState({
-      weekKey: payload.weeklyPlan.weekKey || currentPlan.weekKey,
-      plans:
-        Array.isArray(payload.weeklyPlan.plans) && payload.weeklyPlan.plans.length === 7
-          ? payload.weeklyPlan.plans
-          : Array.from({ length: 7 }, (_, i) => emptyDay(i)),
-      includeOptionalGroups: {
-        ...currentPlan.includeOptionalGroups,
-        ...(payload.weeklyPlan.includeOptionalGroups ?? {}),
-      },
-    });
   }
 
   if (payload.bento) {

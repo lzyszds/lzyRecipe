@@ -33,6 +33,7 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useBentoStore } from '@/store/bentoStore';
 import { useSearchHistoryStore } from '@/store/searchHistoryStore';
+import { useUiPrefsStore } from '@/store/uiPrefsStore';
 import { toast } from '@/store/feedbackStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { Recipe, DifficultyLevel } from '@/types';
@@ -292,8 +293,11 @@ export default function RecipesScreen() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [onlyFast, setOnlyFast] = useState<boolean>(false);
   const [onlyFav, setOnlyFav] = useState<boolean>(false);
-  const [sortMode, setSortMode] = useState<SortMode>('default');
-  const [cardLayout, setCardLayout] = useState<CardLayout>('compact');
+  // 排序与卡片视图持久化到 uiPrefsStore，冷启动不再重置
+  const sortMode = useUiPrefsStore((s) => s.recipesSortMode);
+  const setSortMode = useUiPrefsStore((s) => s.setRecipesSortMode);
+  const cardLayout = useUiPrefsStore((s) => s.recipesCardLayout);
+  const setCardLayout = useUiPrefsStore((s) => s.setRecipesCardLayout);
 
   const { isFavorite } = useFavoritesStore();
   const addSearch = useSearchHistoryStore((s) => s.addSearch);

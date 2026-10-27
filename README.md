@@ -65,4 +65,4 @@ bun run covers:photos  # 从百度图片搜索下载真实封面到 public/cover
 
 - [菜谱导入数据结构](docs/recipe-import.md) —— 外部菜谱导入的 JSON 结构与字段规则
 - [服务器图片上传与静态托管](docs/server-image-storage.md)
-- [应用更新说明](docs/updates.md)
+- [功能扩展建议清单](docs/feature-ideas.md) —— 已提出过的扩展建议与遗留物清理记录（讨论新功能前先读）

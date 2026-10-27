@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
 import { alert } from '@/store/feedbackStore';
 import {
   Heart,
@@ -46,6 +47,7 @@ export default function ProfileScreen() {
 
   const { sync, ai } = useSettingsStore();
   const { status: syncStatus, lastSyncedAt } = useSyncStore();
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
   const [syncModalVisible, setSyncModalVisible] = React.useState(false);
   const [aiModalVisible, setAiModalVisible] = React.useState(false);
   const [importModalVisible, setImportModalVisible] = React.useState(false);
@@ -344,7 +346,7 @@ export default function ProfileScreen() {
             onPress={() => {
               alert({
                 title: '食刻 CookMoment',
-                message: '版本：v2.0.0 (Expo 原生版)\n打造治愈、纯粹、丝滑的掌上私人美食生活。',
+                message: `版本：v${appVersion} (Expo 原生版)\n打造治愈、纯粹、丝滑的掌上私人美食生活。`,
                 icon: 'info',
                 confirmText: '太棒了',
               });
@@ -355,7 +357,7 @@ export default function ProfileScreen() {
               <Info size={18} color={Palette.cocoa[700]} />
             </View>
             <Text style={styles.menuTitle}>关于食刻</Text>
-            <Text style={styles.menuValue}>v2.0.0</Text>
+            <Text style={styles.menuValue}>v{appVersion}</Text>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
         </View>
