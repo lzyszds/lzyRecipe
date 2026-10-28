@@ -28,6 +28,8 @@ import ReaAnimated, {
   Easing as ReaEasing,
 } from 'react-native-reanimated';
 import * as SplashScreen from 'expo-splash-screen';
+import { runAppInit } from '@/lib/appInit';
+import { startAutoSync } from '@/lib/cloudSync';
 import { Sparkles } from 'lucide-react-native';
 import { Palette, Radius } from '@/constants/theme';
 
@@ -132,7 +134,35 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
     flowTimersRef.current.push(setTimeout(fn, delay));
   };
 
-  // 完整的开屏动画流程（阶段 1 ~ 5）
+  // ---- 真实启动工作窗口 ----
+  // 开屏期间真实执行：本地数据注水 → 云同步 → 封面预加载（lib/appInit）
+  // 进度条由真实进度驱动；工作完成且动画播满最短时长后才进首页
+  const MIN_SPLASH_MS = 2600; // 保证「描线 ➔ 3D 显影」完整观感的最短开屏时长
+  const MAX_SPLASH_MS = 7000; // 硬顶：同步慢/卡死也不无限等待，超时转后台继续
+  const initDoneRef = useRef(false);
+  const startedAtRef = useRef(0);
+  const progressTargetRef = useRef(0);
+  const [initLabel, setInitLabel] = useState('准备开席…');
+
+  const animateProgressTo = (value: number) => {
+    if (value <= progressTargetRef.current) return;
+    progressTargetRef.current = value;
+    Animated.timing(progressBarAnim, {
+      toValue: value,
+      duration: 320,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: false,
+    }).start();
+  };
+
+  // 工作完成即预约退场：不足最短时长则补齐差额
+  const maybeFinish = () => {
+    if (!initDoneRef.current || isExiting.current) return;
+    const elapsed = Date.now() - startedAtRef.current;
+    scheduleFlowStep(() => handleFinish(), Math.max(0, MIN_SPLASH_MS - elapsed));
+  };
+
+  // 完整的开屏动画流程（阶段 1 ~ 4）
   const runSplashFlow = () => {
     clearFlowTimers();
 
@@ -142,37 +172,7 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
       easing: ReaEasing.linear,
     });
 
-    // 阶段 2：真实的进度多阶段递进 (伴随动画与资源加载节奏)
-    Animated.sequence([
-      // 0ms ~ 600ms：快速起步准备 (0% -> 35%)
-      Animated.timing(progressBarAnim, {
-        toValue: 0.35,
-        duration: 600,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: false,
-      }),
-      // 600ms ~ 1500ms：线条匀速描绘成形 (35% -> 72%)
-      Animated.timing(progressBarAnim, {
-        toValue: 0.72,
-        duration: 900,
-        easing: Easing.linear,
-        useNativeDriver: false,
-      }),
-      // 1500ms ~ 2500ms：3D 渲染图融合替换注入 (72% -> 92%)
-      Animated.timing(progressBarAnim, {
-        toValue: 0.92,
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: false,
-      }),
-      // 2500ms ~ 3400ms：资源就绪平滑走满 100%
-      Animated.timing(progressBarAnim, {
-        toValue: 1,
-        duration: 900,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: false,
-      }),
-    ]).start();
+    // 阶段 2：进度条由真实启动工作进度驱动（见下方 runAppInit），不再使用假定时动画
 
     // 阶段 3：在 2300ms 处启动“线稿消融 ➔ 3D 实图渐变替换”（画完即换，无缝衔接）
     scheduleFlowStep(() => {
@@ -208,16 +208,13 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
         useNativeDriver: true,
       }).start();
     }, 2500);
-
-    // 阶段 5：走满后自动退场进入 App 主界面 (3700ms)
-    scheduleFlowStep(() => {
-      handleFinish();
-    }, 3700);
   };
 
   useEffect(() => {
     if (!shouldRender) {
       SplashScreen.hideAsync().catch(() => {});
+      // 热启动没有开屏工作窗口，启动同步交给后台自动同步
+      startAutoSync();
       return;
     }
 
@@ -242,8 +239,29 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
       }),
     ]).start();
 
-    // 启动完整开屏流程（阶段 1 ~ 5）
+    // 启动完整开屏流程（阶段 1 ~ 4）
     runSplashFlow();
+
+    // 硬顶保护：初始化再慢也不无限等待，超时直接进首页（同步/预加载转后台继续）
+    scheduleFlowStep(() => handleFinish(), MAX_SPLASH_MS);
+
+    // 开屏窗口内执行真实启动工作，进度条反映真实进度
+    startedAtRef.current = Date.now();
+    void runAppInit((p) => {
+      if (p.progress >= 1) {
+        setInitLabel('上菜喽…');
+        animateProgressTo(1);
+        initDoneRef.current = true;
+        maybeFinish();
+      } else {
+        setInitLabel(p.label);
+        animateProgressTo(Math.max(0.12, p.progress * 0.96));
+      }
+    }).catch(() => {
+      // 初始化异常也不阻塞启动
+      initDoneRef.current = true;
+      maybeFinish();
+    });
 
     return () => {
       clearFlowTimers();
@@ -499,6 +517,9 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
             />
           </Svg>
         </View>
+
+        {/* 真实启动工作状态：数据注水 / 云同步 / 封面预热 */}
+        <Text style={styles.progressLabel}>{initLabel}</Text>
       </Animated.View>
     </Animated.View>
   );
@@ -514,6 +535,12 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 56 : 40,
     paddingBottom: 48,
     paddingHorizontal: 24,
+  },
+  progressLabel: {
+    fontSize: 10,
+    color: '#8A7355',
+    letterSpacing: 1,
+    marginTop: 10,
   },
   topBar: {
     width: '100%',

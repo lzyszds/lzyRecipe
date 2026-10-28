@@ -1,9 +1,12 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
   TouchableOpacity,
   useWindowDimensions,
 } from 'react-native';
@@ -24,7 +27,10 @@ import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useRecentCookedStore } from '@/store/recentCookedStore';
 import { useUiPrefsStore } from '@/store/uiPrefsStore';
 import { useFavoritesStore } from '@/store/favoritesStore';
+import { useFeedProfileStore } from '@/store/feedProfileStore';
+import { createFeedSession, FeedSession } from '@/lib/recommend';
 import { useBrandFont } from '@/hooks/useBrandFont';
+import { pickHeroSlides } from '@/lib/heroPicks';
 import { RecipeCard } from '@/components/RecipeCard';
 import { RecipeImage } from '@/components/RecipeImage';
 import { HeroCarousel } from '@/components/HeroCarousel';
@@ -42,40 +48,7 @@ const SCENE_FILTERS = [
   { id: 'comfort', name: '家常' },
 ];
 
-/** 稳定伪随机数（0~1）：同一 (seed, id) 恒定，跨天/跨菜变化 */
-function stableHash(seed: number, id: string): number {
-  let h = seed >>> 0;
-  for (let i = 0; i < id.length; i++) {
-    h = (Math.imul(h, 31) + id.charCodeAt(i)) >>> 0;
-  }
-  return (h % 1000) / 1000;
-}
-
-/** 当日种子：精选池按天轮换，同一天内保持稳定 */
-function daySeedNow(): number {
-  return Math.floor(Date.now() / 86400000);
-}
-
-/**
- * 精选算法打分：
- * 内容完整度（步骤/用料/封面/诀窍）+ 收藏加成 + 最近吃过降权（推新）+ 每日轮换扰动
- */
-function scoreRecipe(
-  recipe: Recipe,
-  favoriteIds: Set<string>,
-  cookedIds: Set<string>,
-  daySeed: number
-): number {
-  let score = 0;
-  score += Math.min((recipe.steps?.length || 0) / 6, 2); // 步骤完整度 0~2
-  score += (recipe.ingredients?.length || 0) >= 4 ? 1 : 0; // 用料丰富
-  score += recipe.coverImage ? 1 : 0; // 有封面
-  score += recipe.tips ? 0.5 : 0; // 有诀窍
-  if (favoriteIds.has(recipe.id)) score += 2; // 收藏加成
-  if (cookedIds.has(recipe.id)) score -= 2.5; // 最近做过的降权，把位置让给新菜
-  score += stableHash(daySeed, recipe.id) * 3; // 每日轮换扰动 0~3
-  return score;
-}
+/** 稳定伪随机数与精选算法已迁移至 lib/heroPicks（与开屏封面预加载共用） */
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -107,20 +80,13 @@ export default function HomeScreen() {
   }, [weekdayName]);
 
   // 精选算法：全库按综合分排序（当天稳定、每天轮换、收藏加权、吃过降权）
-  const scoredRecipes = useMemo(() => {
-    const daySeed = daySeedNow();
-    const favoriteIds = new Set(favorites);
-    const cookedIds = new Set(recentCooked.map((c) => c.recipeId));
-    return allRecipes
-      .map((r) => ({ recipe: r, score: scoreRecipe(r, favoriteIds, cookedIds, daySeed) }))
-      .sort((a, b) => b.score - a.score)
-      .map((s) => s.recipe);
-  }, [allRecipes, favorites, recentCooked]);
+  const scoredRecipes = useMemo(
+    () => pickHeroSlides(allRecipes, favorites, recentCooked),
+    [allRecipes, favorites, recentCooked]
+  );
 
   // 今日主厨推荐轮播数据（组件内部自管动画与手势，memo 隔离避免整页重渲染）
-  const heroSlides = useMemo(() => scoredRecipes.slice(0, 5), [scoredRecipes]);
-
-  // 最近点过的菜：仅统计便当盒里打卡「已吃掉」（完成）的菜谱，按完成时间倒序，自动过滤已删除菜谱
+  const heroSlides = useMemo(() => scoredRecipes.slice(0, 5), [scoredRecipes]);  // 最近点过的菜：仅统计便当盒里打卡「已吃掉」（完成）的菜谱，按完成时间倒序，自动过滤已删除菜谱
   const recentRecipes = useMemo(() => {
     const recipeMap = new Map(allRecipes.map((recipe) => [recipe.id, recipe]));
     return recentCooked
@@ -129,40 +95,101 @@ export default function HomeScreen() {
       .slice(0, 10);
   }, [recentCooked, allRecipes]);
 
-  // 场景/分类过滤后的双列菜谱流（场景筛选基于新标签体系，按精选算法排序）
-  const feedRecipes = useMemo(() => {
-    const rank = new Map(scoredRecipes.map((r, i) => [r.id, i]));
-    const top = (list: Recipe[], n: number) =>
-      [...list]
-        .sort(
-          (a, b) =>
-            (rank.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
-            (rank.get(b.id) ?? Number.MAX_SAFE_INTEGER)
-        )
-        .slice(0, n);
+  // 场景/分类过滤后的菜谱流已迁移至推荐会话（见 rebuildFeed / loadMore）
 
-    if (activeScene === 'fast') {
-      return top(
-        allRecipes.filter((r) => r.tags?.includes('快手菜') || (r.cookTime || 30) <= 20),
-        10
+  // 推荐会话：小红书式无限流（会话内逐页加权抽样，越滑越个性化）
+  const sessionRef = useRef<FeedSession | null>(null);
+  const [feedItems, setFeedItems] = useState<Recipe[]>([]);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [poolExhausted, setPoolExhausted] = useState(false);
+  // 会话种子：每次冷启动随机 → 每次进入推荐内容顺序都不同
+  const [sessionSeed] = useState(() => Math.floor(Math.random() * 1e9));
+  // 每页条数（双列网格对齐）
+  const PAGE_SIZE = 12;
+
+  // 信号源用 ref + effect 跟踪：收藏/做过/画像在滑动中途变化不应打断当前信息流
+  const allRecipesRef = useRef(allRecipes);
+  const favoritesRef = useRef(favorites);
+  const recentCookedRef = useRef(recentCooked);
+  useEffect(() => {
+    allRecipesRef.current = allRecipes;
+    favoritesRef.current = favorites;
+    recentCookedRef.current = recentCooked;
+  }, [allRecipes, favorites, recentCooked]);
+
+  // 场景 → 推荐池过滤器
+  const sceneFilter = useCallback(
+    (r: Recipe) => {
+      switch (activeScene) {
+        case 'fast':
+          return Boolean(r.tags?.includes('快手菜')) || (r.cookTime || 30) <= 20;
+        case 'chuangxiang':
+          return r.category === '川菜' || r.category === '湘菜';
+        case 'seafood':
+          return Boolean(r.tags?.includes('海鲜'));
+        case 'soup':
+          return r.category === '汤羹';
+        case 'comfort':
+          return r.category === '家常菜';
+        default:
+          return true;
+      }
+    },
+    [activeScene]
+  );
+
+  /** 重建推荐会话：冷启动 / 切场景 / 下拉刷新 */
+  const rebuildFeed = useCallback(
+    (showSpinner: boolean) => {
+      const profile = useFeedProfileStore.getState();
+      sessionRef.current = createFeedSession(
+        allRecipesRef.current,
+        {
+          favorites: favoritesRef.current,
+          cookedIds: recentCookedRef.current.map((c) => c.recipeId),
+          categoryViews: profile.categoryViews,
+          tagViews: profile.tagViews,
+        },
+        sceneFilter,
+        sessionSeed
       );
-    }
-    if (activeScene === 'chuangxiang') {
-      return top(allRecipes.filter((r) => r.category === '川菜' || r.category === '湘菜'), 10);
-    }
-    if (activeScene === 'seafood') {
-      return top(allRecipes.filter((r) => r.tags?.includes('海鲜')), 10);
-    }
-    if (activeScene === 'soup') {
-      return top(allRecipes.filter((r) => r.category === '汤羹'), 10);
-    }
-    if (activeScene === 'comfort') {
-      return top(allRecipes.filter((r) => r.category === '家常菜'), 10);
-    }
-    // all: 精选算法综合分前 12 道（每天轮换一批）
-    return scoredRecipes.slice(0, 12);
-  }, [activeScene, allRecipes, scoredRecipes]);
+      setFeedItems(sessionRef.current.next(PAGE_SIZE));
+      setPoolExhausted(sessionRef.current.remaining() === 0);
+      if (showSpinner) {
+        setRefreshing(false);
+      }
+    },
+    [sceneFilter, sessionSeed]
+  );
 
+  // 初次挂载 / 切换场景时重建
+  useEffect(() => {
+    rebuildFeed(false);
+  }, [rebuildFeed]);
+
+  /** 上拉加载下一页 */
+  const loadMore = useCallback(() => {
+    const session = sessionRef.current;
+    if (!session || loadingMore || session.remaining() === 0) return;
+    setLoadingMore(true);
+    const page = session.next(PAGE_SIZE);
+    if (page.length > 0) {
+      setFeedItems((prev) => [...prev, ...page]);
+    }
+    if (session.remaining() === 0 || page.length < PAGE_SIZE) {
+      setPoolExhausted(true);
+    }
+    setLoadingMore(false);
+  }, [loadingMore]);
+
+  /** 下拉刷新：重开会话拿一批新推荐 */
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    rebuildFeed(true);
+  }, [rebuildFeed]);
+
+  /** 打开菜谱：画像统一在详情页记录 */
   const handleOpenRecipe = useCallback((recipe: Recipe) => {
     router.push({
       pathname: '/recipe/[id]',
@@ -233,131 +260,159 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* 2. 页面主体内容滚动区 */}
-      <ScrollView
+      {/* 2. 页面主体内容滚动区：无限推荐流（拉到底部自动续页） */}
+      <FlatList
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-      >
+        data={feedItems}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={styles.feedRow}
+        removeClippedSubviews
+        initialNumToRender={6}
+        maxToRenderPerBatch={8}
+        windowSize={7}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.6}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={Palette.primary}
+            colors={[Palette.primary]}
+          />
+        }
+        ListHeaderComponent={
+          <>
+            {/* 今日主厨推荐：折叠卡片堆叠轮播（独立组件，换页不重渲染首页） */}
+            <HeroCarousel slides={heroSlides} onOpen={handleOpenRecipe} onAddToPlan={handleAddToPlan} />
 
-        {/* 今日主厨推荐：折叠卡片堆叠轮播（独立组件，换页不重渲染首页） */}
-        <HeroCarousel slides={heroSlides} onOpen={handleOpenRecipe} onAddToPlan={handleAddToPlan} />
-
-        {/* 最近点过：便当盒里打卡「已吃掉」的菜谱，一键回看 */}
-        {recentRecipes.length > 0 && (
-          <View style={styles.recentSection}>
-            <View style={styles.recentHeader}>
-              <View style={styles.sectionTitleRow}>
-                <History size={16} color={Palette.primary} />
-                <Text style={styles.sectionTitle}>最近点过</Text>
-                <View style={styles.countBadge}>
-                  <Text style={styles.countBadgeText}>{recentRecipes.length}</Text>
+            {/* 最近点过：便当盒里打卡「已吃掉」的菜谱，一键回看 */}
+            {recentRecipes.length > 0 && (
+              <View style={styles.recentSection}>
+                <View style={styles.recentHeader}>
+                  <View style={styles.sectionTitleRow}>
+                    <History size={16} color={Palette.primary} />
+                    <Text style={styles.sectionTitle}>最近点过</Text>
+                    <View style={styles.countBadge}>
+                      <Text style={styles.countBadgeText}>{recentRecipes.length}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={clearRecent}
+                    activeOpacity={0.7}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Text style={styles.recentClearText}>清空</Text>
+                  </TouchableOpacity>
                 </View>
-              </View>
-              <TouchableOpacity
-                onPress={clearRecent}
-                activeOpacity={0.7}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Text style={styles.recentClearText}>清空</Text>
-              </TouchableOpacity>
-            </View>
 
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.recentScrollContent}
+                >
+                  {recentRecipes.map((dish) => (
+                    <TouchableOpacity
+                      key={dish.id}
+                      style={styles.recentCard}
+                      onPress={() => handleOpenRecipe(dish)}
+                      activeOpacity={0.86}
+                    >
+                      <View style={styles.recentImageWrap}>
+                        <RecipeImage
+                          coverImage={dish.coverImage}
+                          name={dish.name}
+                          category={dish.category}
+                        />
+                        <TouchableOpacity
+                          style={styles.recentAddBtn}
+                          onPress={(e) => handleAddToPlan(e, dish)}
+                          activeOpacity={0.8}
+                          accessibilityLabel={`将${dish.name}排入便当盒`}
+                        >
+                          <Plus size={13} color={Palette.cocoa[900]} strokeWidth={2.6} />
+                        </TouchableOpacity>
+                      </View>
+                      <Text style={styles.recentName} numberOfLines={1}>
+                        {dish.name}
+                      </Text>
+                      <Text style={styles.recentMeta} numberOfLines={1}>
+                        {dish.cookTime || 0}分钟 · {dish.category}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
+
+            {/* 场景筛选：切换即重开推荐会话 */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.recentScrollContent}
+              style={styles.scenesScroll}
+              contentContainerStyle={styles.scenesScrollContainer}
             >
-              {recentRecipes.map((dish) => (
+              {SCENE_FILTERS.map((s) => (
                 <TouchableOpacity
-                  key={dish.id}
-                  style={styles.recentCard}
-                  onPress={() => handleOpenRecipe(dish)}
-                  activeOpacity={0.86}
+                  key={s.id}
+                  style={[styles.scenePill, activeScene === s.id && styles.scenePillActive]}
+                  onPress={() => setActiveScene(s.id)}
+                  activeOpacity={0.75}
                 >
-                  <View style={styles.recentImageWrap}>
-                    <RecipeImage
-                      coverImage={dish.coverImage}
-                      name={dish.name}
-                      category={dish.category}
-                    />
-                    <TouchableOpacity
-                      style={styles.recentAddBtn}
-                      onPress={(e) => handleAddToPlan(e, dish)}
-                      activeOpacity={0.8}
-                      accessibilityLabel={`将${dish.name}排入便当盒`}
-                    >
-                      <Plus size={13} color={Palette.cocoa[900]} strokeWidth={2.6} />
-                    </TouchableOpacity>
-                  </View>
-                  <Text style={styles.recentName} numberOfLines={1}>
-                    {dish.name}
-                  </Text>
-                  <Text style={styles.recentMeta} numberOfLines={1}>
-                    {dish.cookTime || 0}分钟 · {dish.category}
+                  <Text
+                    style={[
+                      styles.scenePillText,
+                      activeScene === s.id && styles.scenePillTextActive,
+                    ]}
+                  >
+                    {s.name}
                   </Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
+
+            {/* 灵感推荐流区域标题 */}
+            <View style={styles.sectionHeaderRow}>
+              <View style={styles.sectionTitleRow}>
+                <Sparkles size={16} color="#EA580C" />
+                <Text style={styles.sectionTitle}>为你推荐</Text>
+                <View style={styles.countBadge}>
+                  <Text style={styles.countBadgeText}>{feedItems.length}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.sectionMoreBtn}
+                onPress={() => router.push('/recipes')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.sectionMoreText}>查看完整库</Text>
+                <ChevronRight size={14} color="#78716C" />
+              </TouchableOpacity>
+            </View>
+          </>
+        }
+        renderItem={({ item }) => (
+          <View style={{ width: columnWidth }}>
+            <RecipeCard recipe={item} />
           </View>
         )}
-
-        {/* 场景筛选：作用于下方精选菜谱流 */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.scenesScroll}
-          contentContainerStyle={styles.scenesScrollContainer}
-        >
-          {SCENE_FILTERS.map((s) => (
-            <TouchableOpacity
-              key={s.id}
-              style={[styles.scenePill, activeScene === s.id && styles.scenePillActive]}
-              onPress={() => setActiveScene(s.id)}
-              activeOpacity={0.75}
-            >
-              <Text
-                style={[
-                  styles.scenePillText,
-                  activeScene === s.id && styles.scenePillTextActive,
-                ]}
-              >
-                {s.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* 灵感菜谱流区域：纯正双列原生瀑布卡片 */}
-        <View style={styles.sectionHeaderRow}>
-          <View style={styles.sectionTitleRow}>
-            <Sparkles size={16} color="#EA580C" />
-            <Text style={styles.sectionTitle}>
-             精选菜谱
-            </Text>
-            <View style={styles.countBadge}>
-              <Text style={styles.countBadgeText}>{feedRecipes.length}</Text>
+        ListFooterComponent={
+          poolExhausted ? (
+            feedItems.length > 0 ? (
+              <Text style={styles.feedEndText}>已经到底啦 · 下拉刷新换一批</Text>
+            ) : (
+              <Text style={styles.feedEndText}>暂无符合条件的菜谱</Text>
+            )
+          ) : (
+            <View style={styles.feedLoadingRow}>
+              <ActivityIndicator size="small" color={Palette.primary} />
+              <Text style={styles.feedLoadingText}>正在为你挑好菜…</Text>
             </View>
-          </View>
-          <TouchableOpacity
-            style={styles.sectionMoreBtn}
-            onPress={() => router.push('/recipes')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.sectionMoreText}>查看完整库</Text>
-            <ChevronRight size={14} color="#78716C" />
-          </TouchableOpacity>
-        </View>
-
-        {/* 移动端两列精品卡片流 */}
-        <View style={styles.feedGrid}>
-          {feedRecipes.map((dish) => (
-            <View key={dish.id} style={{ width: columnWidth }}>
-              <RecipeCard recipe={dish} />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+          )
+        }
+      />
     </SafeAreaView>
   );
 }
@@ -617,9 +672,25 @@ const styles = StyleSheet.create({
     color: Palette.inkMuted,
     fontWeight: '600',
   },
-  feedGrid: {
+  feedRow: {
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  feedEndText: {
+    textAlign: 'center',
+    fontSize: 12,
+    color: Palette.inkMuted,
+    paddingVertical: 18,
+  },
+  feedLoadingRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 18,
+  },
+  feedLoadingText: {
+    fontSize: 12,
+    color: Palette.inkMuted,
   },
 });

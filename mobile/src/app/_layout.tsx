@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,16 +11,11 @@ import { AddToMealPlanModal } from '@/components/AddToMealPlanModal';
 import { GlobalCustomFeedback } from '@/components/CustomFeedback';
 import { AiGenerateConfirmSheet } from '@/components/AiGenerateConfirmSheet';
 import { AppSplashScreen } from '@/components/AppSplashScreen';
-import { startAutoSync } from '@/lib/cloudSync';
 
 // 阻止原生启动图过早消失，交由 AppSplashScreen 接管平滑转场
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
-  useEffect(() => {
-    startAutoSync();
-  }, []);
-
   return (
     <SafeAreaProvider style={{ flex: 1 }} initialMetrics={initialWindowMetrics}>
       <StatusBar style="dark" />
