@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
-import { alert } from '@/store/feedbackStore';
+import { alert, toast } from '@/store/feedbackStore';
 import {
   Heart,
   FileText,
@@ -24,6 +24,7 @@ import {
   ImagePlus,
   FlaskConical,
   History,
+  RefreshCw,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
@@ -31,6 +32,8 @@ import { useAllRecipes } from '@/lib/recipes';
 import { useImportedRecipesStore } from '@/store/importedRecipesStore';
 import { useSettingsStore, isSyncConfigured, isAiConfigured } from '@/store/settingsStore';
 import { useSyncStore } from '@/lib/cloudSync';
+import { fetchLatestManifest, currentVersionCode, currentVersionName, isNewerVersion } from '@/lib/updater';
+import { useUpdateStore } from '@/store/updateStore';
 import { SyncSettingsModal } from '@/components/SyncSettingsModal';
 import { AiSettingsModal } from '@/components/AiSettingsModal';
 import { RecipeImportModal } from '@/components/RecipeImportModal';
@@ -48,6 +51,32 @@ export default function ProfileScreen() {
   const { sync, ai } = useSettingsStore();
   const { status: syncStatus, lastSyncedAt } = useSyncStore();
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
+
+  // ---- 检查更新（整包 APK 更新）----
+  const setAvailableUpdate = useUpdateStore((s) => s.setAvailable);
+  const [checkingUpdate, setCheckingUpdate] = React.useState(false);
+  const [checkUpdateValue, setCheckUpdateValue] = React.useState('点击检查');
+
+  const handleCheckUpdate = async () => {
+    if (checkingUpdate) return;
+    setCheckingUpdate(true);
+    setCheckUpdateValue('检查中…');
+    try {
+      const manifest = await fetchLatestManifest();
+      if (manifest && isNewerVersion(manifest, currentVersionCode())) {
+        setAvailableUpdate(manifest); // 弹出更新弹窗（全局 UpdateModal）
+        setCheckUpdateValue(`可更新到 v${manifest.versionName}`);
+      } else if (!manifest) {
+        toast({ type: 'error', message: '无法连接更新服务器，请稍后再试' });
+        setCheckUpdateValue('检查失败');
+      } else {
+        toast({ type: 'success', message: `已是最新版本 v${currentVersionName()}` });
+        setCheckUpdateValue('已是最新');
+      }
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
   const [syncModalVisible, setSyncModalVisible] = React.useState(false);
   const [aiModalVisible, setAiModalVisible] = React.useState(false);
   const [importModalVisible, setImportModalVisible] = React.useState(false);
@@ -325,6 +354,21 @@ export default function ProfileScreen() {
             </View>
             <Text style={styles.menuTitle}>操作历史</Text>
             <Text style={styles.menuValue}>带饭 · AI · 全记录</Text>
+            <ChevronRight size={16} color={Palette.cocoa[400]} />
+          </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleCheckUpdate}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconBg, { backgroundColor: '#EDF2E3' }]}>
+              <RefreshCw size={18} color="#5C8A34" />
+            </View>
+            <Text style={styles.menuTitle}>检查更新</Text>
+            <Text style={styles.menuValue}>{checkUpdateValue}</Text>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
         </View>

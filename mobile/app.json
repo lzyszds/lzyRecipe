@@ -17,7 +17,11 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.mobile",
-      "versionCode": 10300
+      "versionCode": 10300,
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.REQUEST_INSTALL_PACKAGES"
+      ]
     },
     "web": {
       "output": "single",

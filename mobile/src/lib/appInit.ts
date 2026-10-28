@@ -5,6 +5,8 @@ import { useImportedRecipesStore } from '@/store/importedRecipesStore';
 import { useNotesStore } from '@/store/notesStore';
 import { useRecentCookedStore } from '@/store/recentCookedStore';
 import { useSettingsStore, isSyncConfigured } from '@/store/settingsStore';
+import { useUpdateStore } from '@/store/updateStore';
+import { fetchLatestManifest, currentVersionCode, isNewerVersion } from './updater';
 import { getAllRecipes } from './recipes';
 import { pickHeroSlides } from './heroPicks';
 import { syncNow } from './cloudSync';
@@ -98,10 +100,19 @@ async function stepCovers(timeoutMs: number): Promise<void> {
   ]);
 }
 
+/** 步骤 4：静默检查新版本 APK，有新版则登记到 updateStore（弹窗由 _layout 渲染） */
+async function stepUpdateCheck(): Promise<void> {
+  const manifest = await fetchLatestManifest();
+  if (manifest && isNewerVersion(manifest, currentVersionCode())) {
+    useUpdateStore.getState().setAvailable(manifest);
+  }
+}
+
 const STEPS = [
-  { key: 'stores', label: '本地数据准备中…', weight: 0.3, run: () => stepStores() },
-  { key: 'sync', label: '多端数据同步中…', weight: 0.35, run: () => stepSync(4000) },
-  { key: 'covers', label: '今日封面预热中…', weight: 0.35, run: () => stepCovers(3000) },
+  { key: 'stores', label: '本地数据准备中…', weight: 0.25, run: () => stepStores() },
+  { key: 'sync', label: '多端数据同步中…', weight: 0.25, run: () => stepSync(4000) },
+  { key: 'covers', label: '今日封面预热中…', weight: 0.25, run: () => stepCovers(3000) },
+  { key: 'update', label: '检查新版本中…', weight: 0.25, run: () => stepUpdateCheck() },
 ] as const;
 
 /** 依次执行启动工作并通过 onProgress 汇报真实进度；任何单步失败都跳过不阻塞 */
