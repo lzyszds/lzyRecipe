@@ -5,6 +5,7 @@ import { getTodayString, getWeekDates, getMondayOf } from '@/lib/bentoDate';
 import type { Recipe } from '@/types';
 import { useRecentCookedStore } from './recentCookedStore';
 import { logActivity } from './activityLogStore';
+import { triggerAutoSync } from '@/lib/syncTrigger';
 
 const MEAL_LABELS: Record<MealType, string> = {
   breakfast: '早餐',
@@ -95,24 +96,31 @@ export const useBentoStore = create<BentoState>()(
           return { recipePool: [recipeId, ...state.recipePool] };
         }),
 
-      removeFromPool: (recipeId) =>
+      removeFromPool: (recipeId) => {
         set((state) => ({
           recipePool: state.recipePool.filter((id) => id !== recipeId),
-        })),
+        }));
+        triggerAutoSync(800);
+      },
 
       togglePool: (recipeId) => {
         const current = get().recipePool;
         const exists = current.includes(recipeId);
         if (exists) {
           set({ recipePool: current.filter((id) => id !== recipeId) });
+          triggerAutoSync(800);
           return false;
         } else {
           set({ recipePool: [recipeId, ...current] });
+          triggerAutoSync(800);
           return true;
         }
       },
 
-      clearPool: () => set({ recipePool: [] }),
+      clearPool: () => {
+        set({ recipePool: [] });
+        triggerAutoSync(800);
+      },
 
       getDayBento: (date) => {
         const state = get();
@@ -150,6 +158,7 @@ export const useBentoStore = create<BentoState>()(
           detail: `${date} ${MEAL_LABELS[mealType]} · ${newItems.length} 道`,
           meta: { 日期: date, 餐位: MEAL_LABELS[mealType] },
         });
+        triggerAutoSync(1000);
       },
 
       removeDishFromMeal: (date, mealType, recipeId) => {
@@ -173,9 +182,10 @@ export const useBentoStore = create<BentoState>()(
           detail: `${date} ${MEAL_LABELS[mealType]} · 菜谱 ${recipeId}`,
           meta: { 日期: date, 餐位: MEAL_LABELS[mealType] },
         });
+        triggerAutoSync(1000);
       },
 
-      clearMeal: (date, mealType) =>
+      clearMeal: (date, mealType) => {
         set((state) => {
           const currentDay = state.bentoByDate[date];
           if (!currentDay) return state;
@@ -188,9 +198,11 @@ export const useBentoStore = create<BentoState>()(
               },
             },
           };
-        }),
+        });
+        triggerAutoSync(1000);
+      },
 
-      clearDay: (date) =>
+      clearDay: (date) => {
         set((state) => {
           const currentDay = state.bentoByDate[date];
           if (!currentDay) return state;
@@ -200,9 +212,11 @@ export const useBentoStore = create<BentoState>()(
               [date]: createEmptyDayBento(date),
             },
           };
-        }),
+        });
+        triggerAutoSync(1000);
+      },
 
-      clearWeek: (mondayStr) =>
+      clearWeek: (mondayStr) => {
         set((state) => {
           const weekDates = getWeekDates(mondayStr);
           const nextBento = { ...state.bentoByDate };
@@ -210,7 +224,9 @@ export const useBentoStore = create<BentoState>()(
             nextBento[d] = createEmptyDayBento(d);
           }
           return { bentoByDate: nextBento };
-        }),
+        });
+        triggerAutoSync(1000);
+      },
 
       batchFillSlots: (slots) => {
         let addedCount = 0;
@@ -252,6 +268,7 @@ export const useBentoStore = create<BentoState>()(
           action: 'AI 智能配餐',
           detail: `填入 ${addedCount} 道菜`,
         });
+        triggerAutoSync(1000);
         return addedCount;
       },
 
@@ -294,9 +311,10 @@ export const useBentoStore = create<BentoState>()(
           detail: `${date} ${MEAL_LABELS[mealType]} · 菜谱 ${recipeId}`,
           meta: { 日期: date, 餐位: MEAL_LABELS[mealType] },
         });
+        triggerAutoSync(1000);
       },
 
-      applyLunchBentoToWorkdays: (mondayStr, recipeId) =>
+      applyLunchBentoToWorkdays: (mondayStr, recipeId) => {
         set((state) => {
           const weekDates = getWeekDates(mondayStr);
           // 周一到周五: index 0 ~ 4
@@ -315,7 +333,9 @@ export const useBentoStore = create<BentoState>()(
           }
 
           return { bentoByDate: nextBento };
-        }),
+        });
+        triggerAutoSync(1000);
+      },
 
       smartFillEmptySlots: (mondayStr, allRecipes) => {
         if (!allRecipes.length) return 0;
@@ -390,18 +410,24 @@ export const useBentoStore = create<BentoState>()(
           return { bentoByDate: nextBento };
         });
 
+        if (filledCount > 0) triggerAutoSync(1000);
         return filledCount;
       },
 
-      togglePurchased: (ingKey) =>
+      togglePurchased: (ingKey) => {
         set((state) => ({
           purchasedIngredients: {
             ...state.purchasedIngredients,
             [ingKey]: !state.purchasedIngredients[ingKey],
           },
-        })),
+        }));
+        triggerAutoSync(1500);
+      },
 
-      clearPurchased: () => set({ purchasedIngredients: {} }),
+      clearPurchased: () => {
+        set({ purchasedIngredients: {} });
+        triggerAutoSync(1500);
+      },
 
       mergeBentoData: (incoming) =>
         set((state) => {

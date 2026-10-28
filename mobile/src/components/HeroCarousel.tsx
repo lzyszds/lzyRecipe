@@ -7,7 +7,7 @@
  * - React.memo 隔离：换页状态变化只重渲染本组件，不牵动首页大列表
  */
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions, Platform } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import ReaAnimated, {
   useSharedValue,
@@ -123,15 +123,15 @@ const DeckCard = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [position]);
 
-  // 顶卡横向拖拽手势：水平激活阈值让首页纵向滚动照常工作
+  // 顶卡横向拖拽手势：更早的横向激活阈值 + 更大的纵向容忍，
+  // 确保鼠标/触控斜向拖拽也是"先抢激活、再取消页面滚动"，避免翻页被外层滚动吃掉
   const pan = useMemo(
     () =>
       Gesture.Pan()
         .enabled(position === 0)
-        .activeOffsetX([-8, 8])
-        // 纵向容忍阈值必须显著大于横向激活阈值：先到横向则抢激活并取消页面滚动，
-        // 反之纵向先超过此值才放弃，避免轻微斜向拖拽被判负导致翻页失败
-        .failOffsetY([-20, 20])
+        .activeOffsetX([-6, 6])
+        .failOffsetY([-14, 14])
+        .shouldCancelWhenOutside(false)
         .onStart(() => {
           runOnJS(onDragState)(true);
         })
@@ -181,6 +181,8 @@ const DeckCard = ({
         style={[
           styles.heroSlide,
           { width: cardWidth, zIndex: total - position },
+          // Web 鼠标/触控拖拽会先被浏览器当作页面滚动手势接管，这里直接声明禁用
+          Platform.OS === 'web' && { touchAction: 'none' as any },
           cardStyle,
         ]}
       >

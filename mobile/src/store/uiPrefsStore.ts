@@ -14,9 +14,12 @@ interface UiPrefsState {
   recipesCardLayout: RecipesCardLayout;
   /** 首页场景筛选 id（all / fast / chuangxiang / seafood / soup / comfort） */
   homeScene: string;
+  /** 开屏动画开关：关闭后冷启动直接进入首页（仅保留轻量加载遮罩） */
+  splashEnabled: boolean;
   setRecipesSortMode: (mode: RecipesSortMode) => void;
   setRecipesCardLayout: (layout: RecipesCardLayout) => void;
   setHomeScene: (scene: string) => void;
+  setSplashEnabled: (enabled: boolean) => void;
 }
 
 /**
@@ -29,9 +32,11 @@ export const useUiPrefsStore = create<UiPrefsState>()(
       recipesSortMode: 'default',
       recipesCardLayout: 'compact',
       homeScene: 'all',
+      splashEnabled: true,
       setRecipesSortMode: (mode) => set({ recipesSortMode: mode }),
       setRecipesCardLayout: (layout) => set({ recipesCardLayout: layout }),
       setHomeScene: (scene) => set({ homeScene: scene }),
+      setSplashEnabled: (enabled) => set({ splashEnabled: enabled }),
     }),
     {
       name: 'lzy-recipe-ui-prefs-storage',

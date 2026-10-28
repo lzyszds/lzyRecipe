@@ -32,6 +32,7 @@ import { runAppInit } from '@/lib/appInit';
 import { startAutoSync } from '@/lib/cloudSync';
 import { Sparkles } from 'lucide-react-native';
 import { Palette, Radius } from '@/constants/theme';
+import { useUiPrefsStore } from '@/store/uiPrefsStore';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -64,9 +65,14 @@ interface AppSplashScreenProps {
   forceShow?: boolean;
 }
 
+/** 开屏模式：checking=等待偏好注水分发 / anim=完整动画 / plain=无动画轻量加载 / done=已退场 */
+type SplashMode = 'checking' | 'anim' | 'plain' | 'done';
+
 export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreenProps) {
   // 如果当前会话已经展示过且非强制，则直接不渲染
   const shouldRender = forceShow || !hasShownSplashThisSession;
+  const [mode, setMode] = useState<SplashMode>(shouldRender ? 'checking' : 'done');
+  const [plainVisible, setPlainVisible] = useState(false);
   const [visible, setVisible] = useState(shouldRender);
   // 加载设计稿同款站酷快乐体（品牌标题专用）；加载失败时降级系统字体，不阻塞开屏
   const [fontsLoaded, fontError] = useFonts({
@@ -133,6 +139,50 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
   const scheduleFlowStep = (fn: () => void, delay: number) => {
     flowTimersRef.current.push(setTimeout(fn, delay));
   };
+
+  // ---- 开屏模式分发 ----
+  // 偏好经 AsyncStorage 异步注水，必须等注水完成再决定展示方式，
+  // 否则"已关闭动画"的用户每次冷启动前几帧仍会读到默认值闪一次动画
+  useEffect(() => {
+    if (!shouldRender) {
+      SplashScreen.hideAsync().catch(() => {});
+      // 热启动没有开屏工作窗口，启动同步交给后台自动同步
+      startAutoSync();
+      setMode('done');
+      setPlainVisible(false);
+      return;
+    }
+    const resolve = () => {
+      setMode(forceShow || useUiPrefsStore.getState().splashEnabled ? 'anim' : 'plain');
+    };
+    if (useUiPrefsStore.persist.hasHydrated()) {
+      resolve();
+      return;
+    }
+    return useUiPrefsStore.persist.onFinishHydration(resolve);
+  }, [shouldRender, forceShow]);
+
+  // ---- 无动画轻量加载窗（设置里关闭了开屏动画）----
+  // 仍需给本地数据注水一个后台窗口，避免进首页闪空；工作完成或 2.5s 硬顶即放行
+  useEffect(() => {
+    if (mode !== 'plain') return;
+    SplashScreen.hideAsync().catch(() => {});
+    hasShownSplashThisSession = true;
+    setPlainVisible(true);
+    const finishPlain = () => {
+      setPlainVisible(false);
+      setMode('done');
+      onFinish?.();
+    };
+    const capTimer = setTimeout(finishPlain, 2500);
+    void runAppInit(() => {})
+      .catch(() => {})
+      .finally(() => {
+        clearTimeout(capTimer);
+        finishPlain();
+      });
+    return () => clearTimeout(capTimer);
+  }, [mode, onFinish]);
 
   // ---- 真实启动工作窗口 ----
   // 开屏期间真实执行：本地数据注水 → 云同步 → 封面预加载（lib/appInit）
@@ -211,12 +261,7 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
   };
 
   useEffect(() => {
-    if (!shouldRender) {
-      SplashScreen.hideAsync().catch(() => {});
-      // 热启动没有开屏工作窗口，启动同步交给后台自动同步
-      startAutoSync();
-      return;
-    }
+    if (mode !== 'anim') return;
 
     // 字体未就绪先不启动动画：保持原生启动图遮挡，避免 TTF 解析卡在描线中途
     if (!fontReady) return;
@@ -266,8 +311,24 @@ export function AppSplashScreen({ onFinish, forceShow = false }: AppSplashScreen
     return () => {
       clearFlowTimers();
     };
-  }, [shouldRender, fontReady]);
+  }, [mode, fontReady]);
 
+  // 渲染门:
+  // checking/done → 覆盖交给原生启动图 / 已进首页
+  // plain → 无动画轻量遮罩（不依赖品牌字体）
+  if (mode === 'checking' || mode === 'done') return null;
+  if (mode === 'plain') {
+    if (!plainVisible) return null;
+    return (
+      <View style={[styles.overlay, { opacity: 1 }]}>
+        <View style={styles.badgePill}>
+          <View style={styles.badgeDot} />
+          <Text style={styles.badgeText}>CookMoment</Text>
+        </View>
+        <Text style={styles.progressLabel}>准备开席…</Text>
+      </View>
+    );
+  }
   if (!visible || !fontReady) return null;
 
   const progressWidthInterpolate = progressBarAnim.interpolate({

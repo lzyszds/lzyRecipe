@@ -61,10 +61,13 @@ export function createFeedSession(
   allRecipes: Recipe[],
   signals: TasteSignals,
   sceneFilter?: (r: Recipe) => boolean,
-  seed: number = Math.floor(Math.random() * 1e9)
+  seed: number = Math.floor(Math.random() * 1e9),
+  /** 已在当前信息流出现过的菜谱：强降权但不清除 → 会话续期时尽量先出没看过的 */
+  excludeIds: string[] = []
 ): FeedSession {
   const favSet = new Set(signals.favorites);
   const cookedSet = new Set(signals.cookedIds);
+  const excludeSet = new Set(excludeIds);
 
   // 从收藏聚合成"用户最爱的分类/标签"（比单独浏览更强的正向信号）
   const favCat = new Map<string, number>();
@@ -96,6 +99,9 @@ export function createFeedSession(
 
     // 最近吃过的单条菜品强降权：把位置让给没做过的新菜
     if (cookedSet.has(r.id)) w *= 0.15;
+
+    // 本流已展示过的菜谱再降一档：续期会话优先补新鲜内容，但保证永不断流
+    if (excludeSet.has(r.id)) w *= 0.03;
 
     // 会话级随机扰动 ×0.55~1.85：每次进入打乱次序，保持探索与新鲜感
     w *= 0.55 + stableHash(seed, r.id) * 1.3;

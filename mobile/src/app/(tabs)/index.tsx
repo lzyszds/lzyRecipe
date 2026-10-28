@@ -102,7 +102,6 @@ export default function HomeScreen() {
   const [feedItems, setFeedItems] = useState<Recipe[]>([]);
   const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [poolExhausted, setPoolExhausted] = useState(false);
   // 会话种子：每次冷启动随机 → 每次进入推荐内容顺序都不同
   const [sessionSeed] = useState(() => Math.floor(Math.random() * 1e9));
   // 每页条数（双列网格对齐）
@@ -155,7 +154,6 @@ export default function HomeScreen() {
         sessionSeed
       );
       setFeedItems(sessionRef.current.next(PAGE_SIZE));
-      setPoolExhausted(sessionRef.current.remaining() === 0);
       if (showSpinner) {
         setRefreshing(false);
       }
@@ -168,20 +166,34 @@ export default function HomeScreen() {
     rebuildFeed(false);
   }, [rebuildFeed]);
 
-  /** 上拉加载下一页 */
+  /** 上拉加载下一页：池抽干时自动续开新会话，永远有内容可刷 */
   const loadMore = useCallback(() => {
-    const session = sessionRef.current;
-    if (!session || loadingMore || session.remaining() === 0) return;
+    let session = sessionRef.current;
+    if (!session || loadingMore) return;
+    if (session.remaining() === 0) {
+      // 续期：新种子新会话，已展示菜品强降权优先补新面孔
+      const profile = useFeedProfileStore.getState();
+      session = createFeedSession(
+        allRecipesRef.current,
+        {
+          favorites: favoritesRef.current,
+          cookedIds: recentCookedRef.current.map((c) => c.recipeId),
+          categoryViews: profile.categoryViews,
+          tagViews: profile.tagViews,
+        },
+        sceneFilter,
+        Math.floor(Math.random() * 1e9),
+        feedItems.map((r) => r.id)
+      );
+      sessionRef.current = session;
+    }
     setLoadingMore(true);
     const page = session.next(PAGE_SIZE);
     if (page.length > 0) {
       setFeedItems((prev) => [...prev, ...page]);
     }
-    if (session.remaining() === 0 || page.length < PAGE_SIZE) {
-      setPoolExhausted(true);
-    }
     setLoadingMore(false);
-  }, [loadingMore]);
+  }, [loadingMore, sceneFilter, feedItems]);
 
   /** 下拉刷新：重开会话拿一批新推荐 */
   const handleRefresh = useCallback(() => {
@@ -399,12 +411,8 @@ export default function HomeScreen() {
           </View>
         )}
         ListFooterComponent={
-          poolExhausted ? (
-            feedItems.length > 0 ? (
-              <Text style={styles.feedEndText}>已经到底啦 · 下拉刷新换一批</Text>
-            ) : (
-              <Text style={styles.feedEndText}>暂无符合条件的菜谱</Text>
-            )
+          feedItems.length === 0 ? (
+            <Text style={styles.feedEndText}>暂无符合条件的菜谱</Text>
           ) : (
             <View style={styles.feedLoadingRow}>
               <ActivityIndicator size="small" color={Palette.primary} />

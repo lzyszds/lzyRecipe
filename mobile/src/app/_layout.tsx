@@ -10,6 +10,7 @@ import { Palette } from '@/constants/theme';
 import { AddToMealPlanModal } from '@/components/AddToMealPlanModal';
 import { GlobalCustomFeedback } from '@/components/CustomFeedback';
 import { AiGenerateConfirmSheet } from '@/components/AiGenerateConfirmSheet';
+import { UpdateModal } from '@/components/UpdateModal';
 import { AppSplashScreen } from '@/components/AppSplashScreen';
 
 // 阻止原生启动图过早消失，交由 AppSplashScreen 接管平滑转场
@@ -42,6 +43,9 @@ export default function RootLayout() {
 
       {/* 全局 AI 生成前确认层：二次确认 + 渠道商切换 + 补充要求输入 */}
       <AiGenerateConfirmSheet />
+
+      {/* 应用内整包更新弹窗（检测到新版本时自动弹出） */}
+      <UpdateModal />
 
       {/* 手机端启动开屏动画：金色边缘轮廓线描画 ➔ 渐变平滑替换为 3D 渲染立体原图 */}
       <AppSplashScreen />

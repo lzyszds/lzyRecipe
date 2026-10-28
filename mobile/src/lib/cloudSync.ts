@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { AppState } from 'react-native';
 import { useFavoritesStore } from '../store/favoritesStore';
 import { useImportedRecipesStore } from '../store/importedRecipesStore';
 import { useNotesStore, Note } from '../store/notesStore';
@@ -8,9 +9,13 @@ import {
   CloudSyncConfig,
 } from '../store/settingsStore';
 import { Recipe } from '../types';
-import { getAllRecipes } from './recipes';
+import { recipes as builtinRecipes } from '../data/recipes';
+import { generatedRecipes } from '../data/generatedRecipes';
 import { useBentoStore } from '../store/bentoStore';
 import { wrapCorsProxy } from './proxyUrl';
+
+/** 内置菜谱 id 集合：内置/AI 生成库随 App 发版打包，不参与云同步（否则每次推好几 MB） */
+const BUILTIN_RECIPE_IDS = new Set<string>([...builtinRecipes, ...generatedRecipes].map((r) => r.id));
 
 /** 同步内容快照：服务端按密钥区分用户，多端完全一致 */
 export interface SyncPayload {
@@ -86,11 +91,12 @@ async function requestJson<T>(
 
 export function collectPayload(): SyncPayload {
   const settings = useSettingsStore.getState();
-  const allRecipes = getAllRecipes(useImportedRecipesStore.getState().importedRecipes);
+  // 只同步用户数据（导入/AI 生成的个人菜谱），不携带内置菜谱库
+  const importedRecipes = useImportedRecipesStore.getState().importedRecipes;
   return {
     favorites: useFavoritesStore.getState().favorites,
     favoritesUpdatedAt: useFavoritesStore.getState().favoritesUpdatedAt,
-    importedRecipes: allRecipes,
+    importedRecipes,
     notes: useNotesStore.getState().notes,
     bento: {
       recipePool: useBentoStore.getState().recipePool,
@@ -127,9 +133,11 @@ function applyPayload(
 
   if (Array.isArray(payload.importedRecipes)) {
     // 按 id 合并，通过 updatedAt 时间戳比较，本地更新时间更新或相同则保留本地，绝不被远端旧数据覆盖
+    // 额外过滤内置菜谱：旧版云端存过全量库，这里不再回收进本地（下次推送自动清理云端冗余）
     const local = useImportedRecipesStore.getState().importedRecipes;
     const map = new Map(local.map((r) => [r.id, r]));
     for (const remoteRecipe of payload.importedRecipes) {
+      if (BUILTIN_RECIPE_IDS.has(remoteRecipe.id)) continue;
       const localRecipe = map.get(remoteRecipe.id);
       if (!localRecipe) {
         map.set(remoteRecipe.id, remoteRecipe);
@@ -308,7 +316,7 @@ registerSyncRunner(performDebouncedAutoSync);
 
 let autoSyncStarted = false;
 
-/** 启动时自动同步 */
+/** 启动时自动同步 + 回到前台自动对齐 */
 export function startAutoSync() {
   if (autoSyncStarted) return;
   autoSyncStarted = true;
@@ -325,4 +333,17 @@ export function startAutoSync() {
   setTimeout(() => {
     void syncNow(sync);
   }, 1200);
+
+  // 回到前台即开新会话同步一次：
+  // App 在后台/被杀期间在其他端做过的改动，切回来立刻双向对齐（60s 内已同步过则跳过）
+  AppState.addEventListener('change', (state) => {
+    if (state !== 'active') return;
+    const latest = useSettingsStore.getState().sync;
+    if (!isSyncConfigured(latest) || !latest.autoSync) return;
+    const last = new Date(useSyncStore.getState().lastSyncedAt || 0).getTime();
+    if (Date.now() - last < 60000) return;
+    setTimeout(() => {
+      void syncNow(latest);
+    }, 800);
+  });
 }

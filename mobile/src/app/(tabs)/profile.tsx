@@ -25,6 +25,7 @@ import {
   FlaskConical,
   History,
   RefreshCw,
+  PlayCircle,
 } from 'lucide-react-native';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useNotesStore, activeNotes } from '@/store/notesStore';
@@ -34,6 +35,8 @@ import { useSettingsStore, isSyncConfigured, isAiConfigured } from '@/store/sett
 import { useSyncStore } from '@/lib/cloudSync';
 import { fetchLatestManifest, currentVersionCode, currentVersionName, isNewerVersion } from '@/lib/updater';
 import { useUpdateStore } from '@/store/updateStore';
+import { useUiPrefsStore } from '@/store/uiPrefsStore';
+import { Switch } from 'react-native-gesture-handler';
 import { SyncSettingsModal } from '@/components/SyncSettingsModal';
 import { AiSettingsModal } from '@/components/AiSettingsModal';
 import { RecipeImportModal } from '@/components/RecipeImportModal';
@@ -44,6 +47,8 @@ export default function ProfileScreen() {
   const router = useRouter();
   const { favorites } = useFavoritesStore();
   const { notes } = useNotesStore();
+  const splashEnabled = useUiPrefsStore((s) => s.splashEnabled);
+  const setSplashEnabled = useUiPrefsStore((s) => s.setSplashEnabled);
   const allRecipes = useAllRecipes();
   const importedRecipes = useImportedRecipesStore((s) => s.importedRecipes);
   const validNotes = activeNotes(notes);
@@ -371,6 +376,25 @@ export default function ProfileScreen() {
             <Text style={styles.menuValue}>{checkUpdateValue}</Text>
             <ChevronRight size={16} color={Palette.cocoa[400]} />
           </TouchableOpacity>
+
+          <View style={styles.menuDivider} />
+
+          {/* 开屏动画：每天开机第一眼要不要来一段，用户说了算 */}
+          <View style={styles.menuItem}>
+            <View style={[styles.menuIconBg, { backgroundColor: Palette.apricot[50] }]}>
+              <PlayCircle size={18} color={Palette.apricot[500]} />
+            </View>
+            <Text style={styles.menuTitle}>开屏动画</Text>
+            <Text style={styles.menuValue}>
+              {splashEnabled ? '每天开席有仪式感' : '已关闭 · 秒进首页'}
+            </Text>
+            <Switch
+              value={splashEnabled}
+              onValueChange={setSplashEnabled}
+              trackColor={{ false: Palette.oat[200], true: Palette.primary }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
         </View>
 
         {/* 关于与系统信息 */}
