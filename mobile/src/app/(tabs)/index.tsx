@@ -11,7 +11,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Search,
   Plus,
@@ -19,6 +19,7 @@ import {
   ChevronRight,
   Heart,
   ArrowRight,
+  ArrowUp,
   History,
 } from 'lucide-react-native';
 import { Image } from 'expo-image';
@@ -60,6 +61,18 @@ export default function HomeScreen() {
   const clearRecent = useRecentCookedStore((s) => s.clearRecent);
   const favorites = useFavoritesStore((s) => s.favorites);
   const { width: windowWidth } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  // 回到顶部悬浮按钮：滚动超过 600px 出现，一键回到流顶部
+  const listRef = useRef<FlatList<Recipe> | null>(null);
+  const [showTop, setShowTop] = useState(false);
+  const handleFeedScroll = useCallback((e: { nativeEvent: { contentOffset: { y: number } } }) => {
+    const next = e.nativeEvent.contentOffset.y > 600;
+    setShowTop((prev) => (prev === next ? prev : next));
+  }, []);
+  const handleScrollTop = useCallback(() => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: true });
+  }, []);
 
   // 场景筛选持久化，回到首页保持上次的选择
   const activeScene = useUiPrefsStore((s) => s.homeScene);
@@ -274,9 +287,12 @@ export default function HomeScreen() {
 
       {/* 2. 页面主体内容滚动区：无限推荐流（拉到底部自动续页） */}
       <FlatList
+        ref={listRef}
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
+        onScroll={handleFeedScroll}
+        scrollEventThrottle={32}
         data={feedItems}
         keyExtractor={(item) => item.id}
         numColumns={2}
@@ -421,6 +437,18 @@ export default function HomeScreen() {
           )
         }
       />
+
+      {/* 回到顶部悬浮按钮：右下角，滑过一段才出现 */}
+      {showTop && (
+        <TouchableOpacity
+          style={[styles.scrollTopFab, { bottom: Math.max(insets.bottom, 12) + 64 + 14 }]}
+          onPress={handleScrollTop}
+          activeOpacity={0.85}
+          accessibilityLabel="回到顶部"
+        >
+          <ArrowUp size={20} color={Palette.primary} strokeWidth={2.5} />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }
@@ -429,6 +457,24 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: Palette.canvas,
+  },
+  scrollTopFab: {
+    position: 'absolute',
+    right: 18,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: Palette.dockBorder,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.14,
+    shadowRadius: 10,
+    elevation: 6,
+    zIndex: 50,
   },
   // 顶部常驻固定 Header (不随页面滚动消失)
   fixedHeader: {

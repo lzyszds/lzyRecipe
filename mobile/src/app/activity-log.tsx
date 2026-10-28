@@ -28,6 +28,7 @@ import {
 } from '@/store/activityLogStore';
 import { confirm } from '@/store/feedbackStore';
 import { useBentoStore, MealType } from '@/store/bentoStore';
+import { useAllRecipes } from '@/lib/recipes';
 
 const FILTERS: { key: 'all' | ActivityType; label: string }[] = [
   { key: 'all', label: '全部' },
@@ -66,6 +67,24 @@ function formatTime(at: number): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
+/**
+ * 把日志里混排的菜谱 id（gen0123 / 内置 id / 自建 id）替换成菜名：
+ * 日志详情曾直接入库 id 字符串，读时人话化比迁移历史数据更稳
+ */
+function makeHumanizer(allRecipes: { id: string; name: string }[]) {
+  const idNameMap = new Map(allRecipes.map((r) => [r.id, r.name]));
+  return {
+    nameOf: (id: string) => idNameMap.get(id) || null,
+    humanize: (text: string): string => {
+      let out = text;
+      for (const [id, name] of idNameMap) {
+        if (out.includes(id)) out = out.split(id).join(name);
+      }
+      return out;
+    },
+  };
+}
+
 export default function ActivityLogScreen() {
   const router = useRouter();
   const entries = useActivityLogStore((s) => s.entries);
@@ -74,6 +93,9 @@ export default function ActivityLogScreen() {
 
   const [filter, setFilter] = useState<'all' | ActivityType>('all');
   const [weekOffset, setWeekOffset] = useState<0 | 1 | null>(null);
+
+  const allRecipes = useAllRecipes();
+  const { nameOf, humanize } = makeHumanizer(allRecipes);
 
   const weekStart = useMemo(() => {
     const d = new Date();
@@ -210,7 +232,7 @@ export default function ActivityLogScreen() {
             </Text>
             {bentoWeekList.slice(0, 30).map((row, idx) => (
               <Text key={`${row.date}-${row.meal}-${row.recipeId}-${idx}`} style={styles.bentoSummaryRow}>
-                {row.date.slice(5)} · {MEAL_LABELS[row.meal]} · {row.recipeId}
+                {row.date.slice(5)} · {MEAL_LABELS[row.meal]} · {nameOf(row.recipeId) || '已删除的菜谱'}
                 {row.eaten ? ' ✓已吃' : ''}
               </Text>
             ))}
@@ -240,7 +262,7 @@ export default function ActivityLogScreen() {
                     </Text>
                     {entry.detail ? (
                       <Text style={styles.entryDetail} numberOfLines={2}>
-                        {entry.detail}
+                        {humanize(entry.detail)}
                       </Text>
                     ) : null}
                     {entry.meta &&
@@ -251,7 +273,7 @@ export default function ActivityLogScreen() {
                             .map(([k, v]) => (
                               <View key={k} style={styles.metaChip}>
                                 <Text style={styles.metaText}>
-                                  {k}:{String(v)}
+                                  {humanize(k)}: {humanize(String(v))}
                                 </Text>
                               </View>
                             ))}
