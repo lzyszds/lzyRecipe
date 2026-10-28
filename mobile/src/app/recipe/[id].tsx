@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import {
   Share2,
 } from 'lucide-react-native';
 import { useAllRecipes } from '@/lib/recipes';
+import { useFeedProfileStore } from '@/store/feedProfileStore';
 import { useFavoritesStore } from '@/store/favoritesStore';
 import { useMealPlanSheetStore } from '@/store/mealPlanSheetStore';
 import { useImportedRecipesStore } from '@/store/importedRecipesStore';
@@ -47,6 +48,12 @@ export default function RecipeDetailScreen() {
   const router = useRouter();
   const allRecipes = useAllRecipes();
   const recipe = allRecipes.find((r) => r.id === id);
+
+  // 浏览即记录：打开详情累积推荐口味画像（任何入口打开都生效，首页统一从这里记，避免重复计数）
+  useEffect(() => {
+    if (recipe) useFeedProfileStore.getState().recordView(recipe);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipe?.id]);
 
   // 响应式订阅收藏数组：React Compiler 下用 get() 型方法取值会被缓存导致红心不高亮
   const favorites = useFavoritesStore((s) => s.favorites);

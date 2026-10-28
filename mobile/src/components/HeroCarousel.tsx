@@ -128,8 +128,10 @@ const DeckCard = ({
     () =>
       Gesture.Pan()
         .enabled(position === 0)
-        .activeOffsetX([-10, 10])
-        .failOffsetY([-8, 8])
+        .activeOffsetX([-8, 8])
+        // 纵向容忍阈值必须显著大于横向激活阈值：先到横向则抢激活并取消页面滚动，
+        // 反之纵向先超过此值才放弃，避免轻微斜向拖拽被判负导致翻页失败
+        .failOffsetY([-20, 20])
         .onStart(() => {
           runOnJS(onDragState)(true);
         })
