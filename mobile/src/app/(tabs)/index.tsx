@@ -20,6 +20,7 @@ import {
   Heart,
   ArrowRight,
   ArrowUp,
+  Gift,
   History,
 } from 'lucide-react-native';
 import { Image } from 'expo-image';
@@ -257,6 +258,14 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.headerRightActions}>
+            <TouchableOpacity
+              style={styles.headerIconBtn}
+              onPress={() => router.push('/new-recipes')}
+              activeOpacity={0.75}
+              accessibilityLabel="每日上新"
+            >
+              <Gift size={18} color={Palette.primary} />
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerIconBtn}
               onPress={() => router.push('/favorites')}
