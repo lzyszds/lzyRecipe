@@ -10,7 +10,6 @@ interface FavoritesState {
   favoritesUpdatedAt: number;
   addFavorite: (recipeId: string) => void;
   removeFavorite: (recipeId: string) => void;
-  isFavorite: (recipeId: string) => boolean;
   toggleFavorite: (recipeId: string) => void;
 }
 
@@ -37,7 +36,6 @@ export const useFavoritesStore = create<FavoritesState>()(
         logActivity({ type: 'favorite', action: '取消收藏', detail: recipeId });
         triggerAutoSync(800);
       },
-      isFavorite: (recipeId: string) => get().favorites.includes(recipeId),
       toggleFavorite: (recipeId: string) => {
         const { favorites, addFavorite, removeFavorite } = get();
         if (favorites.includes(recipeId)) {

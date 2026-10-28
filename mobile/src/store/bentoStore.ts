@@ -47,7 +47,6 @@ interface BentoState {
   addToPool: (recipeId: string) => void;
   removeFromPool: (recipeId: string) => void;
   togglePool: (recipeId: string) => boolean;
-  isInPool: (recipeId: string) => boolean;
   clearPool: () => void;
 
   // 便当餐位操作
@@ -112,8 +111,6 @@ export const useBentoStore = create<BentoState>()(
           return true;
         }
       },
-
-      isInPool: (recipeId) => get().recipePool.includes(recipeId),
 
       clearPool: () => set({ recipePool: [] }),
 

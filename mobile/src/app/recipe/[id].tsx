@@ -48,7 +48,9 @@ export default function RecipeDetailScreen() {
   const allRecipes = useAllRecipes();
   const recipe = allRecipes.find((r) => r.id === id);
 
-  const { isFavorite, toggleFavorite } = useFavoritesStore();
+  // 响应式订阅收藏数组：React Compiler 下用 get() 型方法取值会被缓存导致红心不高亮
+  const favorites = useFavoritesStore((s) => s.favorites);
+  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
 
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const [coverModalVisible, setCoverModalVisible] = useState(false);
@@ -68,7 +70,7 @@ export default function RecipeDetailScreen() {
     );
   }
 
-  const favorite = isFavorite(recipe.id);
+  const favorite = favorites.includes(recipe.id);
   const difficulty = difficultyConfig[recipe.difficulty] || { label: '普通' };
 
   // 微信式滚动渐变动画：导航栏背景与标题无缝浮现

@@ -22,8 +22,10 @@ const difficultyLabel: Record<DifficultyLevel, string> = {
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, compact }) => {
   const router = useRouter();
-  const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const favorite = isFavorite(recipe.id);
+  // 响应式订阅收藏数组：React Compiler 下用 get() 型方法取值会被缓存导致红心不高亮
+  const favorites = useFavoritesStore((s) => s.favorites);
+  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
+  const favorite = favorites.includes(recipe.id);
 
   const handlePress = () => {
     router.push({

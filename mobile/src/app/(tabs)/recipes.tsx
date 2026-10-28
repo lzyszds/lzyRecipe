@@ -85,10 +85,13 @@ function renderDifficultyBadge(difficulty: DifficultyLevel) {
 // 模式 A：黄金比例“左图右文”精品横卡（默认推荐）
 const CompactHorizontalCard = React.memo(function CompactHorizontalCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { isInPool, togglePool } = useBentoStore();
-  const favorite = isFavorite(recipe.id);
-  const inPool = isInPool(recipe.id);
+  // 响应式订阅：React Compiler 下 get() 型方法取值会被缓存，状态变化不高亮
+  const favorites = useFavoritesStore((s) => s.favorites);
+  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
+  const recipePool = useBentoStore((s) => s.recipePool);
+  const togglePool = useBentoStore((s) => s.togglePool);
+  const favorite = favorites.includes(recipe.id);
+  const inPool = recipePool.includes(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -195,10 +198,13 @@ const CompactHorizontalCard = React.memo(function CompactHorizontalCard({ recipe
 // 模式 B：杂志感大图海报卡
 const MagazineCard = React.memo(function MagazineCard({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
-  const { isFavorite, toggleFavorite } = useFavoritesStore();
-  const { isInPool, togglePool } = useBentoStore();
-  const favorite = isFavorite(recipe.id);
-  const inPool = isInPool(recipe.id);
+  // 响应式订阅：React Compiler 下 get() 型方法取值会被缓存，状态变化不高亮
+  const favorites = useFavoritesStore((s) => s.favorites);
+  const toggleFavorite = useFavoritesStore((s) => s.toggleFavorite);
+  const recipePool = useBentoStore((s) => s.recipePool);
+  const togglePool = useBentoStore((s) => s.togglePool);
+  const favorite = favorites.includes(recipe.id);
+  const inPool = recipePool.includes(recipe.id);
 
   const handlePress = () => {
     router.push({
@@ -299,7 +305,7 @@ export default function RecipesScreen() {
   const cardLayout = useUiPrefsStore((s) => s.recipesCardLayout);
   const setCardLayout = useUiPrefsStore((s) => s.setRecipesCardLayout);
 
-  const { isFavorite } = useFavoritesStore();
+  const favorites = useFavoritesStore((s) => s.favorites);
   const addSearch = useSearchHistoryStore((s) => s.addSearch);
   const showToast = (message: string) => toast({ type: 'info', message });
 
@@ -334,7 +340,7 @@ export default function RecipesScreen() {
     // 过滤函数：搜索匹配交给 lib/search 统一处理（支持同义词、多关键词与相关度排序）
     const matchFilter = (r: Recipe) => {
       if (onlyFast && r.cookTime > 30) return false;
-      if (onlyFav && !isFavorite(r.id)) return false;
+      if (onlyFav && !favorites.includes(r.id)) return false;
       return true;
     };
 
@@ -392,7 +398,7 @@ export default function RecipesScreen() {
       categoryIndexMap: indexMap,
       totalCount: total,
     };
-  }, [allRecipes, rawCategories, searchQuery, onlyFast, onlyFav, sortMode, isFavorite]);
+  }, [allRecipes, rawCategories, searchQuery, onlyFast, onlyFav, sortMode, favorites]);
 
   // 计算平铺数据项的精确尺寸与布局（O(1) 精准定位，彻底告别虚拟列表计算偏差与抖动）
   const itemLayouts = useMemo(() => {
